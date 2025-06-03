@@ -1,0 +1,104 @@
+.quickVoiceDiv {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.suiSetOptions {
+	width: 80%;
+	height: 80%;
+	display: flex;
+	z-index: 1000;
+	flex-flow: column;
+	position: relative;
+	top: 50%;
+	left: 0;
+	overflow: scroll;
+	/* border: 4px solid black; */
+	border-radius: 5px;
+	background-color: rgba(0, 0, 0, 0.3);
+	margin: 0;
+	padding: 0;
+	outline: none;
+}
+.openDiv {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 2.5;
+	font-size: 20px;
+	pointer-events: none;
+	font-family: "宋体";
+}
+.suiSetOptions li {
+	margin-top: 20px;
+	font-size: 17px;
+	position: relative;
+	left: 0;
+	top: 0;
+	padding: 5px;
+	font-size: 20px;
+}
+.suiSetOptions li.close {
+	opacity: 0.5;
+}
+.addList {
+	width: 80%;
+	height: 60%;
+	background-color: rgba(0, 0, 0, 0.8);
+	border-radius: 5px;
+	border: 1px solid black;
+	overflow: scroll;
+}
+.addList li {
+	text-shadow: 1px 1px black;
+	padding: 5px;
+	width: auto;
+	list-style: auto;
+}
+.addQuickVoice {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 100px;
+	height: 50px;
+}
+.addList li.active {
+	background-color: rgba(94, 189, 226, 0.3);
+}
+
+li.active {
+	background-color: rgba(135, 207, 235, 0.413);
+}
+.optionButton {
+	top: 0;
+	position: fixed;
+	right: 0;
+	width: 100px;
+	height: 50px;
+	z-index: 10000;
+}
+.hid {
+	display: none;
+}
+.sho {
+	display: block;
+}
+
+.optioncs {
+	top: 145px;
+	position: fixed;
+	right: 135px;
+	width: 100px;
+	height: 50px;
+	text-align: center;
+	z-index: 10000;
+	font-size: 20px;
+}
+.allDiv {
+	width: 100%;
+	height: 100%;
+}

@@ -1,0 +1,22 @@
+联机彩色字体
+ 在聊天处输入 <span style="color:颜色的英文单词;">你想发的文本
+联机字体大小
+ 在聊天处输入 <i style="font-size:你想发的字体大小数字（例如72）px;">你想发的文本
+字体换行
+任意文本<br>任意文本
+例：哈<br>哈<br>哈<br>哈<br>哈
+联机特殊字体
+文本下划线：<u>你想发的文本
+文本删除线：<s>你想发的文本
+文本加粗：<b>你想发的文本
+文本倾斜：<i>你想发的文本
+文本加大：<big>你想发的文本
+【注】以下需要房主与房员装好本扩展
+武将技能语音
+/playAudio skill 技能代码 后面可加任意文本（也可以不加文本）
+例：/playAudio skill jiwu2 今天，就让你们感受一下真正的绝望！
+进阶：/playAudio skill jiwu2 <b><i style="font-size:30px;"><span style="color:red;">今天，就让你们感受一下真正的绝望！
+武将阵亡语音
+/playAudio die  武将内部名 后面可加任意文本（也可以不加文本）
+例：/playAudio die caocao 大爷胃疼！胃疼啊！！
+进阶：/playAudio die caocao <b><i style="font-size:30px;"><span style="color:aqua;">大爷胃疼！胃疼啊！！

@@ -1,0 +1,101 @@
+/*手杀记录显示，需要在游戏内开启历史记录*/
+#arena.chess > #arenalog {
+	display: none !important;
+	background: none;
+}
+#arena.observe .handcards > .card > div {
+	opacity: 0 !important;
+	background: none;
+}
+#arena.hide_name .player > .name:not(.name_seat),
+#arena.hide_name .player > .name2,
+#arena.hide_name > .dialog .button.character > .name {
+	display: none !important;
+	background: none;
+}
+/*记录栏主体*/
+#arenalog {
+	width: calc(50% - 230px);
+	height: calc(100% - 452px); /*100消了四层。*/
+	left: calc(50% + 60px);
+	top: 184px;
+	overflow: hidden;
+	font-family: "shousha" !important;
+	z-index: 10;
+	pointer-events: none;
+	text-align: center;
+}
+#arenalog.withdialog {
+	opacity: 0.5;
+}
+#arena:not(.oldlayout) > #arenalog[data-position="center"] {
+	left: calc(25% + 105px);
+}
+#arena:not(.oldlayout) > #arenalog[data-position="left"] {
+	left: 150px;
+}
+#arena.oldlayout > #arenalog {
+	top: 160px;
+	width: calc(50% - 280px);
+	height: calc(100% - 355px);
+}
+#arena.oldlayout > #arenalog[data-position="center"] {
+	left: calc(25% + 150px);
+}
+#arena.oldlayout > #arenalog[data-position="left"] {
+	left: 240px;
+}
+/*-------文本颜色------*/
+#arenalog > div .firetext {
+	color: rgb(255, 119, 63);
+}
+/* 卡牌名称 */
+#arenalog > div .yellowtext {
+	color: rgb(255, 255, 25);
+}
+/* 武将名称 */
+#arenalog > div .bluetext {
+	color: rgb(37, 197, 35);
+}
+/* 技能名称 */
+#arenalog > div .greentext {
+	color: rgb(189, 100, 32);
+}
+#arenalog > div .icetext {
+	color: rgb(59, 98, 115);
+}
+#arenalog > div .thundertext,
+#arenalog > div .controlthundertext {
+	color: rgb(117, 186, 255);
+}
+#arenalog > div .kamitext {
+	color: rgb(90, 118, 99);
+}
+#arenalog > div .whitetext .thundertext {
+	color: #d6d0af;
+}
+#arenalog > div .poisontext {
+	color: rgb(104, 221, 127);
+}
+#arenalog > div .browntext {
+	color: rgb(195, 161, 223);
+}
+#arenalog > div .legendtext {
+	color: rgb(233, 131, 255);
+}
+
+#arenalog > div {
+	position: relative;
+	display: block;
+	width: calc(100% - 23px);
+	left: 20px;
+	font-size: 18px;
+	line-height: 21px;
+	background: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 10%, rgba(0, 0, 0, 0.5) 90%, transparent 100%);
+	/*background-image: url("info.png");*/
+	background-size: 100% 100%;
+}
+#window:not(.low_performance) #arena #arenalog > div {
+	animation: game_start 0.5s;
+	-webkit-animation: game_start 0.5s;
+}
