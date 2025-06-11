@@ -176,174 +176,120 @@ export async function precontent(config, pack) {
         };
     }
     //阶段提示
-    if (lib.config.extension_星之梦_tphaseTip) {
-        lib.skill._tphaseTip = {
-            trigger: {
-                global: ["phaseBegin", "phaseZhunbeiBefore", "phaseJudgeBefore", "phaseDrawBefore", "phaseUseBefore", "phaseDiscardBefore", "phaseJieshuBefore", "phaseEnd", "phaseAfter"],
-            },
-            async content(event, trigger) {
-                if (lib.config.extension_星之梦_tphaseTipStyle == "1") {
-                    game.broadcastAll(
-                        (phasename, player) => {
-                            if (phasename === "phaseAfter") {
-                                if (player.node.tphaseTip) {
-                                    player.node.tphaseTip.innerHTML = "";
-                                }
-                            } else {
-                                const phase = {
-                                    phaseBegin: "extension/星之梦/image/JDTS/hhks.jpg",
-                                    phaseZhunbeiBefore: "extension/星之梦/image/JDTS/zbjd.jpg",
-                                    phaseJudgeBefore: "extension/星之梦/image/JDTS/pdjd.jpg",
-                                    phaseDrawBefore: "extension/星之梦/image/JDTS/mpjd.jpg",
-                                    phaseUseBefore: "extension/星之梦/image/JDTS/cpjd.jpg",
-                                    phaseDiscardBefore: "extension/星之梦/image/JDTS/qpjd.jpg",
-                                    phaseJieshuBefore: "extension/星之梦/image/JDTS/jsjd.jpg",
-                                    phaseEnd: "extension/星之梦/image/JDTS/hhjs.jpg",
-                                };
-                                const imgSrc = phase[phasename];
-                                if (!player.node.tphaseTip) {
-                                    const addStyle = () => {
-                                        const style = document.createElement("style");
-                                        style.innerHTML = `
-                                        .tphaseTip {
-                                            display: none;
-                                            left: 40px;
-                                            bottom: 185px;
-                                            width: 80px;
-                                            position: fixed;                         
-                                            transition-property:all; 
-                                            transition-duration:1s;
-                                            pointer-events: none;
-                                        }
-                                        .player[data-position="0"] .tphaseTip {
-                                            display: block;                                
-                                            left: 40px;
-                                            bottom: 185px;
-                                            width: 80px;
-                                            position: fixed;                         
-                                            transition-property:all; 
-                                            transition-duration:1s;
-                                            pointer-events: none;
-                                        }
-                                        .tphaseTip img {
-                                            max-width: 100%;
-                                            height: auto;
-                                        }
-                                        `;
-                                        document.head.appendChild(style);
-                                    };
-                                    if (!game.phaseStyle) {
-                                        game.phaseStyle = true;
-                                        addStyle();
-                                    }
-                                    player.node.tphaseTip = ui.create.div(".tphaseTip", `<img src="${imgSrc}" alt="${phasename}">`, player);
-                                    if (lib.node && lib.node.clients) {
-                                        lib.node.clients.forEach(c => {
-                                            if (!c.gameOptions) {
-                                                c.gameOptions = {};
-                                            }
-                                            if (!c.gameOptions.phaseTip) {
-                                                c.send(addStyle);
-                                                c.gameOptions.phaseTip = true;
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    player.node.tphaseTip.innerHTML = `<img src="${imgSrc}" alt="${phasename}">`;
-                                }
+    lib.skill._tphaseTip = {
+        trigger: {
+            global: ["phaseBegin", "phaseZhunbeiBefore", "phaseJudgeBefore", "phaseDrawBefore", "phaseUseBefore", "phaseDiscardBefore", "phaseJieshuBefore", "phaseEnd", "phaseAfter"],
+        },
+        filter: function (event, player) {
+            const config = lib.config.extension_星之梦_tphaseTipStyle;
+            return config && lib.config.extension_星之梦_tphaseTip;
+        },
+        async content(event, trigger) {
+            game.broadcastAll(
+                (phasename, player) => {
+                    if (phasename === "phaseAfter") {
+                        if (player.tphaseTip) {
+                            player.tphaseTip.remove(); // 直接移除 DOM 元素
+                            player.tphaseTip = null;   // 清除引用
+                        }
+                    } else {
+                        const config = lib.config.extension_星之梦_tphaseTipStyle;
+                        const phaseStyles = {
+                            "1": {
+                                phaseBegin: "extension/星之梦/image/JDTS/hhks.jpg",
+                                phaseZhunbeiBefore: "extension/星之梦/image/JDTS/zbjd.jpg",
+                                phaseJudgeBefore: "extension/星之梦/image/JDTS/pdjd.jpg",
+                                phaseDrawBefore: "extension/星之梦/image/JDTS/mpjd.jpg",
+                                phaseUseBefore: "extension/星之梦/image/JDTS/cpjd.jpg",
+                                phaseDiscardBefore: "extension/星之梦/image/JDTS/qpjd.jpg",
+                                phaseJieshuBefore: "extension/星之梦/image/JDTS/jsjd.jpg",
+                                phaseEnd: "extension/星之梦/image/JDTS/hhjs.jpg",
+                            },
+                            "2": {
+                                phaseBegin: "extension/星之梦/image/JDTS/hhks.png",
+                                phaseZhunbeiBefore: "extension/星之梦/image/JDTS/zbjd.png",
+                                phaseJudgeBefore: "extension/星之梦/image/JDTS/pdjd.png",
+                                phaseDrawBefore: "extension/星之梦/image/JDTS/mpjd.png",
+                                phaseUseBefore: "extension/星之梦/image/JDTS/cpjd.png",
+                                phaseDiscardBefore: "extension/星之梦/image/JDTS/qpjd.png",
+                                phaseJieshuBefore: "extension/星之梦/image/JDTS/jsjd.png",
+                                phaseEnd: "extension/星之梦/image/JDTS/hhjs.png",
                             }
-                        },
-                        event.triggername,
-                        trigger.player
-                    );
-                }
-                if (lib.config.extension_星之梦_tphaseTipStyle == "2") {
-                    game.broadcastAll(
-                        (phasename, player) => {
-                            if (phasename === "phaseAfter") {
-                                if (player.node.tphaseTip) {
-                                    player.node.tphaseTip.innerHTML = "";
-                                }
-                            } else {
-                                const phase = {
-                                    phaseBegin: "extension/星之梦/image/JDTS/hhks.png",
-                                    phaseZhunbeiBefore: "extension/星之梦/image/JDTS/zbjd.png",
-                                    phaseJudgeBefore: "extension/星之梦/image/JDTS/pdjd.png",
-                                    phaseDrawBefore: "extension/星之梦/image/JDTS/mpjd.png",
-                                    phaseUseBefore: "extension/星之梦/image/JDTS/cpjd.png",
-                                    phaseDiscardBefore: "extension/星之梦/image/JDTS/qpjd.png",
-                                    phaseJieshuBefore: "extension/星之梦/image/JDTS/jsjd.png",
-                                    phaseEnd: "extension/星之梦/image/JDTS/hhjs.png",
-                                };
-                                const imgSrc = phase[phasename];
-                                if (!player.node.tphaseTip) {
-                                    const addStyle = () => {
-                                        const style = document.createElement("style");
-                                        style.innerHTML = `
-                                        .tphaseTip {
-                                            display: none;
-                                            left: 40px;
-                                            bottom: 185px;
-                                            width: 80px;
-                                            position: fixed;                         
-                                            transition-property:all; 
-                                            transition-duration:1s;
-                                            pointer-events: none;
-                                        }
-                                        .player[data-position="0"] .tphaseTip {
-                                            display: block;                                
-                                            left: 40px;
-                                            bottom: 185px;
-                                            width: 80px;
-                                            position: fixed;                         
-                                            transition-property:all; 
-                                            transition-duration:1s;
-                                            pointer-events: none;
-                                        }
-                                        .player[data-position="0"] .tphaseTip.show {
-                                            opacity: 1;
-                                        }
-                                        .tphaseTip img {
-                                            max-width: 100%;
-                                            height: auto;
-                                        }
-                                        `;
-                                        document.head.appendChild(style);
-                                    };
-                                    if (!game.phaseStyle) {
-                                        game.phaseStyle = true;
-                                        addStyle();
+                        };
+                        // 根据配置选择对应的图片路径
+                        const phase = phaseStyles[config] || phaseStyles["1"];
+                        const imgSrc = phase[phasename];
+                        if (!player.tphaseTip) {
+                            const addStyle = () => {
+                                const style = document.createElement("style");
+                                style.textContent = `
+                                    .tphaseTip {
+                                        display: none;
+                                        left: 35px;
+                                        bottom: 190px;
+                                        width: 80px;
+                                        position: fixed;
+                                        transition: all 1s;
+                                        pointer-events: none;
                                     }
-                                    player.node.tphaseTip = ui.create.div(".tphaseTip", `<img src="${imgSrc}" alt="${phasename}">`, player);
-                                    if (lib.node && lib.node.clients) {
-                                        lib.node.clients.forEach(c => {
-                                            if (!c.gameOptions) {
-                                                c.gameOptions = {};
-                                            }
-                                            if (!c.gameOptions.phaseTip) {
-                                                c.send(addStyle);
-                                                c.gameOptions.phaseTip = true;
-                                            }
-                                        });
+                                    .tphaseTip.active {
+                                        display: block;
                                     }
-                                } else {
-                                    player.node.tphaseTip.innerHTML = `<img src="${imgSrc}" alt="${phasename}">`;
-                                }
+                                    .tphaseTip img {
+                                        max-width: 100%;
+                                        height: auto;
+                                    }
+                                `;
+                                document.head.appendChild(style);
+                            };
+                            if (!game.phaseStyle) {
+                                game.phaseStyle = true;
+                                addStyle();
                             }
-                        },
-                        event.triggername,
-                        trigger.player
-                    );
-                }
-            },
-            direct: true,
-            popup: false,
-            forced: true,
-            forceDie: true,
-            charlotte: true,
-            locked: true,
-        };
-    }
+                            // 创建并附加到 document.body
+                            player.tphaseTip = document.createElement("div");
+                            player.tphaseTip.className = "tphaseTip";
+                            document.body.appendChild(player.tphaseTip);
+
+                            const img = document.createElement("img");
+                            img.src = imgSrc;
+                            img.alt = phasename;
+                            player.tphaseTip.appendChild(img);
+                            // 如果是主玩家，则显示
+                            if (player == game.me) {
+                                player.tphaseTip.classList.add("active");
+                            }
+
+                            if (lib.node && lib.node.clients) {
+                                lib.node.clients.forEach(c => {
+                                    if (!c.gameOptions) c.gameOptions = {};
+                                    if (!c.gameOptions.phaseTip) {
+                                        c.send(addStyle);
+                                        c.gameOptions.phaseTip = true;
+                                    }
+                                });
+                            }
+                        } else {
+                            // 更新图片
+                            const img = player.tphaseTip.querySelector("img");
+                            if (img) {
+                                img.src = imgSrc;
+                                img.alt = phasename;
+                            }
+                        }
+                    }
+                },
+                event.triggername,
+                trigger.player
+            );
+        },
+        direct: true,
+        popup: false,
+        forced: true,
+        forceDie: true,
+        charlotte: true,
+        locked: true,
+    };
     //前缀Prefix添加
     lib.namePrefix.set("凌", {
         color: "#8470FF",
