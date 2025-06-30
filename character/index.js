@@ -6,6 +6,7 @@ import { characterSort } from './characterSort.js'
 import { characterSubstitute } from './characterSubstitute.js'
 import { characterTitle } from './characterTitle.js'
 import { perfectPair } from './perfectPair.js'
+import { dynamicTranslate } from './dynamicTranslate.js'
 import { translate } from './translate.js'
 let lmCharacter = {
     name: 'mode_extension_星之梦',
@@ -17,6 +18,7 @@ let lmCharacter = {
     characterTitle: { ...characterTitle },//武将称号
     characterSubstitute: { ...characterSubstitute },//转换技切换皮肤
     perfectPair: { ...perfectPair },//珠联璧合
+    dynamicTranslate: { ...dynamicTranslate },//动态翻译
     translate: translate,//翻译信息
 };
 if (lib.device || lib.node) {

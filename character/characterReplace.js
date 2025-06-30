@@ -9,6 +9,7 @@ let lmCharacter = {//武将切换
     wangling: ["mb_wangjingu", "old_wangling"],
     wangshuang: ["old_wangshuang"],
     wujing: ["old_wujing"],
+    sp_xinpi: ["old_sp_xinpi"],
     qiaogong: ["old_qiaogong"],
     zhangzhongjing: ["zhangzhongjing", "old_xin_zhangzhongjing"],
     zhujun: ["diy_zhujun", "old_sp_zhujun"],
@@ -133,6 +134,9 @@ let lmCharacter = {//武将切换
     liubiao: ["old_ol_liubiao"],
     xunyu: ["old_dc_sb_xunyu"],
     wuke: ["old_wuke"],
+    kongshu: ["old_kongshu"],
+    xiahouxuan: ["old_dc_xiahouxuan"],
+    tw_zhugejun: ["old_dc_zhugejun"],
 
     shen_huatuo: ["old_dc_shen_huatuo"],
     shen_lusu: ["shen_lusu", "old_shen_lusu"],

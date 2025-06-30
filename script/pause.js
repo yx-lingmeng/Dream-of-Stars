@@ -497,7 +497,7 @@ window.lm_import(function (lib, game, ui, get, ai, _status) {
 						var list = [arguments[i]['giveLP'], arguments[i]['player'], arguments[i]['target'], arguments[i]['cards']]
 						if (list[3]?.length) {
 							giveLog = arguments[i];
-							if (list[1] == game.me || list[2] == game.me) {
+							if (list[1] == game.me || list[2] == game.me || arguments[i]['visible']) {
 								str += '<span class="bluetext">' + get.translation(list[1]) + '</span>';
 								str2 += get.translation(list[1]);
 								str += '从';
@@ -558,7 +558,7 @@ window.lm_import(function (lib, game, ui, get, ai, _status) {
 		}
 		var node = ui.create.div();
 		node.innerHTML = lib.config.log_highlight ? str : str2;
-		ui.sidebar.appendChild(node);
+		ui.sidebar.insertBefore(node, ui.sidebar.firstChild);
 		game.addVideo('log', null, lib.config.log_highlight ? str : str2);
 		if (giveLog) {
 			game.broadcast(function (arg) {

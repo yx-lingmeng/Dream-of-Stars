@@ -109,7 +109,7 @@ window.lm_import(function (lib, game, ui, get, ai, _status) {
 			"step 0";
 			if (!player.storage.bilibili_kill) player.storage.bilibili_kill = 0;
 			player.storage.bilibili_kill++;
-			("step 1");
+			"step 1";
 			let config = lib.config.extension_星之梦_HDfightAudio;
 			config = config === "default" ? lib.config.extension_星之梦_HDkillAudio : config;
 			let list;

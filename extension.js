@@ -11,7 +11,6 @@ export default async function () {
     window.lm_import = function (func) {
         func(lib, game, ui, get, ai, _status);
     };
-    lib.init.css(lib.assetURL + "extension/星之梦/style", "quickVoice");
     lib.init.js(lib.assetURL + "extension/星之梦/style", "broadcast");
     if (lib.config.extension_星之梦_lianji) {
         lib.init.js(lib.assetURL + "extension/星之梦/script", "connect");

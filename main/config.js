@@ -49,15 +49,10 @@ export let config = {
 		name: "<font size='4'>---------美化相关---------</font>",
 		clear: true,
 	},
-	zhuanhuanji: {
-		name: "转换技修正",
-		init: true,
-		intro: "开启后，将修正转换技的阴阳描述。",
-	},
-	// Charactermark: {
-	// 	name: "图片标记转文字",
-	// 	init: false,
-	// 	intro: "开启后，将部分图片样式的标记转为文字标记。",
+	// zhuanhuanji: {
+	// 	name: "转换技修正",
+	// 	init: true,
+	// 	intro: "开启后，将修正转换技的阴阳描述。",
 	// },
 	tphaseTip: {
 		//修改自联机修改与手杀ui
@@ -171,11 +166,6 @@ export let config = {
 		init: true,
 		intro: "包括单人开房，连续交互等。",
 	},
-	// extensionClose: {//搬运自云中守望
-	// 	name: "假装自己没有装扩展",
-	// 	intro: "此功能慎用，仅限一些不影响房间进程且懒得关扩展的情景。如果被房主追着骂不关我事",
-	// 	init: false,
-	// },
 	emotionsize: {
 		name: "聊天图片尺寸",
 		intro: "设置聊天图片尺寸。",
@@ -189,6 +179,9 @@ export let config = {
 			100: "100*100",
 			110: "110*110",
 			120: "120*120",
+			130: "130*130",
+			140: "140*140",
+			150: "150*150",
 		},
 	},
 	// addquickVoice: {
@@ -265,7 +258,7 @@ export let config = {
 	// 	init: false,
 	// 	clear: true,
 	// },
-	fgx3: {
+	fgx3: {//搬运自活动武将
 		name: "<font size='4'>---------游戏播报---------</font>",
 		clear: true,
 	},

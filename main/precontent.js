@@ -25,26 +25,7 @@ export async function precontent(config, pack) {
     if (lib.config && lib.config[`extension_凌梦自用_enable`]) {
         alert("Tip:建议删除旧扩展凌梦自用")
     }
-    if (lib.config.extension_星之梦_extensionClose) {
-        lib.message.client.opened = function () {
-            game.send(
-                "init",
-                lib.versionOL,
-                {
-                    id: game.onlineID,
-                    onlineKey: game.onlineKey,
-                    avatar: lib.config.connect_avatar,
-                    nickname: get.connectNickname(),
-                    versionLocal: lib.version,
-                    extension: false,
-                },
-                lib.config.banned_info
-            );
-            if (ui.connecting && !ui.connecting.splashtimeout) {
-                ui.connecting.firstChild.innerHTML = "重连成功";
-            }
-        }
-    }
+
     //屏蔽弹窗
     if (lib.config.extension_星之梦_cancelwindow) {
         window.onerror = function (msg, src, line, column, err) { };
@@ -194,28 +175,20 @@ export async function precontent(config, pack) {
                         }
                     } else {
                         const config = lib.config.extension_星之梦_tphaseTipStyle;
+                        const basePath = "extension/星之梦/image/JDTS/";
+                        const imageTypes = ["hhks", "zbjd", "pdjd", "mpjd", "cpjd", "qpjd", "jsjd", "hhjs"];
+                        const phases = ["Begin", "ZhunbeiBefore", "JudgeBefore", "DrawBefore", "UseBefore", "DiscardBefore", "JieshuBefore", "End"];
                         const phaseStyles = {
-                            "1": {
-                                phaseBegin: "extension/星之梦/image/JDTS/hhks.jpg",
-                                phaseZhunbeiBefore: "extension/星之梦/image/JDTS/zbjd.jpg",
-                                phaseJudgeBefore: "extension/星之梦/image/JDTS/pdjd.jpg",
-                                phaseDrawBefore: "extension/星之梦/image/JDTS/mpjd.jpg",
-                                phaseUseBefore: "extension/星之梦/image/JDTS/cpjd.jpg",
-                                phaseDiscardBefore: "extension/星之梦/image/JDTS/qpjd.jpg",
-                                phaseJieshuBefore: "extension/星之梦/image/JDTS/jsjd.jpg",
-                                phaseEnd: "extension/星之梦/image/JDTS/hhjs.jpg",
-                            },
-                            "2": {
-                                phaseBegin: "extension/星之梦/image/JDTS/hhks.png",
-                                phaseZhunbeiBefore: "extension/星之梦/image/JDTS/zbjd.png",
-                                phaseJudgeBefore: "extension/星之梦/image/JDTS/pdjd.png",
-                                phaseDrawBefore: "extension/星之梦/image/JDTS/mpjd.png",
-                                phaseUseBefore: "extension/星之梦/image/JDTS/cpjd.png",
-                                phaseDiscardBefore: "extension/星之梦/image/JDTS/qpjd.png",
-                                phaseJieshuBefore: "extension/星之梦/image/JDTS/jsjd.png",
-                                phaseEnd: "extension/星之梦/image/JDTS/hhjs.png",
-                            }
+                            "1": {},
+                            "2": {}
                         };
+                        [1, 2].forEach(version => {
+                            const ext = version === 1 ? "jpg" : "png";
+                            phases.forEach((phase, index) => {
+                                const key = `phase${phase}`;
+                                phaseStyles[version][key] = `${basePath}${imageTypes[index]}.${ext}`;
+                            });
+                        });
                         // 根据配置选择对应的图片路径
                         const phase = phaseStyles[config] || phaseStyles["1"];
                         const imgSrc = phase[phasename];
@@ -223,23 +196,23 @@ export async function precontent(config, pack) {
                             const addStyle = () => {
                                 const style = document.createElement("style");
                                 style.textContent = `
-                                    .tphaseTip {
-                                        display: none;
-                                        left: 35px;
-                                        bottom: 190px;
-                                        width: 80px;
-                                        position: fixed;
-                                        transition: all 1s;
-                                        pointer-events: none;
-                                    }
-                                    .tphaseTip.active {
-                                        display: block;
-                                    }
-                                    .tphaseTip img {
-                                        max-width: 100%;
-                                        height: auto;
-                                    }
-                                `;
+                                .tphaseTip {
+                                    display: none;
+                                    left: 40px;
+                                    bottom: 190px;
+                                    width: 80px;
+                                    position: fixed;
+                                    transition: all 1s;
+                                    pointer-events: none;
+                                }
+                                .tphaseTip.active {
+                                    display: block;
+                                }
+                                .tphaseTip img {
+                                    max-width: 100%;
+                                    height: auto;
+                                }
+                            `;
                                 document.head.appendChild(style);
                             };
                             if (!game.phaseStyle) {
@@ -316,65 +289,10 @@ export async function precontent(config, pack) {
         nature: "watermm",
         showName: "严",
     });
-    lib.namePrefix.set("旧界", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("界")}`,
-    });
-    lib.namePrefix.set("旧谋", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("谋")}`,
-    });
-    lib.namePrefix.set("旧勇", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("勇")}`,
-    });
-    lib.namePrefix.set("旧严", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("严")}`,
-    });
-    lib.namePrefix.set("旧玄", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("玄")}`,
-    });
-    lib.namePrefix.set("旧友", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("友")}`,
-    });
-    lib.namePrefix.set("旧势", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("势")}`,
-    });
-    lib.namePrefix.set("旧☆", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("☆")}`,
-    });
-    lib.namePrefix.set("旧SP", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("SP")}`,
-    });
-    lib.namePrefix.set("旧族", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("族")}`,
-    });
-    lib.namePrefix.set("旧星", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("星")}`,
-    });
-    lib.namePrefix.set("旧乐", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("乐")}`,
-    });
-    lib.namePrefix.set("旧武", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("武")}`,
-    });
-    lib.namePrefix.set("旧威", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("威")}`,
-    });
-    lib.namePrefix.set("旧神", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("神")}`,
-    });
-    lib.namePrefix.set("旧侠", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("侠")}`,
-    });
-    lib.namePrefix.set("旧幻", {
-        getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("幻")}`,
-    });
-    lib.namePrefix.set("凌界", {
-        getSpan: (prefix, name) => `${get.prefixSpan("凌")}${get.prefixSpan("界")}`,
-    });
-    lib.namePrefix.set("凌谋", {
-        getSpan: (prefix, name) => `${get.prefixSpan("凌")}${get.prefixSpan("谋")}`,
-    });
-    lib.namePrefix.set("凌神", {
-        getSpan: (prefix, name) => `${get.prefixSpan("凌")}${get.prefixSpan("神")}`,
+    lib.namePrefix.set("信", {
+        color: "#def7ca",
+        nature: "watermm",
+        showName: "信",
     });
     //添加卡牌包
     lib.init.js(
@@ -394,6 +312,14 @@ export async function precontent(config, pack) {
     if (skill.translate) {
         for (let translate in skill.translate) if (!character.translate[translate]) character.translate[translate] = skill.translate[translate];
     };
+    // if (skill.dynamicTranslate) {
+    //     character.dynamicTranslate = character.dynamicTranslate || {}; // 初始化
+    //     for (let key in skill.dynamicTranslate) {
+    //         if (!character.dynamicTranslate[key]) {  // 和translate一样的保护性赋值
+    //             character.dynamicTranslate[key] = skill.dynamicTranslate[key];
+    //         }
+    //     }
+    // };
     delete character.name;
     game.addCharacterPack(character);
     lib.translate.星之梦_character_config = "星之梦";
@@ -440,65 +366,10 @@ export async function precontent(config, pack) {
             nature: "watermm",
             showName: "严",
         });
-        lib.namePrefix.set("旧界", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("界")}`,
-        });
-        lib.namePrefix.set("旧谋", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("谋")}`,
-        });
-        lib.namePrefix.set("旧勇", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("勇")}`,
-        });
-        lib.namePrefix.set("旧严", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("严")}`,
-        });
-        lib.namePrefix.set("旧玄", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("玄")}`,
-        });
-        lib.namePrefix.set("旧友", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("友")}`,
-        });
-        lib.namePrefix.set("旧势", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("势")}`,
-        });
-        lib.namePrefix.set("旧☆", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("☆")}`,
-        });
-        lib.namePrefix.set("旧SP", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("SP")}`,
-        });
-        lib.namePrefix.set("旧族", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("族")}`,
-        });
-        lib.namePrefix.set("旧星", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("星")}`,
-        });
-        lib.namePrefix.set("旧乐", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("乐")}`,
-        });
-        lib.namePrefix.set("旧武", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("武")}`,
-        });
-        lib.namePrefix.set("旧威", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("威")}`,
-        });
-        lib.namePrefix.set("旧神", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("神")}`,
-        });
-        lib.namePrefix.set("旧侠", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("侠")}`,
-        });
-        lib.namePrefix.set("旧幻", {
-            getSpan: (prefix, name) => `${get.prefixSpan("旧")}${get.prefixSpan("幻")}`,
-        });
-        lib.namePrefix.set("凌界", {
-            getSpan: (prefix, name) => `${get.prefixSpan("凌")}${get.prefixSpan("界")}`,
-        });
-        lib.namePrefix.set("凌谋", {
-            getSpan: (prefix, name) => `${get.prefixSpan("凌")}${get.prefixSpan("谋")}`,
-        });
-        lib.namePrefix.set("凌神", {
-            getSpan: (prefix, name) => `${get.prefixSpan("凌")}${get.prefixSpan("神")}`,
+        lib.namePrefix.set("信", {
+            color: "#def7ca",
+            nature: "watermm",
+            showName: "信",
         });
     }, []];
     lib.element.content.waitForPlayer = function () {
@@ -572,384 +443,383 @@ export async function precontent(config, pack) {
 
 
     //转换技阴阳修正
-    if (lib.config.extension_星之梦_zhuanhuanji) {
-        lib.translate.nzry_juzhan_info = "转换技，阳：当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。阴：当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用牌。";
-        lib.dynamicTranslate.nzry_juzhan = function (player) {
-            if (player.storage.nzry_juzhan == true) return '转换技，阳：当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。<span class="bluetext">阴：当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用牌。</span>';
-            return '转换技，<span class="bluetext">阳：当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。</span>阴：当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用牌。';
-        };
-        lib.translate.nzry_chenglve_info = "转换技，出牌阶段限一次，阳：你可以摸一张牌，然后弃置两张手牌。阴：你可以摸两张牌，然后弃置一张手牌。若如此做，直到本回合结束，你使用与弃置牌花色相同的牌无距离和次数限制。";
-        lib.dynamicTranslate.nzry_chenglve = function (player) {
-            if (player.storage.nzry_chenglve == true) return '转换技，出牌阶段限一次，阳：你可以摸一张牌，然后弃置两张手牌。<span class="bluetext">阴：你可以摸两张牌，然后弃置一张手牌。</span>若如此做，直到本回合结束，你使用与弃置牌花色相同的牌无距离和次数限制。';
-            return 'ngyi转换技，出牌阶段限一次，<span class="bluetext">阳：你可以摸一张牌，然后弃置两张手牌。</span>阴：你可以摸两张牌，然后弃置一张手牌。若如此做，直到本回合结束，你使用与弃置牌花色相同的牌无距离和次数限制。';
-        };
-        lib.translate.nzry_zhenliang_info = "转换技，阳：出牌阶段限一次，你可以弃置一张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害。阴：当你于回合外使用或打出的牌结算完成后，若此牌与“任”颜色相同，则你可以令一名角色摸一张牌。";
-        lib.dynamicTranslate.nzry_zhenliang = function (player) {
-            if (player.storage.nzry_zhenliang == true) return '转换技，阳：出牌阶段限一次，你可以弃置一张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害。<span class="bluetext">阴：当你于回合外使用或打出的牌结算完成后，若此牌与“任”颜色相同，则你可以令一名角色摸一张牌。</span>';
-            return '转换技，<span class="bluetext">阳：出牌阶段限一次，你可以弃置一张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害。</span>阴：当你于回合外使用或打出的牌结算完成后，若此牌与“任”颜色相同，则你可以令一名角色摸一张牌。';
-        };
-        lib.translate.nzry_shenshi_info = "转换技，阳：出牌阶段限一次，你可以将一张牌交给一名除你外手牌数最多的角色，然后对其造成1点伤害，若该角色因此死亡，则你可以令一名角色将手牌摸至四张。阴：其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当前角色回合结束时，若此牌仍在该角色的区域内，你将手牌摸至四张。";
-        lib.dynamicTranslate.nzry_shenshi = function (player) {
-            if (player.storage.nzry_shenshi == true) return '转换技，阳：出牌阶段限一次，你可以将一张牌交给一名手牌数最多的角色，然后对其造成1点伤害，若该角色因此死亡，则你可以令一名角色将手牌摸至四张。<span class="bluetext">阴：其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当前角色回合结束时，若此牌仍在该角色的区域内，你将手牌摸至四张。</span>';
-            return '转换技，<span class="bluetext">阳：出牌阶段限一次，你可以将一张牌交给一名手牌数最多的角色，然后对其造成1点伤害，若该角色因此死亡，则你可以令一名角色将手牌摸至四张。</span>阴：其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当前角色回合结束时，若此牌仍在该角色的区域内，你将手牌摸至四张。';
-        };
+    // if (lib.config.extension_星之梦_zhuanhuanji) {
+    //     lib.translate.nzry_juzhan_info = "转换技，阳：当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。阴：当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用牌。";
+    //     lib.dynamicTranslate.nzry_juzhan = function (player) {
+    //         if (player.storage.nzry_juzhan == true) return '转换技，阳：当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。<span class="bluetext">阴：当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用牌。</span>';
+    //         return '转换技，<span class="bluetext">阳：当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。</span>阴：当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用牌。';
+    //     };
+    //     lib.translate.nzry_chenglve_info = "转换技，出牌阶段限一次，阳：你可以摸一张牌，然后弃置两张手牌。阴：你可以摸两张牌，然后弃置一张手牌。若如此做，直到本回合结束，你使用与弃置牌花色相同的牌无距离和次数限制。";
+    //     lib.dynamicTranslate.nzry_chenglve = function (player) {
+    //         if (player.storage.nzry_chenglve == true) return '转换技，出牌阶段限一次，阳：你可以摸一张牌，然后弃置两张手牌。<span class="bluetext">阴：你可以摸两张牌，然后弃置一张手牌。</span>若如此做，直到本回合结束，你使用与弃置牌花色相同的牌无距离和次数限制。';
+    //         return 'ngyi转换技，出牌阶段限一次，<span class="bluetext">阳：你可以摸一张牌，然后弃置两张手牌。</span>阴：你可以摸两张牌，然后弃置一张手牌。若如此做，直到本回合结束，你使用与弃置牌花色相同的牌无距离和次数限制。';
+    //     };
+    //     lib.translate.nzry_zhenliang_info = "转换技，阳：出牌阶段限一次，你可以弃置一张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害。阴：当你于回合外使用或打出的牌结算完成后，若此牌与“任”颜色相同，则你可以令一名角色摸一张牌。";
+    //     lib.dynamicTranslate.nzry_zhenliang = function (player) {
+    //         if (player.storage.nzry_zhenliang == true) return '转换技，阳：出牌阶段限一次，你可以弃置一张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害。<span class="bluetext">阴：当你于回合外使用或打出的牌结算完成后，若此牌与“任”颜色相同，则你可以令一名角色摸一张牌。</span>';
+    //         return '转换技，<span class="bluetext">阳：出牌阶段限一次，你可以弃置一张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害。</span>阴：当你于回合外使用或打出的牌结算完成后，若此牌与“任”颜色相同，则你可以令一名角色摸一张牌。';
+    //     };
+    //     lib.translate.nzry_shenshi_info = "转换技，阳：出牌阶段限一次，你可以将一张牌交给一名除你外手牌数最多的角色，然后对其造成1点伤害，若该角色因此死亡，则你可以令一名角色将手牌摸至四张。阴：其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当前角色回合结束时，若此牌仍在该角色的区域内，你将手牌摸至四张。";
+    //     lib.dynamicTranslate.nzry_shenshi = function (player) {
+    //         if (player.storage.nzry_shenshi == true) return '转换技，阳：出牌阶段限一次，你可以将一张牌交给一名手牌数最多的角色，然后对其造成1点伤害，若该角色因此死亡，则你可以令一名角色将手牌摸至四张。<span class="bluetext">阴：其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当前角色回合结束时，若此牌仍在该角色的区域内，你将手牌摸至四张。</span>';
+    //         return '转换技，<span class="bluetext">阳：出牌阶段限一次，你可以将一张牌交给一名手牌数最多的角色，然后对其造成1点伤害，若该角色因此死亡，则你可以令一名角色将手牌摸至四张。</span>阴：其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当前角色回合结束时，若此牌仍在该角色的区域内，你将手牌摸至四张。';
+    //     };
 
-        lib.translate.nzry_longnu_info = "转换技，锁定技，阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。";
-        lib.dynamicTranslate.nzry_longnu = function (player) {
-            if (player.hasSkill("nzry_longnu_2")) return '转换技，锁定技，阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。<span class="legendtext">阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。</span>';
-            if (player.hasSkill("nzry_longnu_1")) return '转换技，锁定技，<span class="legendtext">阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。</span>阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。';
-            if (player.storage.nzry_longnu == true) return '转换技，锁定技，阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。<span class="bluetext">阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。</span>';
-            return '转换技，锁定技，<span class="bluetext">阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。</span>阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。';
-        };
+    //     lib.translate.nzry_longnu_info = "转换技，锁定技，阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。";
+    //     lib.dynamicTranslate.nzry_longnu = function (player) {
+    //         if (player.hasSkill("nzry_longnu_2")) return '转换技，锁定技，阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。<span class="legendtext">阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。</span>';
+    //         if (player.hasSkill("nzry_longnu_1")) return '转换技，锁定技，<span class="legendtext">阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。</span>阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。';
+    //         if (player.storage.nzry_longnu == true) return '转换技，锁定技，阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。<span class="bluetext">阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。</span>';
+    //         return '转换技，锁定技，<span class="bluetext">阳：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。</span>阴：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。';
+    //     };
 
-        lib.translate.diezhang_info = "转换技。①出牌阶段，你使用杀的次数上限+1。②阳：当你使用牌被其他角色抵消后，你可以弃置一张牌，视为对其使用X张【杀】；阴：当其他角色使用牌被你抵消后，你可以摸X张牌，视为对其使用一张【杀】（X为1）。";
-        lib.dynamicTranslate.diezhang = function (player) {
-            var str = "";
-            str += player.storage.duanwan ? "" : "①出牌阶段，你使用杀的次数上限+1。②";
-            str += "转换技" + (player.storage.duanwan ? "，每回合限一次" : "") + "。";
-            var cnNum = get.cnNumber(player.storage.duanwan ? 2 : 1);
-            var yinStr = "阳：当你使用牌被其他角色抵消后，你可以弃置一张牌，视为对其使用" + cnNum + "张【杀】";
-            var yangStr = "阴：当其他角色使用牌被你抵消后，你可以摸" + cnNum + "张牌，视为对其使用一张【杀】";
-            if (player.storage.diezhang) {
-                if (player.storage.duanwan) yinStr = '<span style="text-decoration: line-through; ">' + yinStr + "</span>";
-                yangStr = '<span class="bluetext">' + yangStr + "</span>";
-            } else {
-                yinStr = '<span class="bluetext">' + yinStr + "</span>";
-                if (player.storage.duanwan) yangStr = '<span style="text-decoration: line-through; ">' + yangStr + "</span>";
-            }
-            return str + yinStr + "；" + yangStr + "。";
-        };
+    //     lib.translate.diezhang_info = "转换技。①出牌阶段，你使用杀的次数上限+1。②阳：当你使用牌被其他角色抵消后，你可以弃置一张牌，视为对其使用X张【杀】；阴：当其他角色使用牌被你抵消后，你可以摸X张牌，视为对其使用一张【杀】（X为1）。";
+    //     lib.dynamicTranslate.diezhang = function (player) {
+    //         var str = "";
+    //         str += player.storage.duanwan ? "" : "①出牌阶段，你使用杀的次数上限+1。②";
+    //         str += "转换技" + (player.storage.duanwan ? "，每回合限一次" : "") + "。";
+    //         var cnNum = get.cnNumber(player.storage.duanwan ? 2 : 1);
+    //         var yinStr = "阳：当你使用牌被其他角色抵消后，你可以弃置一张牌，视为对其使用" + cnNum + "张【杀】";
+    //         var yangStr = "阴：当其他角色使用牌被你抵消后，你可以摸" + cnNum + "张牌，视为对其使用一张【杀】";
+    //         if (player.storage.diezhang) {
+    //             if (player.storage.duanwan) yinStr = '<span style="text-decoration: line-through; ">' + yinStr + "</span>";
+    //             yangStr = '<span class="bluetext">' + yangStr + "</span>";
+    //         } else {
+    //             yinStr = '<span class="bluetext">' + yinStr + "</span>";
+    //             if (player.storage.duanwan) yangStr = '<span style="text-decoration: line-through; ">' + yangStr + "</span>";
+    //         }
+    //         return str + yinStr + "；" + yangStr + "。";
+    //     };
 
-        lib.translate.jsrgshichong_info = "转换技。当你使用牌指定其他角色为唯一目标后，阳：你可以获得目标角色一张手牌；阴：目标角色可以交给你一张手牌。";
-        lib.dynamicTranslate.jsrgshichong = function (player) {
-            if (player.storage.jsrgshichong) return '转换技。当你使用牌指定其他角色为唯一目标后，阳：你可以获得目标角色一张手牌；<span class="bluetext">阴：目标角色可以交给你一张手牌</span>。';
-            return '转换技。当你使用牌指定其他角色为唯一目标后，<span class="bluetext">阳：你可以获得目标角色一张手牌</span>；阴：目标角色可以交给你一张手牌。';
-        };
-        lib.translate.spshidi_info = "转换技，锁定技，准备阶段，转换为阳，结束阶段，转换为阴，阳：你计算与其他角色的距离-1，你使用的黑色【杀】不可被响应。阴：其他角色计算与你的距离+1，你不可响应其他角色对你使用的红色【杀】。";
-        lib.dynamicTranslate.spshidi = function (player) {
-            if (player.countMark("spshidi") % 2 == 0) return '转换技，锁定技。准备阶段，转换为阳，结束阶段，转换为阴。<span class="bluetext">阳：你计算与其他角色的距离-1，你使用的黑色【杀】不可被响应。</span>阴：其他角色计算与你的距离+1，你不可响应其他角色对你使用的红色【杀】。';
-            return '转换技，锁定技。准备阶段，转换为阳，结束阶段，转换为阴。阳：你计算与其他角色的距离-1，你使用的黑色【杀】不可被响应。<span class="bluetext">阴：其他角色计算与你的距离+1，你不可响应其他角色对你使用的红色【杀】。</span>';
-        };
-        lib.translate.sbzhenliang_info = "转换技。阳：出牌阶段限一次，你可以弃置X张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害（X为你与其体力值值差且X至少为1）。阴：你的回合外，一名角色使用或打出牌结算完成后，若此牌与“任”类别相同，则你可以令至多两名角色各摸两张牌。";
-        lib.dynamicTranslate.sbzhenliang = function (player) {
-            var storage = player.storage.sbzhenliang;
-            var str = "转换技。";
-            if (!storage) str += '<span class="bluetext">';
-            str += "阳：出牌阶段限一次，你可以弃置X张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害（X为你与其体力值值差且X至少为1）。";
-            if (!storage) str += "</span>";
-            if (storage) str += '<span class="bluetext">';
-            str += "阴：你的回合外，一名角色使用或打出牌结算完成后，若此牌与“任”类别相同，则你可以令至多两名角色各摸两张牌。";
-            if (storage) str += "</span>";
-            return str;
-        };
-        lib.translate.mbxuetu_info = "转换技。出牌阶段限一次，阳：你可以令一名角色回复1点体力；阴：你可以令一名角色摸两张牌。";
-        lib.translate.mbxuetu_fail_info = "转换技。出牌阶段限一次，阳：你可以回复1点体力，然后令一名其他角色弃置两张牌；阴：你可以摸一张牌，然后对一名其他角色造成1点伤害。";
-        lib.dynamicTranslate.mbxuetu = function (player) {
-            const xuetu = player.storage.mbxuetu,
-                status = player.countMark("mbxuetu_status");
-            if (status === 0) {
-                if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以令一名角色回复1点体力；</span>阴：你可以令一名角色摸两张牌。';
-                return '转换技。出牌阶段限一次，阳：你可以令一名角色回复1点体力；<span class="bluetext">阴：你可以令一名角色摸两张牌。</span>';
-            } else if (status === 1) {
-                return lib.translate.mbxuetu_achieve_info;
-            } else {
-                if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以回复1点体力，然后令一名其他角色弃置两张牌；</span>阴：你可以摸一张牌，然后对一名其他角色造成1点伤害。';
-                return '转换技。出牌阶段限一次，阳：你可以回复1点体力，然后令一名其他角色弃置两张牌；<span class="bluetext">阴：你可以摸一张牌，然后对一名其他角色造成1点伤害。</span>';
-            }
-        };
-        lib.translate.mbzuoyou_info = "转换技。出牌阶段限一次，阳：你可以令一名角色摸三张牌，然后其弃置两张牌；阴：你可以令一名角色弃置一张手牌，然后其获得1点护甲。";
-        lib.dynamicTranslate.mbzuoyou = function (player) {
-            const mbzuoyou = player.storage.mbzuoyou,
-                versus = get.mode() == "versus" && _status.mode == "two" ? "角色" : "有手牌的角色弃置一张手牌，然后其";
-            if (mbzuoyou) return '转换技。出牌阶段限一次，阳：你可以令一名角色摸三张牌，然后其弃置两张牌；<span class="bluetext">阴：你可以令一名' + versus + "获得1点护甲。</span>";
-            return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以令一名角色摸三张牌，然后其弃置两张牌；</span>阴：你可以令一名' + versus + "获得1点护甲。";
-        };
-        lib.translate.twfeifu_info = "锁定技，转换技。阳：当你成为【杀】的唯一目标后；阴：当你使用【杀】指定唯一目标后；目标角色须交给使用者一张牌。若此牌为装备牌，则使用者可使用此牌。";
-        lib.dynamicTranslate.twfeifu = function (player) {
-            var str = "锁定技，转换技。";
-            if (!player.storage.twfeifu) str += '<span class="bluetext">';
-            str += "阳：当你成为【杀】的唯一目标后；";
-            if (!player.storage.twfeifu) str += "</span>";
-            if (player.storage.twfeifu) str += '<span class="bluetext">';
-            str += "阴：当你使用【杀】指定唯一目标后；";
-            if (player.storage.twfeifu) str += "</span>";
-            str += "目标角色须交给使用者一张牌。若此牌为装备牌，则使用者可使用此牌。";
-            return str;
-        };
-        lib.translate.twzhenliang_info = "转换技。阳：出牌阶段限一次。你可以弃置一张牌并对攻击范围内的一名角色造成1点伤害。阴：当你或你攻击范围内的一名角色于你的回合外受到伤害时，你可以弃置一张牌令此伤害-1。然后若你以此法弃置的牌颜色与“任”的颜色相同，你摸一张牌。";
-        lib.dynamicTranslate.twzhenliang = function (player) {
-            if (player.storage.twzhenliang) return '转换技。阳：出牌阶段限一次。你可以弃置一张牌并对攻击范围内的一名角色造成1点伤害。<span class="bluetext">阴：当你或你攻击范围内的一名角色于你的回合外受到伤害时，你可以弃置一张牌令此伤害-1。然后若你以此法弃置的牌颜色与“任”的颜色相同，你摸一张牌。</span>';
-            return '转换技。<span class="bluetext">阳：出牌阶段限一次。你可以弃置一张牌并对攻击范围内的一名角色造成1点伤害。</span>阴：当你或你攻击范围内的一名角色于你的回合外受到伤害时，你可以弃置一张牌令此伤害-1。<span class="bluetext">然后若你以此法弃置的牌颜色与“任”的颜色相同，你摸一张牌。</span>';
-        };
+    //     lib.translate.jsrgshichong_info = "转换技。当你使用牌指定其他角色为唯一目标后，阳：你可以获得目标角色一张手牌；阴：目标角色可以交给你一张手牌。";
+    //     lib.dynamicTranslate.jsrgshichong = function (player) {
+    //         if (player.storage.jsrgshichong) return '转换技。当你使用牌指定其他角色为唯一目标后，阳：你可以获得目标角色一张手牌；<span class="bluetext">阴：目标角色可以交给你一张手牌</span>。';
+    //         return '转换技。当你使用牌指定其他角色为唯一目标后，<span class="bluetext">阳：你可以获得目标角色一张手牌</span>；阴：目标角色可以交给你一张手牌。';
+    //     };
+    //     lib.translate.spshidi_info = "转换技，锁定技，准备阶段，转换为阳，结束阶段，转换为阴，阳：你计算与其他角色的距离-1，你使用的黑色【杀】不可被响应。阴：其他角色计算与你的距离+1，你不可响应其他角色对你使用的红色【杀】。";
+    //     lib.dynamicTranslate.spshidi = function (player) {
+    //         if (player.countMark("spshidi") % 2 == 0) return '转换技，锁定技。准备阶段，转换为阳，结束阶段，转换为阴。<span class="bluetext">阳：你计算与其他角色的距离-1，你使用的黑色【杀】不可被响应。</span>阴：其他角色计算与你的距离+1，你不可响应其他角色对你使用的红色【杀】。';
+    //         return '转换技，锁定技。准备阶段，转换为阳，结束阶段，转换为阴。阳：你计算与其他角色的距离-1，你使用的黑色【杀】不可被响应。<span class="bluetext">阴：其他角色计算与你的距离+1，你不可响应其他角色对你使用的红色【杀】。</span>';
+    //     };
+    //     lib.translate.sbzhenliang_info = "转换技。阳：出牌阶段限一次，你可以弃置X张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害（X为你与其体力值值差且X至少为1）。阴：你的回合外，一名角色使用或打出牌结算完成后，若此牌与“任”类别相同，则你可以令至多两名角色各摸两张牌。";
+    //     lib.dynamicTranslate.sbzhenliang = function (player) {
+    //         var storage = player.storage.sbzhenliang;
+    //         var str = "转换技。";
+    //         if (!storage) str += '<span class="bluetext">';
+    //         str += "阳：出牌阶段限一次，你可以弃置X张与“任”颜色相同的牌并对攻击范围内的一名角色造成1点伤害（X为你与其体力值值差且X至少为1）。";
+    //         if (!storage) str += "</span>";
+    //         if (storage) str += '<span class="bluetext">';
+    //         str += "阴：你的回合外，一名角色使用或打出牌结算完成后，若此牌与“任”类别相同，则你可以令至多两名角色各摸两张牌。";
+    //         if (storage) str += "</span>";
+    //         return str;
+    //     };
+    //     lib.translate.mbxuetu_info = "转换技。出牌阶段限一次，阳：你可以令一名角色回复1点体力；阴：你可以令一名角色摸两张牌。";
+    //     lib.translate.mbxuetu_fail_info = "转换技。出牌阶段限一次，阳：你可以回复1点体力，然后令一名其他角色弃置两张牌；阴：你可以摸一张牌，然后对一名其他角色造成1点伤害。";
+    //     lib.dynamicTranslate.mbxuetu = function (player) {
+    //         const xuetu = player.storage.mbxuetu,
+    //             status = player.countMark("mbxuetu_status");
+    //         if (status === 0) {
+    //             if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以令一名角色回复1点体力；</span>阴：你可以令一名角色摸两张牌。';
+    //             return '转换技。出牌阶段限一次，阳：你可以令一名角色回复1点体力；<span class="bluetext">阴：你可以令一名角色摸两张牌。</span>';
+    //         } else if (status === 1) {
+    //             return lib.translate.mbxuetu_achieve_info;
+    //         } else {
+    //             if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以回复1点体力，然后令一名其他角色弃置两张牌；</span>阴：你可以摸一张牌，然后对一名其他角色造成1点伤害。';
+    //             return '转换技。出牌阶段限一次，阳：你可以回复1点体力，然后令一名其他角色弃置两张牌；<span class="bluetext">阴：你可以摸一张牌，然后对一名其他角色造成1点伤害。</span>';
+    //         }
+    //     };
+    //     lib.translate.mbzuoyou_info = "转换技。出牌阶段限一次，阳：你可以令一名角色摸三张牌，然后其弃置两张牌；阴：你可以令一名角色弃置一张手牌，然后其获得1点护甲。";
+    //     lib.dynamicTranslate.mbzuoyou = function (player) {
+    //         const mbzuoyou = player.storage.mbzuoyou,
+    //             versus = get.mode() == "versus" && _status.mode == "two" ? "角色" : "有手牌的角色弃置一张手牌，然后其";
+    //         if (mbzuoyou) return '转换技。出牌阶段限一次，阳：你可以令一名角色摸三张牌，然后其弃置两张牌；<span class="bluetext">阴：你可以令一名' + versus + "获得1点护甲。</span>";
+    //         return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以令一名角色摸三张牌，然后其弃置两张牌；</span>阴：你可以令一名' + versus + "获得1点护甲。";
+    //     };
+    //     lib.translate.twfeifu_info = "锁定技，转换技。阳：当你成为【杀】的唯一目标后；阴：当你使用【杀】指定唯一目标后；目标角色须交给使用者一张牌。若此牌为装备牌，则使用者可使用此牌。";
+    //     lib.dynamicTranslate.twfeifu = function (player) {
+    //         var str = "锁定技，转换技。";
+    //         if (!player.storage.twfeifu) str += '<span class="bluetext">';
+    //         str += "阳：当你成为【杀】的唯一目标后；";
+    //         if (!player.storage.twfeifu) str += "</span>";
+    //         if (player.storage.twfeifu) str += '<span class="bluetext">';
+    //         str += "阴：当你使用【杀】指定唯一目标后；";
+    //         if (player.storage.twfeifu) str += "</span>";
+    //         str += "目标角色须交给使用者一张牌。若此牌为装备牌，则使用者可使用此牌。";
+    //         return str;
+    //     };
+    //     lib.translate.twzhenliang_info = "转换技。阳：出牌阶段限一次。你可以弃置一张牌并对攻击范围内的一名角色造成1点伤害。阴：当你或你攻击范围内的一名角色于你的回合外受到伤害时，你可以弃置一张牌令此伤害-1。然后若你以此法弃置的牌颜色与“任”的颜色相同，你摸一张牌。";
+    //     lib.dynamicTranslate.twzhenliang = function (player) {
+    //         if (player.storage.twzhenliang) return '转换技。阳：出牌阶段限一次。你可以弃置一张牌并对攻击范围内的一名角色造成1点伤害。<span class="bluetext">阴：当你或你攻击范围内的一名角色于你的回合外受到伤害时，你可以弃置一张牌令此伤害-1。然后若你以此法弃置的牌颜色与“任”的颜色相同，你摸一张牌。</span>';
+    //         return '转换技。<span class="bluetext">阳：出牌阶段限一次。你可以弃置一张牌并对攻击范围内的一名角色造成1点伤害。</span>阴：当你或你攻击范围内的一名角色于你的回合外受到伤害时，你可以弃置一张牌令此伤害-1。<span class="bluetext">然后若你以此法弃置的牌颜色与“任”的颜色相同，你摸一张牌。</span>';
+    //     };
 
-        lib.translate.youlong_info = "转换技，阳，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的普通锦囊牌；阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的基本牌。";
-        lib.dynamicTranslate.youlong = function (player) {
-            if (player.storage.youlong) return '转换技，阳，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的普通锦囊牌；<span class="bluetext">阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的基本牌。</span>';
-            return '转换技，<span class="bluetext">阳，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的普通锦囊牌；</span>阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的基本牌。';
-        };
-        lib.translate.olfeibai_info = "转换技，锁定技。阳：当你因执行你使用的非黑色牌的效果而造成伤害时，此伤害值+1；阴：当你因执行你使用的非红色牌的效果而回复体力时，此回复值+1。";
-        lib.dynamicTranslate.olfeibai = function (player) {
-            if (player.storage.olfeibai) return '转换技，锁定技。阳：当你因执行你使用的非黑色牌的效果而造成伤害时，此伤害值+1；<span class="bluetext">阴：当你因执行你使用的非红色牌的效果而回复体力时，此回复值+1。</span>';
-            return '转换技，锁定技。<span class="bluetext">阳：当你因执行你使用的非黑色牌的效果而造成伤害时，此伤害值+1；</span>阴：当你因执行你使用的非红色牌的效果而回复体力时，此回复值+1。';
-        };
-        lib.translate.olmiuyan_info = "转换技，阳：你可以将一张黑色牌当【火攻】使用，若此牌造成伤害，你获得本阶段展示过的所有手牌；阴：你可以将一张黑色牌当【火攻】使用，若此牌未造成伤害，本轮本技能失效。";
-        lib.dynamicTranslate.olmiuyan = function (player) {
-            if (player.storage.olmiuyan) return '转换技，阳：你可以将一张黑色牌当【火攻】使用，若此牌造成伤害，你获得本阶段展示过的所有手牌；<span class="bluetext">阴：你可以将一张黑色牌当【火攻】使用，若此牌未造成伤害，本轮本技能失效。</span>';
-            return '转换技，<span class="bluetext">阳：你可以将一张黑色牌当【火攻】使用，若此牌造成伤害，你获得本阶段展示过的所有手牌；</span>阴：你可以将一张黑色牌当【火攻】使用，若此牌未造成伤害，本轮本技能失效。';
-        };
-        lib.translate.olsaogu_info = "转换技。①出牌阶段，你可以。阳：弃置两张牌（不能包含你本阶段弃置过的花色），然后使用其中的【杀】；阴：摸一张牌。②结束阶段，你可以弃置一张牌，令一名其他角色执行你当前〖扫谷①〗的分支。";
-        lib.dynamicTranslate.olsaogu = function (player) {
-            if (player.storage.olsaogu) return '转换技。①出牌阶段，你可以。阳：弃置两张牌（不能包含你本阶段弃置过的花色），然后使用其中的【杀】；<span class="bluetext">阴：摸一张牌</span>。②结束阶段，你可以弃置一张牌，令一名其他角色执行你当前〖扫谷①〗的分支。';
-            return '转换技。①出牌阶段，你可以。<span class="bluetext">阳：弃置两张牌（不能包含你本阶段弃置过的花色），然后使用其中的【杀】</span>；阴：摸一张牌。②结束阶段，你可以弃置一张牌，令一名其他角色执行你当前〖扫谷①〗的分支。';
-        };
-        lib.translate.olxuanzhu_info = "转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：阳，任意基本牌；阴，任意普通锦囊牌（须指定目标且仅指定一个目标）。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。";
-        lib.dynamicTranslate.olxuanzhu = function (player) {
-            if (player.storage.olxuanzhu) return '转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：阳，任意基本牌；<span class="bluetext">阴，任意普通锦囊牌（须指定目标且仅指定一个目标）</span>。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。';
-            return '转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：<span class="bluetext">阳，任意基本牌</span>；阴，任意普通锦囊牌（须指定目标且仅指定一个目标）。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。';
-        };
-        lib.translate.piaoping_info = "转换技，锁定技。当你使用一张牌时，阳：你摸X张牌。阴：你弃置X张牌。（X为你本阶段内发动过〖漂萍〗的次数且至多等于你的体力值）";
-        lib.dynamicTranslate.piaoping = function (player) {
-            if (player.storage.piaoping) return '转换技，锁定技。当你使用一张牌时，阳：你摸X张牌。<span class="bluetext">阴：你弃置X张牌。</span>（X为你本阶段内发动过〖漂萍〗的次数且至多等于你的体力值）';
-            return '转换技，锁定技。当你使用一张牌时，<span class="bluetext">阳：你摸X张牌。</span>阴：你弃置X张牌。（X为你本阶段内发动过〖漂萍〗的次数且至多等于你的体力值）';
-        };
+    //     lib.translate.youlong_info = "转换技，阳，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的普通锦囊牌；阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的基本牌。";
+    //     lib.dynamicTranslate.youlong = function (player) {
+    //         if (player.storage.youlong) return '转换技，阳，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的普通锦囊牌；<span class="bluetext">阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的基本牌。</span>';
+    //         return '转换技，<span class="bluetext">阳，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的普通锦囊牌；</span>阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张未以此法使用过的基本牌。';
+    //     };
+    //     lib.translate.olfeibai_info = "转换技，锁定技。阳：当你因执行你使用的非黑色牌的效果而造成伤害时，此伤害值+1；阴：当你因执行你使用的非红色牌的效果而回复体力时，此回复值+1。";
+    //     lib.dynamicTranslate.olfeibai = function (player) {
+    //         if (player.storage.olfeibai) return '转换技，锁定技。阳：当你因执行你使用的非黑色牌的效果而造成伤害时，此伤害值+1；<span class="bluetext">阴：当你因执行你使用的非红色牌的效果而回复体力时，此回复值+1。</span>';
+    //         return '转换技，锁定技。<span class="bluetext">阳：当你因执行你使用的非黑色牌的效果而造成伤害时，此伤害值+1；</span>阴：当你因执行你使用的非红色牌的效果而回复体力时，此回复值+1。';
+    //     };
+    //     lib.translate.olmiuyan_info = "转换技，阳：你可以将一张黑色牌当【火攻】使用，若此牌造成伤害，你获得本阶段展示过的所有手牌；阴：你可以将一张黑色牌当【火攻】使用，若此牌未造成伤害，本轮本技能失效。";
+    //     lib.dynamicTranslate.olmiuyan = function (player) {
+    //         if (player.storage.olmiuyan) return '转换技，阳：你可以将一张黑色牌当【火攻】使用，若此牌造成伤害，你获得本阶段展示过的所有手牌；<span class="bluetext">阴：你可以将一张黑色牌当【火攻】使用，若此牌未造成伤害，本轮本技能失效。</span>';
+    //         return '转换技，<span class="bluetext">阳：你可以将一张黑色牌当【火攻】使用，若此牌造成伤害，你获得本阶段展示过的所有手牌；</span>阴：你可以将一张黑色牌当【火攻】使用，若此牌未造成伤害，本轮本技能失效。';
+    //     };
+    //     lib.translate.olsaogu_info = "转换技。①出牌阶段，你可以。阳：弃置两张牌（不能包含你本阶段弃置过的花色），然后使用其中的【杀】；阴：摸一张牌。②结束阶段，你可以弃置一张牌，令一名其他角色执行你当前〖扫谷①〗的分支。";
+    //     lib.dynamicTranslate.olsaogu = function (player) {
+    //         if (player.storage.olsaogu) return '转换技。①出牌阶段，你可以。阳：弃置两张牌（不能包含你本阶段弃置过的花色），然后使用其中的【杀】；<span class="bluetext">阴：摸一张牌</span>。②结束阶段，你可以弃置一张牌，令一名其他角色执行你当前〖扫谷①〗的分支。';
+    //         return '转换技。①出牌阶段，你可以。<span class="bluetext">阳：弃置两张牌（不能包含你本阶段弃置过的花色），然后使用其中的【杀】</span>；阴：摸一张牌。②结束阶段，你可以弃置一张牌，令一名其他角色执行你当前〖扫谷①〗的分支。';
+    //     };
+    //     lib.translate.olxuanzhu_info = "转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：阳，任意基本牌；阴，任意普通锦囊牌（须指定目标且仅指定一个目标）。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。";
+    //     lib.dynamicTranslate.olxuanzhu = function (player) {
+    //         if (player.storage.olxuanzhu) return '转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：阳，任意基本牌；<span class="bluetext">阴，任意普通锦囊牌（须指定目标且仅指定一个目标）</span>。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。';
+    //         return '转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：<span class="bluetext">阳，任意基本牌</span>；阴，任意普通锦囊牌（须指定目标且仅指定一个目标）。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。';
+    //     };
+    //     lib.translate.piaoping_info = "转换技，锁定技。当你使用一张牌时，阳：你摸X张牌。阴：你弃置X张牌。（X为你本阶段内发动过〖漂萍〗的次数且至多等于你的体力值）";
+    //     lib.dynamicTranslate.piaoping = function (player) {
+    //         if (player.storage.piaoping) return '转换技，锁定技。当你使用一张牌时，阳：你摸X张牌。<span class="bluetext">阴：你弃置X张牌。</span>（X为你本阶段内发动过〖漂萍〗的次数且至多等于你的体力值）';
+    //         return '转换技，锁定技。当你使用一张牌时，<span class="bluetext">阳：你摸X张牌。</span>阴：你弃置X张牌。（X为你本阶段内发动过〖漂萍〗的次数且至多等于你的体力值）';
+    //     };
 
-        lib.translate.chuaili_info = "锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：处于阴状态，则你将〖漂萍〗转换至阳状态；处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。";
-        lib.dynamicTranslate.chuaili = function (player) {
-            if (!player.hasSkill("piaoping", null, null, false)) return "锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：处于阴状态，则你将〖漂萍〗转换至阳状态；处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。";
-            if (player.storage.piaoping) return '锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：<span class="bluetext">处于阴状态，则你将〖漂萍〗转换至阳状态；</span>处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。';
-            return '锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：处于阴状态，则你将〖漂萍〗转换至阳状态；<span class="bluetext">处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。</span>';
-        };
-        lib.translate.dcdouzhen_info = "转换技，锁定技。你的回合内，阳：你的黑色基本牌只能当【决斗】使用，且使用时获得目标一张牌；阴：你的红色基本牌只能当【杀】使用或打出，且使用时无次数限制。";
-        lib.dynamicTranslate.dcdouzhen = function (player) {
-            var str = "锁定技，转换技。你的回合内，";
-            if (player.countMark("dcdouzhen") % 2) str += '阳：你的黑色基本牌只能当【决斗】使用，且使用时获得目标一张牌；<span class="bluetext">阴：你的红色基本牌只能当【杀】使用或打出，且使用时无次数限制。</span>';
-            else str += '<span class="bluetext">阳：你的黑色基本牌只能当【决斗】使用，且使用时获得目标一张牌；</span>阴：你的红色基本牌只能当【杀】使用或打出，且使用时无次数限制。';
-            return str;
-        };
+    //     lib.translate.chuaili_info = "锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：处于阴状态，则你将〖漂萍〗转换至阳状态；处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。";
+    //     lib.dynamicTranslate.chuaili = function (player) {
+    //         if (!player.hasSkill("piaoping", null, null, false)) return "锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：处于阴状态，则你将〖漂萍〗转换至阳状态；处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。";
+    //         if (player.storage.piaoping) return '锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：<span class="bluetext">处于阴状态，则你将〖漂萍〗转换至阳状态；</span>处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。';
+    //         return '锁定技。当你成为其他角色使用黑色牌的目标后，若你的〖漂萍〗：处于阴状态，则你将〖漂萍〗转换至阳状态；<span class="bluetext">处于阳状态，则你令〖托献〗发动次数+1，然后若〖托献〗发动次数大于3，则〖惴栗〗于本回合内失效。</span>';
+    //     };
+    //     lib.translate.dcdouzhen_info = "转换技，锁定技。你的回合内，阳：你的黑色基本牌只能当【决斗】使用，且使用时获得目标一张牌；阴：你的红色基本牌只能当【杀】使用或打出，且使用时无次数限制。";
+    //     lib.dynamicTranslate.dcdouzhen = function (player) {
+    //         var str = "锁定技，转换技。你的回合内，";
+    //         if (player.countMark("dcdouzhen") % 2) str += '阳：你的黑色基本牌只能当【决斗】使用，且使用时获得目标一张牌；<span class="bluetext">阴：你的红色基本牌只能当【杀】使用或打出，且使用时无次数限制。</span>';
+    //         else str += '<span class="bluetext">阳：你的黑色基本牌只能当【决斗】使用，且使用时获得目标一张牌；</span>阴：你的红色基本牌只能当【杀】使用或打出，且使用时无次数限制。';
+    //         return str;
+    //     };
 
-        lib.translate.bazhan_info = "转换技，出牌阶段限一次，阳：你可以将至多两张手牌交给一名其他角色。阴：你可以获得一名其他角色的至多两张手牌。若以此法移动的牌包含【酒】或♥牌，则你可令得到牌的角色执行一项：①回复1点体力。②复原武将牌。";
-        lib.dynamicTranslate.bazhan = function (player) {
-            if (player.storage.bazhan) return '转换技，出牌阶段限一次，阳：你可以将至多两张手牌交给一名其他角色。<span class="bluetext">阴：你可以获得一名其他角色的至多两张手牌。</span>若以此法移动的牌包含【酒】或♥牌，则你可令得到此牌的角色执行一项：①回复1点体力。②复原武将牌。';
-            return '转换技，出牌阶段限一次，<span class="bluetext">阳：你可以将至多两张手牌交给一名其他角色。</span>阴：你可以获得一名其他角色的至多两张手牌。若以此法移动的牌包含【酒】或♥牌，则你可令得到此牌的角色执行一项：①回复1点体力。②复原武将牌。';
-        };
-        lib.translate.caiyi_info = "转换技。结束阶段，你可令一名角色选择并执行一项，然后移除此选项。阳：⒈回复X点体力。⒉摸X张牌，⒊复原武将牌。⒋随机执行一个已经移除过的阳选项；阴：⒈受到X点伤害。⒉弃置X张牌。⒊翻面并横置。⒋随机执行一个已经移除过的阴选项。（X为该阳阴态剩余选项的数量）。";
-        lib.dynamicTranslate.caiyi = function (player) {
-            var current = player.storage.caiyi,
-                list = player.storage.caiyi_info || [[], []];
-            var str = "转换技。结束阶段，你可令一名角色选择并执行一项，然后移除此选项。";
-            var list1 = ["⒈回复X点体力。", "⒉摸X张牌。", "⒊复原武将牌。", "⒋随机执行一个已经移除过的阳选项；"],
-                list2 = ["⒈受到X点伤害。", "⒉弃置X张牌。", "⒊翻面并横置。", "⒋随机执行一个已经移除过的阴选项。"],
-                str1 = "阳：",
-                str2 = "阴：";
-            for (var i = 0; i < 4; i++) {
-                var clip1 = list1[i],
-                    clip2 = list2[i];
-                if (list[0].includes(i)) clip1 = '<span style="text-decoration:line-through;">' + clip1 + "</span>";
-                if (list[1].includes(i)) clip2 = '<span style="text-decoration:line-through;">' + clip2 + "</span>";
-                str1 += clip1;
-                str2 += clip2;
-            }
-            if (current) str2 = '<span class="bluetext">' + str2 + "</span>";
-            else str1 = '<span class="bluetext">' + str1 + "</span>";
-            return str + str1 + str2 + "（X为该阳阴态剩余选项的数量）。";
-        };
-        lib.translate.dckaiji_info = "转换技。出牌阶段限一次，你可以：阳：摸X张牌；阴：弃置至多X张牌（X为你的体力上限且至多为5）。";
-        lib.dynamicTranslate.dckaiji = function (player) {
-            if (player.storage.dckaiji) return '转换技。出牌阶段限一次，你可以：阳：摸X张牌；<span class="bluetext">阴：你可以获得一名其他角色的至多两张手牌。</span>阴：弃置至多X张牌（X为你的体力上限且至多为5）。';
-            return '转换技。出牌阶段限一次，你可以：<span class="bluetext">阳：摸X张牌；</span>阴：弃置至多X张牌（X为你的体力上限且至多为5）。';
-        };
-        lib.translate.dcshoutan_info = "转换技。出牌阶段限一次，阳：你可以弃置一张不为黑色的手牌。阴：你可以弃置一张黑色手牌。";
-        lib.dynamicTranslate.dcshoutan = function (player) {
-            if (player.storage.dcshoutan) return '转换技。出牌阶段限一次，阳：你可以弃置一张不为黑色的手牌。<span class="bluetext">阴：你可以弃置一张黑色手牌。</span>';
-            return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以弃置一张不为黑色的手牌。</span>阴：你可以弃置一张黑色手牌。';
-        };
-        lib.translate.dcsbmengmou_info = "转换技，每回合每项各限一次，当你得到其他角色的牌后，或其他角色得到你的牌后：阳，你可以令该角色使用至多X张【杀】，且其每以此法造成1点伤害，其回复1点体力；阴，你可令该角色打出至多X张【杀】，然后其失去Y点体力。（X为你的体力值，Y为X-其打出【杀】数）";
-        lib.dynamicTranslate.dcsbmengmou = function (player) {
-            var storage = player.storage.dcsbmengmou;
-            var str = "转换技，每回合每项各限一次，当你得到其他角色的牌后，或其他角色得到你的牌后：";
-            if (!storage) str += '<span class="bluetext">';
-            str += "阳，你可以令该角色使用至多X张【杀】，且其每以此法造成1点伤害，其回复1点体力；";
-            if (!storage) str += "</span>";
-            if (storage) str += '<span class="bluetext">';
-            str += "阴，你可令该角色打出至多X张【杀】，然后其失去Y点体力。";
-            if (storage) str += "</span>";
-            str += "（X为你的体力值，Y为X-其打出【杀】数）";
-            return str;
-        };
-        lib.translate.dcsbyingmou_info = "转换技，每回合限一次，当你对其他角色使用牌后，你可以选择其中一名目标角色：阳，你将手牌数摸至与其相同（至多摸五张），然后视为对其使用一张【火攻】；阴，令一名手牌数为全场最大的角色对其使用手牌中所有的【杀】和伤害类锦囊牌（若其没有可使用的牌则将手牌数弃至与你相同）。";
-        lib.dynamicTranslate.dcsbyingmou = function (player) {
-            var storage = player.storage.dcsbyingmou;
-            var str = "转换技，每回合限一次，你对其他角色使用牌后，你可以选择其中一名目标角色：";
-            if (!storage) str += '<span class="bluetext">';
-            str += "阳，你将手牌数摸至与其相同（至多摸五张），然后视为对其使用一张【火攻】；";
-            if (!storage) str += "</span>";
-            if (storage) str += '<span class="bluetext">';
-            str += "阴，令一名手牌数为全场最大的角色对其使用手牌中所有的【杀】和伤害类锦囊牌（若其没有可使用的牌则将手牌数弃至与你相同）。";
-            if (storage) str += "</span>";
-            return str;
-        };
-        lib.translate.dcsbquanmou_info = "转换技。出牌阶段每名角色限一次，你可以令一名攻击范围内的其他角色交给你一张牌。阳：当你于本阶段内下次对其造成伤害时，取消之；阴：当你于本阶段内下次对其造成伤害后，你可以选择除其外的至多三名其他角色，对这些角色依次造成1点伤害。";
-        lib.dynamicTranslate.dcsbquanmou = function (player) {
-            if (player.storage.dcsbquanmou) return '转换技。①游戏开始时，你可以转换此技能状态；②出牌阶段每名角色限一次，你可以令一名攻击范围内的其他角色交给你一张牌。阳：当你于本阶段内下次对其造成伤害时，取消之；<span class="bluetext">阴：当你于本阶段内下次对其造成伤害后，你可以选择除其外的至多三名其他角色，对这些角色依次造成1点伤害。</span>';
-            return '转换技。①游戏开始时，你可以转换此技能状态；②出牌阶段每名角色限一次，你可以令一名攻击范围内的其他角色交给你一张牌。<span class="bluetext">阳：当你于本阶段内下次对其造成伤害时，取消之；</span>阴：当你于本阶段内下次对其造成伤害后，你可以选择除其外的至多三名其他角色，对这些角色依次造成1点伤害。';
-        };
+    //     lib.translate.bazhan_info = "转换技，出牌阶段限一次，阳：你可以将至多两张手牌交给一名其他角色。阴：你可以获得一名其他角色的至多两张手牌。若以此法移动的牌包含【酒】或♥牌，则你可令得到牌的角色执行一项：①回复1点体力。②复原武将牌。";
+    //     lib.dynamicTranslate.bazhan = function (player) {
+    //         if (player.storage.bazhan) return '转换技，出牌阶段限一次，阳：你可以将至多两张手牌交给一名其他角色。<span class="bluetext">阴：你可以获得一名其他角色的至多两张手牌。</span>若以此法移动的牌包含【酒】或♥牌，则你可令得到此牌的角色执行一项：①回复1点体力。②复原武将牌。';
+    //         return '转换技，出牌阶段限一次，<span class="bluetext">阳：你可以将至多两张手牌交给一名其他角色。</span>阴：你可以获得一名其他角色的至多两张手牌。若以此法移动的牌包含【酒】或♥牌，则你可令得到此牌的角色执行一项：①回复1点体力。②复原武将牌。';
+    //     };
+    //     lib.translate.caiyi_info = "转换技。结束阶段，你可令一名角色选择并执行一项，然后移除此选项。阳：⒈回复X点体力。⒉摸X张牌，⒊复原武将牌。⒋随机执行一个已经移除过的阳选项；阴：⒈受到X点伤害。⒉弃置X张牌。⒊翻面并横置。⒋随机执行一个已经移除过的阴选项。（X为该阳阴态剩余选项的数量）。";
+    //     lib.dynamicTranslate.caiyi = function (player) {
+    //         var current = player.storage.caiyi,
+    //             list = player.storage.caiyi_info || [[], []];
+    //         var str = "转换技。结束阶段，你可令一名角色选择并执行一项，然后移除此选项。";
+    //         var list1 = ["⒈回复X点体力。", "⒉摸X张牌。", "⒊复原武将牌。", "⒋随机执行一个已经移除过的阳选项；"],
+    //             list2 = ["⒈受到X点伤害。", "⒉弃置X张牌。", "⒊翻面并横置。", "⒋随机执行一个已经移除过的阴选项。"],
+    //             str1 = "阳：",
+    //             str2 = "阴：";
+    //         for (var i = 0; i < 4; i++) {
+    //             var clip1 = list1[i],
+    //                 clip2 = list2[i];
+    //             if (list[0].includes(i)) clip1 = '<span style="text-decoration:line-through;">' + clip1 + "</span>";
+    //             if (list[1].includes(i)) clip2 = '<span style="text-decoration:line-through;">' + clip2 + "</span>";
+    //             str1 += clip1;
+    //             str2 += clip2;
+    //         }
+    //         if (current) str2 = '<span class="bluetext">' + str2 + "</span>";
+    //         else str1 = '<span class="bluetext">' + str1 + "</span>";
+    //         return str + str1 + str2 + "（X为该阳阴态剩余选项的数量）。";
+    //     };
+    //     lib.translate.dckaiji_info = "转换技。出牌阶段限一次，你可以：阳：摸X张牌；阴：弃置至多X张牌（X为你的体力上限且至多为5）。";
+    //     lib.dynamicTranslate.dckaiji = function (player) {
+    //         if (player.storage.dckaiji) return '转换技。出牌阶段限一次，你可以：阳：摸X张牌；<span class="bluetext">阴：你可以获得一名其他角色的至多两张手牌。</span>阴：弃置至多X张牌（X为你的体力上限且至多为5）。';
+    //         return '转换技。出牌阶段限一次，你可以：<span class="bluetext">阳：摸X张牌；</span>阴：弃置至多X张牌（X为你的体力上限且至多为5）。';
+    //     };
+    //     lib.translate.dcshoutan_info = "转换技。出牌阶段限一次，阳：你可以弃置一张不为黑色的手牌。阴：你可以弃置一张黑色手牌。";
+    //     lib.dynamicTranslate.dcshoutan = function (player) {
+    //         if (player.storage.dcshoutan) return '转换技。出牌阶段限一次，阳：你可以弃置一张不为黑色的手牌。<span class="bluetext">阴：你可以弃置一张黑色手牌。</span>';
+    //         return '转换技。出牌阶段限一次，<span class="bluetext">阳：你可以弃置一张不为黑色的手牌。</span>阴：你可以弃置一张黑色手牌。';
+    //     };
+    //     lib.translate.dcsbmengmou_info = "转换技，每回合每项各限一次，当你得到其他角色的牌后，或其他角色得到你的牌后：阳，你可以令该角色使用至多X张【杀】，且其每以此法造成1点伤害，其回复1点体力；阴，你可令该角色打出至多X张【杀】，然后其失去Y点体力。（X为你的体力值，Y为X-其打出【杀】数）";
+    //     lib.dynamicTranslate.dcsbmengmou = function (player) {
+    //         var storage = player.storage.dcsbmengmou;
+    //         var str = "转换技，每回合每项各限一次，当你得到其他角色的牌后，或其他角色得到你的牌后：";
+    //         if (!storage) str += '<span class="bluetext">';
+    //         str += "阳，你可以令该角色使用至多X张【杀】，且其每以此法造成1点伤害，其回复1点体力；";
+    //         if (!storage) str += "</span>";
+    //         if (storage) str += '<span class="bluetext">';
+    //         str += "阴，你可令该角色打出至多X张【杀】，然后其失去Y点体力。";
+    //         if (storage) str += "</span>";
+    //         str += "（X为你的体力值，Y为X-其打出【杀】数）";
+    //         return str;
+    //     };
+    //     lib.translate.dcsbyingmou_info = "转换技，每回合限一次，当你对其他角色使用牌后，你可以选择其中一名目标角色：阳，你将手牌数摸至与其相同（至多摸五张），然后视为对其使用一张【火攻】；阴，令一名手牌数为全场最大的角色对其使用手牌中所有的【杀】和伤害类锦囊牌（若其没有可使用的牌则将手牌数弃至与你相同）。";
+    //     lib.dynamicTranslate.dcsbyingmou = function (player) {
+    //         var storage = player.storage.dcsbyingmou;
+    //         var str = "转换技，每回合限一次，你对其他角色使用牌后，你可以选择其中一名目标角色：";
+    //         if (!storage) str += '<span class="bluetext">';
+    //         str += "阳，你将手牌数摸至与其相同（至多摸五张），然后视为对其使用一张【火攻】；";
+    //         if (!storage) str += "</span>";
+    //         if (storage) str += '<span class="bluetext">';
+    //         str += "阴，令一名手牌数为全场最大的角色对其使用手牌中所有的【杀】和伤害类锦囊牌（若其没有可使用的牌则将手牌数弃至与你相同）。";
+    //         if (storage) str += "</span>";
+    //         return str;
+    //     };
+    //     lib.translate.dcsbquanmou_info = "转换技。出牌阶段每名角色限一次，你可以令一名攻击范围内的其他角色交给你一张牌。阳：当你于本阶段内下次对其造成伤害时，取消之；阴：当你于本阶段内下次对其造成伤害后，你可以选择除其外的至多三名其他角色，对这些角色依次造成1点伤害。";
+    //     lib.dynamicTranslate.dcsbquanmou = function (player) {
+    //         if (player.storage.dcsbquanmou) return '转换技。①游戏开始时，你可以转换此技能状态；②出牌阶段每名角色限一次，你可以令一名攻击范围内的其他角色交给你一张牌。阳：当你于本阶段内下次对其造成伤害时，取消之；<span class="bluetext">阴：当你于本阶段内下次对其造成伤害后，你可以选择除其外的至多三名其他角色，对这些角色依次造成1点伤害。</span>';
+    //         return '转换技。①游戏开始时，你可以转换此技能状态；②出牌阶段每名角色限一次，你可以令一名攻击范围内的其他角色交给你一张牌。<span class="bluetext">阳：当你于本阶段内下次对其造成伤害时，取消之；</span>阴：当你于本阶段内下次对其造成伤害后，你可以选择除其外的至多三名其他角色，对这些角色依次造成1点伤害。';
+    //     };
 
-        lib.translate.clanlianzhu_info = "转换技。每名角色Ａ的出牌阶段限一次。阳：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色不同，则你的手牌上限-1；阴：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色相同，则你的手牌上限+1。";
-        lib.dynamicTranslate.clanlianzhu = function (player) {
-            if (player.storage.clanlianzhu) return '转换技。每名角色Ａ的出牌阶段限一次。阳：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色不同，则你的手牌上限-1；<span class="bluetext">阴：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色相同，则你的手牌上限+1</span>。';
-            return '转换技。每名角色Ａ的出牌阶段限一次。<span class="bluetext">阳：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色不同，则你的手牌上限-1</span>；阴：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色相同，则你的手牌上限+1。';
-        };
-        lib.translate.clanguangu_info = "转换技，出牌阶段限一次。阳：你可以观看牌堆顶的至多四张牌；阴：你可以观看一名角色的至多四张手牌。然后你可以使用其中的一张牌。";
-        lib.dynamicTranslate.clanguangu = function (player) {
-            if (player.storage.clanguangu) return '转换技，出牌阶段限一次。阳：你可以观看牌堆顶的至多四张牌；<span class="bluetext">阴：你可以观看一名角色的至多四张手牌。</span>然后你可以使用其中的一张牌。';
-            return '转换技，出牌阶段限一次。<span class="bluetext">阳：你可以观看牌堆顶的至多四张牌；</span>阴：你可以观看一名角色的至多四张手牌。然后你可以使用其中的一张牌。';
-        };
-        lib.translate.clanjiexuan_info = "限定技，转换技。阳：你可以将一张红色牌当【顺手牵羊】使用；阴：你可以将一张黑色牌当【过河拆桥】使用。";
-        lib.dynamicTranslate.clanjiexuan = function (player) {
-            if (player.storage.clanjiexuan) return '限定技，转换技。阳：你可以将一张红色牌当【顺手牵羊】使用；<span class="bluetext">阴：你可以将一张黑色牌当【过河拆桥】使用。</span>';
-            return '限定技，转换技。<span class="bluetext">阳：你可以将一张红色牌当【顺手牵羊】使用；</span>阴：你可以将一张黑色牌当【过河拆桥】使用。';
-        };
-        lib.translate.dddlanghuai_info = "转换技。摸牌阶段，你可展示手牌（无牌则不展示），并改为摸其中：阳，包含花色数的牌；阴，缺少花色数的牌。";
-        lib.dynamicTranslate.dddlanghuai = function (player) {
-            return "转换技，摸牌阶段，你" + (player.hasMark("dddxuanlun_del") ? "" : "可") + "展示手牌（无牌则不展示），并改为摸其中" + (!player.storage["dddlanghuai"] ? "包含" : "缺少") + "花色数的牌。";
-        };
-        lib.translate.chihaya_youfeng_info = "转换技，阳，每轮限一次，你可以加1点体力上限，视为使用一张普通锦囊牌；阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张基本牌。";
+    //     lib.translate.clanlianzhu_info = "转换技。每名角色Ａ的出牌阶段限一次。阳：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色不同，则你的手牌上限-1；阴：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色相同，则你的手牌上限+1。";
+    //     lib.dynamicTranslate.clanlianzhu = function (player) {
+    //         if (player.storage.clanlianzhu) return '转换技。每名角色Ａ的出牌阶段限一次。阳：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色不同，则你的手牌上限-1；<span class="bluetext">阴：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色相同，则你的手牌上限+1</span>。';
+    //         return '转换技。每名角色Ａ的出牌阶段限一次。<span class="bluetext">阳：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色不同，则你的手牌上限-1</span>；阴：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色相同，则你的手牌上限+1。';
+    //     };
+    //     lib.translate.clanguangu_info = "转换技，出牌阶段限一次。阳：你可以观看牌堆顶的至多四张牌；阴：你可以观看一名角色的至多四张手牌。然后你可以使用其中的一张牌。";
+    //     lib.dynamicTranslate.clanguangu = function (player) {
+    //         if (player.storage.clanguangu) return '转换技，出牌阶段限一次。阳：你可以观看牌堆顶的至多四张牌；<span class="bluetext">阴：你可以观看一名角色的至多四张手牌。</span>然后你可以使用其中的一张牌。';
+    //         return '转换技，出牌阶段限一次。<span class="bluetext">阳：你可以观看牌堆顶的至多四张牌；</span>阴：你可以观看一名角色的至多四张手牌。然后你可以使用其中的一张牌。';
+    //     };
+    //     lib.translate.clanjiexuan_info = "限定技，转换技。阳：你可以将一张红色牌当【顺手牵羊】使用；阴：你可以将一张黑色牌当【过河拆桥】使用。";
+    //     lib.dynamicTranslate.clanjiexuan = function (player) {
+    //         if (player.storage.clanjiexuan) return '限定技，转换技。阳：你可以将一张红色牌当【顺手牵羊】使用；<span class="bluetext">阴：你可以将一张黑色牌当【过河拆桥】使用。</span>';
+    //         return '限定技，转换技。<span class="bluetext">阳：你可以将一张红色牌当【顺手牵羊】使用；</span>阴：你可以将一张黑色牌当【过河拆桥】使用。';
+    //     };
+    //     lib.translate.dddlanghuai_info = "转换技。摸牌阶段，你可展示手牌（无牌则不展示），并改为摸其中：阳，包含花色数的牌；阴，缺少花色数的牌。";
+    //     lib.dynamicTranslate.dddlanghuai = function (player) {
+    //         return "转换技，摸牌阶段，你" + (player.hasMark("dddxuanlun_del") ? "" : "可") + "展示手牌（无牌则不展示），并改为摸其中" + (!player.storage["dddlanghuai"] ? "包含" : "缺少") + "花色数的牌。";
+    //     };
+    //     lib.translate.chihaya_youfeng_info = "转换技，阳，每轮限一次，你可以加1点体力上限，视为使用一张普通锦囊牌；阴，每轮限一次，你可以废除你的一个装备栏，视为使用一张基本牌。";
 
-        lib.translate.kamome_jieban_info = "转换技。每回合限一次，当你受到或造成伤害后，阳：你可将两张牌交给一名其他角色，然后其交给你一张牌。阴：你可将一张牌交给一名其他角色，然后其交给你两张牌。";
-        lib.dynamicTranslate.kamome_jieban = function (player) {
-            if (player.storage.kamome_jieban) return '转换技。每回合限一次，当你受到或造成伤害后，阳：你可将两张牌交给一名其他角色，然后其交给你一张牌。<span class="bluetext">阴：你可将一张牌交给一名其他角色，然后其交给你两张牌。</span>';
-            return '转换技。每回合限一次，当你受到或造成伤害后，<span class="bluetext">阳：你可将两张牌交给一名其他角色，然后其交给你一张牌。</span>阴：你可将一张牌交给一名其他角色，然后其交给你两张牌。';
-        };
-        lib.translate.junkchigang_info = "转换技，锁定技。判定阶段开始前，你取消此阶段。然后你获得一个额外的：阳，摸牌阶段；阴，出牌阶段。";
-        lib.dynamicTranslate.junkchigang = function (player) {
-            if (player.storage.junkchigang) return '转换技，锁定技。判定阶段开始前，你取消此阶段。然后你获得一个额外的：阳，摸牌阶段；<span class="bluetext">阴，出牌阶段。</span>';
-            return '转换技，锁定技。判定阶段开始前，你取消此阶段。然后你获得一个额外的：<span class="bluetext">阳，摸牌阶段</span>；阴，出牌阶段。';
-        };
-        lib.translate.dcbenxi_info = "转换技，锁定技。当你失去手牌后，阳：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。阴：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
-        lib.dynamicTranslate.dcbenxi = function (player) {
-            if (player.storage.dcbenxi) return "转换技，锁定技。当你失去手牌后，阳：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。<span class='bluetext'>阴：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。</span>";
-            return "转换技，锁定技。当你失去手牌后，<span class='bluetext'>阳：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。</span>阴：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
-        };
-        lib.translate.olziruo_info = "转换技，锁定技。①当你使用最{阳：左；阴：右}侧的手牌时，你摸一张牌。②你以此法摸牌后本回合不能整理手牌。";
-        lib.dynamicTranslate.olziruo = function (player) {
-            if (player.storage.olziruo) return '转换技，锁定技。①当你使用最{阳：左；<span class="bluetext">阴：右</span>}侧的手牌时，你摸一张牌。②你以此法摸牌后本回合不能整理手牌。';
-            return '转换技，锁定技。①当你使用最{<span class="bluetext">阳：左</span>；阴：右}侧的手牌时，你摸一张牌。②你以此法摸牌后本回合不能整理手牌。';
-        };
-        lib.translate.jsrgdangren_info = "转换技。阳：当你需要对自己使用【桃】时，你可以视为使用之。阴：当你可以对其他角色使用【桃】时，你须视为使用之。";
-        lib.dynamicTranslate.jsrgdangren = function (player) {
-            if (player.storage.jsrgdangren) return '转换技。阳：当你需要对自己使用【桃】时，你可以视为使用之。<span class="bluetext">阴：当你可以对其他角色使用【桃】时，你须视为使用之。</span>';
-            return '转换技。<span class="bluetext">阳：当你需要对自己使用【桃】时，你可以视为使用之。</span>阴：当你可以对其他角色使用【桃】时，你须视为使用之。';
-        };
-        lib.translate.dcsbfumou_info = "转换技，出牌阶段限一次，你可以观看一名其他角色A的手牌并展示其一半手牌：阳，并将这些牌交给另一名其他角色B，然后你与A各摸X张牌（X为A以此法失去的手牌数）；阴，令A依次使用这些牌中所有其可以使用的牌（无距离限制且不可被响应）。";
-        lib.dynamicTranslate.dcsbfumou = function (player) {
-            const storage = player.storage.dcsbfumou;
-            var str = "转换技，出牌阶段限一次，你可以观看一名其他角色A的手牌并展示其一半手牌：";
-            if (!storage) str += '<span class="bluetext">';
-            str += "阳，并将这些牌交给另一名其他角色B，然后你与A各摸X张牌（X为A以此法失去的手牌数）；";
-            if (!storage) str += "</span>";
-            if (storage) str += '<span class="bluetext">';
-            str += "阴，令A依次使用这些牌中所有其可以使用的牌（无距离限制且不可被响应）。";
-            if (storage) str += "</span>";
-            return str;
-        };
-        lib.translate.dcxianmou_info = "转换技，你失去过牌的回合结束时，你可以：阳，观看牌堆顶五张牌并获得至多X张牌，若未获得X张牌则获得〖遗计〗直到再发动此项；阴，观看一名角色手牌并弃置其中至多X张牌，若弃置X张牌则你进行一次【闪电】判定。（X为你本回合失去牌数）";
-        lib.dynamicTranslate.dcxianmou = function (player) {
-            const storage = player.storage.dcxianmou;
-            var str = "转换技，你失去过牌的回合结束时，你可以：";
-            if (!storage) str += '<span class="bluetext">';
-            str += "阳，观看牌堆顶五张牌并获得至多X张牌，若未获得X张牌则获得〖遗计〗直到再发动此项；";
-            if (!storage) str += "</span>";
-            if (storage) str += '<span class="bluetext">';
-            str += "阴，观看一名角色手牌并弃置其中至多X张牌，若弃置X张牌则你进行一次【闪电】判定。";
-            if (storage) str += "</span>";
-            return str + "（X为你本回合失去牌数）";
-        };
-        lib.translate.dcqixin_info = "转换技。①出牌阶段，你可以将性别变更为：阳，刘协--男；阴，曹节--女。②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。";
-        lib.dynamicTranslate.dcqixin = function (player) {
-            const storage = player.storage["dcqixin"];
-            const banned = player.storage.dcqixin_die;
-            if (banned) return '<span style="opacity:0.5">' + lib.translate.dcqixin_info + "</span>";
-            let str = "转换技。①出牌阶段，你可以将性别变更为：";
-            if (!storage) str += '<span class="bluetext">';
-            str += "阳，刘协--男。";
-            if (!storage) str += "</span>";
-            if (storage) str += '<span class="bluetext">';
-            str += "阴，曹节--女；";
-            if (storage) str += "</span>";
-            return str + "②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。";
-        };
-        lib.translate.dcsbkongwu_info = "转换技，出牌阶段限一次，你可以弃置至多体力上限张牌，选择一名其他角色：阳，弃置其至多等量张牌；阴，视为对其使用等量张【杀】。此阶段结束时，若其手牌数和体力值均不大于你，其下回合摸牌阶段摸牌数-1且装备区里的所有牌失效。";
-        lib.dynamicTranslate.dcsbkongwu = function (player) {
-            let str = "转换技，出牌阶段限一次，你可以弃置至多体力上限张牌，选择一名其他角色：",
-                yin = "阳，弃置其至多等量张牌；",
-                yang = "阴，视为对其使用等量张【杀】。";
-            if (player.storage.dcsbkongwu) yang = `<span class="firetext">${yang}</span>`;
-            else yin = `<span class="bluetext">${yin}</span>`;
-            return str + yin + yang + "此阶段结束时，若其手牌数和体力值均不大于你，其下回合摸牌阶段摸牌数-1且装备区里的所有牌失效。";
-        };
-        lib.translate.jdjuqi_info = "转换技。阳：准备阶段，你摸三张牌；其他角色的准备阶段，其可以展示并交给你一张黑色手牌。阴：准备阶段，你令你本回合使用牌无次数限制且造成的伤害+1；其他角色的准备阶段，其可以展示并交给你一张红色手牌。";
-        lib.dynamicTranslate.jdjuqi = function (player) {
-            if (player.storage.jdjuqi) return '转换技。阳：准备阶段，你摸三张牌；其他角色的准备阶段，其可以展示并交给你一张黑色手牌。<span class="bluetext">阴：准备阶段，你令你本回合使用牌无次数限制且造成的伤害+1；其他角色的准备阶段，其可以展示并交给你一张红色手牌。</span>';
-            return '转换技。<span class="bluetext">阳：准备阶段，你摸三张牌；其他角色的准备阶段，其可以展示并交给你一张黑色手牌。</span>阴：准备阶段，你令你本回合使用牌无次数限制且造成的伤害+1；其他角色的准备阶段，其可以展示并交给你一张红色手牌。';
-        };
-        lib.translate.tylongnu_info = "转换技，游戏开始时，你可以改变此转换技的状态。出牌阶段开始时，你可以摸一张牌并：阳：失去1点体力，然后此阶段内你可以将红色手牌当无距离限制的火【杀】使用或打出；阴：减少1点体力上限，然后此阶段内你可以将锦囊牌当无次数限制的雷【杀】使用或打出。";
-        lib.dynamicTranslate.tylongnu = function (player) {
-            let str = "转换技，游戏开始时，你可以改变此转换技的状态。出牌阶段开始时，你可以摸一张牌并：";
-            let yin = "阳：失去1点体力，然后此阶段内你可以将红色手牌当无距离限制的火【杀】使用或打出；";
-            if (player.hasSkill("tylongnu_yin")) yin = "<span class='legendtext'>" + yin + "</span>";
-            else if (!player.storage.tylongnu && !player.hasSkill("tylongnu_yang")) yin = "<span class='bluetext'>" + yin + "</span>";
-            str += yin;
-            let yang = "阴：减少1点体力上限，然后此阶段内你可以将锦囊牌当无次数限制的雷【杀】使用或打出。";
-            if (player.hasSkill("tylongnu_yang")) yang = "<span class='legendtext'>" + yang + "</span>";
-            else if (player.storage.tylongnu && !player.hasSkill("tylongnu_yin")) yang = "<span class='firetext'>" + yang + "</span>";
-            str += yang;
-            return str;
-        };
-        lib.translate.tyqianshou_info = "转换技，其他角色的回合开始时，若其体力值大于你，或其未处于横置状态，阳：你可展示并交给其一张红色牌，本回合你不能使用手牌且你与其不能成为牌的目标；阴：你可令其展示并交给你一张牌，若此牌不为黑色，你失去一点体力。";
-        lib.dynamicTranslate.tyqianshou = function (player) {
-            let str = "转换技，其他角色的回合开始时，若其体力值大于你，或其未处于横置状态，",
-                yin = "阳：你可展示并交给其一张红色牌，本回合你不能使用手牌且你与其不能成为牌的目标；",
-                yang = "阴：你可令其展示并交给你一张牌，若此牌不为黑色，你失去一点体力。";
-            if (player.storage.tyqianshou) yang = "<span class='firetext'>" + yang + "</span>";
-            else yin = "<span class='bluetext'>" + yin + "</span>";
-            return str + yin + yang;
-        };
-        lib.translate.tyliupo_info = "转换技，回合开始时，你令本轮：阳：所有角色不能使用【桃】；阴：所有即将造成的伤害均视为体力流失。";
-        lib.dynamicTranslate.tyliupo = function (player) {
-            let str = "转换技，回合开始时，你令本轮：",
-                yin = "阳：所有角色不能使用【桃】；",
-                yang = "阴：所有即将造成的伤害均视为体力流失。";
-            if (player.storage.tyliupo) yang = "<span class='firetext'>" + yang + "</span>";
-            else yin = "<span class='bluetext'>" + yin + "</span>";
-            return str + yin + yang;
-        };
-        lib.translate.yyyanggu_info = "转换技。阳，当你受到伤害后，你可以回复1点体力；阴，你可以将一张手牌当作【声东击西】使用。";
-        lib.dynamicTranslate.yyyanggu = function (player) {
-            if (player.storage.yyyanggu) return '转换技。阳，当你受到伤害后，你可以回复1点体力；<span class="bluetext">阴，你可以将一张手牌当作【声东击西】使用</span>。';
-            return '转换技。<span class="bluetext">阳，当你受到伤害后，你可以回复1点体力</span>；阴，你可以将一张手牌当作【声东击西】使用。';
-        };
-        lib.translate.sbtiandu_info = "转换技，出牌阶段开始时，阳：你可以弃置两张手牌，然后视为使用一张普通锦囊牌；阴：你进行判定并获得判定牌，然后若判定结果与你本局游戏因〖天妒〗弃置的牌花色相同，你受到1点无来源伤害。";
-        lib.dynamicTranslate.sbtiandu = function (player) {
-            if (player.storage.sbtiandu) return '转换技，出牌阶段开始时，阳：你可以弃置两张手牌，然后视为使用一张普通锦囊牌；<span class="bluetext">阴：你进行判定并获得判定牌，然后若判定结果与你本局游戏因〖天妒〗弃置的牌花色相同，你受到1点无来源伤害</span>。';
-            return '转换技，出牌阶段开始时，<span class="bluetext">阳：你可以弃置两张手牌，然后视为使用一张普通锦囊牌</span>；阴：你进行判定并获得判定牌，然后若判定结果与你本局游戏因〖天妒〗弃置的牌花色相同，你受到1点无来源伤害。';
-        };
-        lib.translate.hm_shice_info = "转换技，阳：当你受到属性伤害时，若你的技能数不大于伤害来源，你可以防止此伤害并视为使用一张【火攻】；阴：当你不因此技能使用牌指定唯一目标后，你可以令其弃置装备区任意张牌，然后此牌额外结算X次（X为其装备区的牌数）。";
-        lib.dynamicTranslate.hm_shice = function (player) {
-            if (player.storage.hm_shice) return '转换技，<span class="bluetext">阳：当你受到属性伤害时，若你的技能数不大于伤害来源，你可以防止此伤害并视为使用一张【火攻】</span>；阴：当你不因此技能使用牌指定唯一目标后，你可以令其弃置装备区任意张牌，然后此牌额外结算X次（X为其装备区的牌数）。';
-            return '转换技，阳：当你受到属性伤害时，若你的技能数不大于伤害来源，你可以防止此伤害并视为使用一张【火攻】；<span class="bluetext">阴：当你不因此技能使用牌指定唯一目标后，你可以令其弃置装备区任意张牌，然后此牌额外结算X次（X为其装备区的牌数）</span>。';
-        };
-        lib.translate.fengliao_info = "锁定技，转换技，你使用牌指定唯一目标后，阳：你令其摸一张牌；阴：你对其造成一点火焰伤害。";
-        lib.dynamicTranslate.fengliao = function (player) {
-            if (Boolean(player.storage["fengliao"])) return `锁定技，转换技，你使用牌指定唯一目标后，阳：你令其摸一张牌；<span class="bluetext">阴：你对其造成一点火焰伤害。</span>`;
-            return `锁定技，转换技，你使用牌指定唯一目标后，<span class="bluetext">阳：你令其摸一张牌</span>；阴：你对其造成一点火焰伤害。`;
-        };
-        lib.translate.yyyanggu_info = "转换技。阳，当你受到伤害后，你可以回复1点体力；阴，你可以将一张手牌当作【声东击西】使用。";
-        lib.dynamicTranslate.yyyanggu = function (player) {
-            if (player.storage.yyyanggu) return '转换技。阳：当你受到伤害后，你可以回复1点体力；<span class="bluetext">阴：你可以将一张手牌当作【声东击西】使用</span>。';
-            return '转换技。<span class="bluetext">阳：当你受到伤害后，你可以回复1点体力</span>；阴：你可以将一张手牌当作【声东击西】使用。';
-        };
-    }
-    //自用定位
+    //     lib.translate.kamome_jieban_info = "转换技。每回合限一次，当你受到或造成伤害后，阳：你可将两张牌交给一名其他角色，然后其交给你一张牌。阴：你可将一张牌交给一名其他角色，然后其交给你两张牌。";
+    //     lib.dynamicTranslate.kamome_jieban = function (player) {
+    //         if (player.storage.kamome_jieban) return '转换技。每回合限一次，当你受到或造成伤害后，阳：你可将两张牌交给一名其他角色，然后其交给你一张牌。<span class="bluetext">阴：你可将一张牌交给一名其他角色，然后其交给你两张牌。</span>';
+    //         return '转换技。每回合限一次，当你受到或造成伤害后，<span class="bluetext">阳：你可将两张牌交给一名其他角色，然后其交给你一张牌。</span>阴：你可将一张牌交给一名其他角色，然后其交给你两张牌。';
+    //     };
+    //     lib.translate.junkchigang_info = "转换技，锁定技。判定阶段开始前，你取消此阶段。然后你获得一个额外的：阳，摸牌阶段；阴，出牌阶段。";
+    //     lib.dynamicTranslate.junkchigang = function (player) {
+    //         if (player.storage.junkchigang) return '转换技，锁定技。判定阶段开始前，你取消此阶段。然后你获得一个额外的：阳，摸牌阶段；<span class="bluetext">阴，出牌阶段。</span>';
+    //         return '转换技，锁定技。判定阶段开始前，你取消此阶段。然后你获得一个额外的：<span class="bluetext">阳，摸牌阶段</span>；阴，出牌阶段。';
+    //     };
+    //     lib.translate.dcbenxi_info = "转换技，锁定技。当你失去手牌后，阳：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。阴：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
+    //     lib.dynamicTranslate.dcbenxi = function (player) {
+    //         if (player.storage.dcbenxi) return "转换技，锁定技。当你失去手牌后，阳：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。<span class='bluetext'>阴：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。</span>";
+    //         return "转换技，锁定技。当你失去手牌后，<span class='bluetext'>阳：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。</span>阴：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
+    //     };
+    //     lib.translate.olziruo_info = "转换技，锁定技。①当你使用最{阳：左；阴：右}侧的手牌时，你摸一张牌。②你以此法摸牌后本回合不能整理手牌。";
+    //     lib.dynamicTranslate.olziruo = function (player) {
+    //         if (player.storage.olziruo) return '转换技，锁定技。①当你使用最{阳：左；<span class="bluetext">阴：右</span>}侧的手牌时，你摸一张牌。②你以此法摸牌后本回合不能整理手牌。';
+    //         return '转换技，锁定技。①当你使用最{<span class="bluetext">阳：左</span>；阴：右}侧的手牌时，你摸一张牌。②你以此法摸牌后本回合不能整理手牌。';
+    //     };
+    //     lib.translate.jsrgdangren_info = "转换技。阳：当你需要对自己使用【桃】时，你可以视为使用之。阴：当你可以对其他角色使用【桃】时，你须视为使用之。";
+    //     lib.dynamicTranslate.jsrgdangren = function (player) {
+    //         if (player.storage.jsrgdangren) return '转换技。阳：当你需要对自己使用【桃】时，你可以视为使用之。<span class="bluetext">阴：当你可以对其他角色使用【桃】时，你须视为使用之。</span>';
+    //         return '转换技。<span class="bluetext">阳：当你需要对自己使用【桃】时，你可以视为使用之。</span>阴：当你可以对其他角色使用【桃】时，你须视为使用之。';
+    //     };
+    //     lib.translate.dcsbfumou_info = "转换技，出牌阶段限一次，你可以观看一名其他角色A的手牌并展示其一半手牌：阳，并将这些牌交给另一名其他角色B，然后你与A各摸X张牌（X为A以此法失去的手牌数）；阴，令A依次使用这些牌中所有其可以使用的牌（无距离限制且不可被响应）。";
+    //     lib.dynamicTranslate.dcsbfumou = function (player) {
+    //         const storage = player.storage.dcsbfumou;
+    //         var str = "转换技，出牌阶段限一次，你可以观看一名其他角色A的手牌并展示其一半手牌：";
+    //         if (!storage) str += '<span class="bluetext">';
+    //         str += "阳，并将这些牌交给另一名其他角色B，然后你与A各摸X张牌（X为A以此法失去的手牌数）；";
+    //         if (!storage) str += "</span>";
+    //         if (storage) str += '<span class="bluetext">';
+    //         str += "阴，令A依次使用这些牌中所有其可以使用的牌（无距离限制且不可被响应）。";
+    //         if (storage) str += "</span>";
+    //         return str;
+    //     };
+    //     lib.translate.dcxianmou_info = "转换技，你失去过牌的回合结束时，你可以：阳，观看牌堆顶五张牌并获得至多X张牌，若未获得X张牌则获得〖遗计〗直到再发动此项；阴，观看一名角色手牌并弃置其中至多X张牌，若弃置X张牌则你进行一次【闪电】判定。（X为你本回合失去牌数）";
+    //     lib.dynamicTranslate.dcxianmou = function (player) {
+    //         const storage = player.storage.dcxianmou;
+    //         var str = "转换技，你失去过牌的回合结束时，你可以：";
+    //         if (!storage) str += '<span class="bluetext">';
+    //         str += "阳，观看牌堆顶五张牌并获得至多X张牌，若未获得X张牌则获得〖遗计〗直到再发动此项；";
+    //         if (!storage) str += "</span>";
+    //         if (storage) str += '<span class="bluetext">';
+    //         str += "阴，观看一名角色手牌并弃置其中至多X张牌，若弃置X张牌则你进行一次【闪电】判定。";
+    //         if (storage) str += "</span>";
+    //         return str + "（X为你本回合失去牌数）";
+    //     };
+    //     lib.translate.dcqixin_info = "转换技。①出牌阶段，你可以将性别变更为：阳，刘协--男；阴，曹节--女。②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。";
+    //     lib.dynamicTranslate.dcqixin = function (player) {
+    //         const storage = player.storage["dcqixin"];
+    //         const banned = player.storage.dcqixin_die;
+    //         if (banned) return '<span style="opacity:0.5">' + lib.translate.dcqixin_info + "</span>";
+    //         let str = "转换技。①出牌阶段，你可以将性别变更为：";
+    //         if (!storage) str += '<span class="bluetext">';
+    //         str += "阳，刘协--男。";
+    //         if (!storage) str += "</span>";
+    //         if (storage) str += '<span class="bluetext">';
+    //         str += "阴，曹节--女；";
+    //         if (storage) str += "</span>";
+    //         return str + "②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。";
+    //     };
+    //     lib.translate.dcsbkongwu_info = "转换技，出牌阶段限一次，你可以弃置至多体力上限张牌，选择一名其他角色：阳，弃置其至多等量张牌；阴，视为对其使用等量张【杀】。此阶段结束时，若其手牌数和体力值均不大于你，其下回合摸牌阶段摸牌数-1且装备区里的所有牌失效。";
+    //     lib.dynamicTranslate.dcsbkongwu = function (player) {
+    //         let str = "转换技，出牌阶段限一次，你可以弃置至多体力上限张牌，选择一名其他角色：",
+    //             yin = "阳，弃置其至多等量张牌；",
+    //             yang = "阴，视为对其使用等量张【杀】。";
+    //         if (player.storage.dcsbkongwu) yang = `<span class="firetext">${yang}</span>`;
+    //         else yin = `<span class="bluetext">${yin}</span>`;
+    //         return str + yin + yang + "此阶段结束时，若其手牌数和体力值均不大于你，其下回合摸牌阶段摸牌数-1且装备区里的所有牌失效。";
+    //     };
+    //     lib.translate.jdjuqi_info = "转换技。阳：准备阶段，你摸三张牌；其他角色的准备阶段，其可以展示并交给你一张黑色手牌。阴：准备阶段，你令你本回合使用牌无次数限制且造成的伤害+1；其他角色的准备阶段，其可以展示并交给你一张红色手牌。";
+    //     lib.dynamicTranslate.jdjuqi = function (player) {
+    //         if (player.storage.jdjuqi) return '转换技。阳：准备阶段，你摸三张牌；其他角色的准备阶段，其可以展示并交给你一张黑色手牌。<span class="bluetext">阴：准备阶段，你令你本回合使用牌无次数限制且造成的伤害+1；其他角色的准备阶段，其可以展示并交给你一张红色手牌。</span>';
+    //         return '转换技。<span class="bluetext">阳：准备阶段，你摸三张牌；其他角色的准备阶段，其可以展示并交给你一张黑色手牌。</span>阴：准备阶段，你令你本回合使用牌无次数限制且造成的伤害+1；其他角色的准备阶段，其可以展示并交给你一张红色手牌。';
+    //     };
+    //     lib.translate.tylongnu_info = "转换技，游戏开始时，你可以改变此转换技的状态。出牌阶段开始时，你可以摸一张牌并：阳：失去1点体力，然后此阶段内你可以将红色手牌当无距离限制的火【杀】使用或打出；阴：减少1点体力上限，然后此阶段内你可以将锦囊牌当无次数限制的雷【杀】使用或打出。";
+    //     lib.dynamicTranslate.tylongnu = function (player) {
+    //         let str = "转换技，游戏开始时，你可以改变此转换技的状态。出牌阶段开始时，你可以摸一张牌并：";
+    //         let yin = "阳：失去1点体力，然后此阶段内你可以将红色手牌当无距离限制的火【杀】使用或打出；";
+    //         if (player.hasSkill("tylongnu_yin")) yin = "<span class='legendtext'>" + yin + "</span>";
+    //         else if (!player.storage.tylongnu && !player.hasSkill("tylongnu_yang")) yin = "<span class='bluetext'>" + yin + "</span>";
+    //         str += yin;
+    //         let yang = "阴：减少1点体力上限，然后此阶段内你可以将锦囊牌当无次数限制的雷【杀】使用或打出。";
+    //         if (player.hasSkill("tylongnu_yang")) yang = "<span class='legendtext'>" + yang + "</span>";
+    //         else if (player.storage.tylongnu && !player.hasSkill("tylongnu_yin")) yang = "<span class='firetext'>" + yang + "</span>";
+    //         str += yang;
+    //         return str;
+    //     };
+    //     lib.translate.tyqianshou_info = "转换技，其他角色的回合开始时，若其体力值大于你，或其未处于横置状态，阳：你可展示并交给其一张红色牌，本回合你不能使用手牌且你与其不能成为牌的目标；阴：你可令其展示并交给你一张牌，若此牌不为黑色，你失去一点体力。";
+    //     lib.dynamicTranslate.tyqianshou = function (player) {
+    //         let str = "转换技，其他角色的回合开始时，若其体力值大于你，或其未处于横置状态，",
+    //             yin = "阳：你可展示并交给其一张红色牌，本回合你不能使用手牌且你与其不能成为牌的目标；",
+    //             yang = "阴：你可令其展示并交给你一张牌，若此牌不为黑色，你失去一点体力。";
+    //         if (player.storage.tyqianshou) yang = "<span class='firetext'>" + yang + "</span>";
+    //         else yin = "<span class='bluetext'>" + yin + "</span>";
+    //         return str + yin + yang;
+    //     };
+    //     lib.translate.tyliupo_info = "转换技，回合开始时，你令本轮：阳：所有角色不能使用【桃】；阴：所有即将造成的伤害均视为体力流失。";
+    //     lib.dynamicTranslate.tyliupo = function (player) {
+    //         let str = "转换技，回合开始时，你令本轮：",
+    //             yin = "阳：所有角色不能使用【桃】；",
+    //             yang = "阴：所有即将造成的伤害均视为体力流失。";
+    //         if (player.storage.tyliupo) yang = "<span class='firetext'>" + yang + "</span>";
+    //         else yin = "<span class='bluetext'>" + yin + "</span>";
+    //         return str + yin + yang;
+    //     };
+    //     lib.translate.yyyanggu_info = "转换技。阳，当你受到伤害后，你可以回复1点体力；阴，你可以将一张手牌当作【声东击西】使用。";
+    //     lib.dynamicTranslate.yyyanggu = function (player) {
+    //         if (player.storage.yyyanggu) return '转换技。阳，当你受到伤害后，你可以回复1点体力；<span class="bluetext">阴，你可以将一张手牌当作【声东击西】使用</span>。';
+    //         return '转换技。<span class="bluetext">阳，当你受到伤害后，你可以回复1点体力</span>；阴，你可以将一张手牌当作【声东击西】使用。';
+    //     };
+    //     lib.translate.sbtiandu_info = "转换技，出牌阶段开始时，阳：你可以弃置两张手牌，然后视为使用一张普通锦囊牌；阴：你进行判定并获得判定牌，然后若判定结果与你本局游戏因〖天妒〗弃置的牌花色相同，你受到1点无来源伤害。";
+    //     lib.dynamicTranslate.sbtiandu = function (player) {
+    //         if (player.storage.sbtiandu) return '转换技，出牌阶段开始时，阳：你可以弃置两张手牌，然后视为使用一张普通锦囊牌；<span class="bluetext">阴：你进行判定并获得判定牌，然后若判定结果与你本局游戏因〖天妒〗弃置的牌花色相同，你受到1点无来源伤害</span>。';
+    //         return '转换技，出牌阶段开始时，<span class="bluetext">阳：你可以弃置两张手牌，然后视为使用一张普通锦囊牌</span>；阴：你进行判定并获得判定牌，然后若判定结果与你本局游戏因〖天妒〗弃置的牌花色相同，你受到1点无来源伤害。';
+    //     };
+    //     lib.translate.hm_shice_info = "转换技，阳：当你受到属性伤害时，若你的技能数不大于伤害来源，你可以防止此伤害并视为使用一张【火攻】；阴：当你不因此技能使用牌指定唯一目标后，你可以令其弃置装备区任意张牌，然后此牌额外结算X次（X为其装备区的牌数）。";
+    //     lib.dynamicTranslate.hm_shice = function (player) {
+    //         if (player.storage.hm_shice) return '转换技，<span class="bluetext">阳：当你受到属性伤害时，若你的技能数不大于伤害来源，你可以防止此伤害并视为使用一张【火攻】</span>；阴：当你不因此技能使用牌指定唯一目标后，你可以令其弃置装备区任意张牌，然后此牌额外结算X次（X为其装备区的牌数）。';
+    //         return '转换技，阳：当你受到属性伤害时，若你的技能数不大于伤害来源，你可以防止此伤害并视为使用一张【火攻】；<span class="bluetext">阴：当你不因此技能使用牌指定唯一目标后，你可以令其弃置装备区任意张牌，然后此牌额外结算X次（X为其装备区的牌数）</span>。';
+    //     };
+    //     lib.translate.fengliao_info = "锁定技，转换技，你使用牌指定唯一目标后，阳：你令其摸一张牌；阴：你对其造成一点火焰伤害。";
+    //     lib.dynamicTranslate.fengliao = function (player) {
+    //         if (Boolean(player.storage["fengliao"])) return `锁定技，转换技，你使用牌指定唯一目标后，阳：你令其摸一张牌；<span class="bluetext">阴：你对其造成一点火焰伤害。</span>`;
+    //         return `锁定技，转换技，你使用牌指定唯一目标后，<span class="bluetext">阳：你令其摸一张牌</span>；阴：你对其造成一点火焰伤害。`;
+    //     };
+    //     lib.translate.yyyanggu_info = "转换技。阳，当你受到伤害后，你可以回复1点体力；阴，你可以将一张手牌当作【声东击西】使用。";
+    //     lib.dynamicTranslate.yyyanggu = function (player) {
+    //         if (player.storage.yyyanggu) return '转换技。阳：当你受到伤害后，你可以回复1点体力；<span class="bluetext">阴：你可以将一张手牌当作【声东击西】使用</span>。';
+    //         return '转换技。<span class="bluetext">阳：当你受到伤害后，你可以回复1点体力</span>；阴：你可以将一张手牌当作【声东击西】使用。';
+    //     };
+    // }
 
     //天命增强
     if (lib.config.extension_星之梦_tmEnhance) {

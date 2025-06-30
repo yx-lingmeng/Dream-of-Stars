@@ -2010,103 +2010,32 @@ let lmCharacter = {
             },
         },
         old_tamo: {
+            available(mode) {
+                // 走另外的phaseLoop的模式/子模式/设置
+                if (["boss", "stone", "tafang"].includes(mode) || ["jiange", "standard", "three", "leader"].includes(_status.mode) || get.config("seat_order") === "指定") {
+                    return false;
+                }
+            },
+            getTargets() {
+                return game.filterPlayer(current => {
+                    return !current.isZhu2();
+                });
+            },
             audio: "tamo",
             trigger: {
                 global: "phaseBefore",
                 player: "enterGame",
             },
             filter(event, player) {
-                return (
-                    (event.name != "phase" || game.phaseNumber == 0) &&
-                    game.countPlayer(current => {
-                        return !current.isZhu2();
-                    }) > 1
-                );
+                return (event.name != "phase" || game.phaseNumber == 0) && get.info("old_tamo").getTargets().length > 1;
             },
-            direct: true,
-            changeSeat: true,
-            seatRelated: true,
+            seatRelated: "changeSeat",
             derivation: "old_tamo_faq",
-            async content(event, trigger, player) {
-                const toSortPlayers = game.filterPlayer(current => {
-                    return !current.isZhu2();
-                });
+            async cost(event, trigger, player) {
+                const toSortPlayers = get.info(event.skill).getTargets();
                 toSortPlayers.sortBySeat(game.findPlayer2(current => current.getSeatNum() == 1, true));
-                const next = player.chooseToMove("榻谟：是否分配" + (game.hasPlayer(cur => cur.isZhu2()) ? "除主公外" : "") + "所有角色的座次？");
-                next.set("list", [
-                    [
-                        "（以下排列的顺序即为发动技能后角色的座次顺序）",
-                        [
-                            toSortPlayers.map(i => `${i.getSeatNum()}|${i.name}`),
-                            (item, type, position, noclick, node) => {
-                                const info = item.split("|"),
-                                    _item = item;
-                                const seat = parseInt(info[0]);
-                                item = info[1];
-                                if (node) {
-                                    node.classList.add("button");
-                                    node.classList.add("character");
-                                    node.style.display = "";
-                                } else {
-                                    node = ui.create.div(".button.character", position);
-                                }
-                                node._link = item;
-                                node.link = item;
-
-                                const func = function (node, item) {
-                                    const currentPlayer = game.findPlayer(current => current.getSeatNum() == seat);
-                                    if (currentPlayer.classList.contains("unseen_show")) node.setBackground("hidden_image", "character");
-                                    else if (item != "unknown") node.setBackground(item, "character");
-                                    if (node.node) {
-                                        node.node.name.remove();
-                                        node.node.hp.remove();
-                                        node.node.group.remove();
-                                        node.node.intro.remove();
-                                        if (node.node.replaceButton) node.node.replaceButton.remove();
-                                    }
-                                    node.node = {
-                                        name: ui.create.div(".name", node),
-                                        group: ui.create.div(".identity", node),
-                                        intro: ui.create.div(".intro", node),
-                                    };
-                                    const infoitem = [currentPlayer.sex, currentPlayer.group, `${currentPlayer.hp}/${currentPlayer.maxHp}/${currentPlayer.hujia}`];
-                                    node.node.name.innerHTML = get.slimName(item);
-                                    if (lib.config.buttoncharacter_style == "default" || lib.config.buttoncharacter_style == "simple") {
-                                        if (lib.config.buttoncharacter_style == "simple") {
-                                            node.node.group.style.display = "none";
-                                        }
-                                        node.classList.add("newstyle");
-                                        node.node.name.dataset.nature = get.groupnature(get.bordergroup(infoitem));
-                                        node.node.group.dataset.nature = get.groupnature(get.bordergroup(infoitem), "raw");
-                                    }
-                                    node.node.name.style.top = "8px";
-                                    if (node.node.name.querySelectorAll("br").length >= 4) {
-                                        node.node.name.classList.add("long");
-                                        if (lib.config.buttoncharacter_style == "old") {
-                                            node.addEventListener("mouseenter", ui.click.buttonnameenter);
-                                            node.addEventListener("mouseleave", ui.click.buttonnameleave);
-                                        }
-                                    }
-                                    node.node.intro.innerHTML = lib.config.intro;
-                                    if (!noclick) {
-                                        lib.setIntro(node);
-                                    }
-                                    node.node.group.innerHTML = `<div>${get.cnNumber(seat, true)}号</div>`;
-                                    node.node.group.style.backgroundColor = get.translation(`${get.bordergroup(infoitem)}Color`);
-                                };
-                                node.refresh = func;
-                                node.refresh(node, item);
-
-                                node.link = _item;
-                                node.seatNumber = seat;
-                                node._customintro = uiintro => {
-                                    uiintro.add(`${get.translation(node._link)}(原${get.cnNumber(node.seatNumber, true)}号位)`);
-                                };
-                                return node;
-                            },
-                        ],
-                    ],
-                ]);
+                const next = player.chooseToMove("榻谟：是否分配" + (get.mode() != "doudizhu" ? (game.hasPlayer(cur => cur.isZhu2()) ? "除主公外" : "") : "除三号位外") + "所有角色的座次？");
+                next.set("list", [["（以下排列的顺序即为发动技能后角色的座次顺序）", [toSortPlayers.map(i => `${i.getSeatNum()}|${i.name}`), lib.skill.old_tamo.$createButton]]]);
                 next.set("toSortPlayers", toSortPlayers.slice(0));
                 next.set("processAI", () => {
                     const players = get.event("toSortPlayers"),
@@ -2115,9 +2044,14 @@ let lmCharacter = {
                     return [players.map(i => `${i.getSeatNum()}|${i.name}`)];
                 });
                 const { result } = await next;
-                if (!result.bool) return;
-                await player.logSkill("old_tamo");
-                const resultList = result.moved[0].map(info => {
+                event.result = {
+                    bool: result?.bool,
+                    cost_data: [toSortPlayers, result?.moved],
+                };
+            },
+            async content(event, trigger, player) {
+                const [toSortPlayers, moved] = event.cost_data;
+                const resultList = moved[0].map(info => {
                     return parseInt(info.split("|")[0]);
                 });
                 const toSwapList = [];
@@ -2154,6 +2088,77 @@ let lmCharacter = {
                     });
                 }
                 await game.delay();
+            },
+            $createButton(item, type, position, noclick, node) {
+                const info = item.split("|"),
+                    _item = item;
+                const seat = parseInt(info[0]);
+                item = info[1];
+                if (node) {
+                    node.classList.add("button");
+                    node.classList.add("character");
+                    node.style.display = "";
+                } else {
+                    node = ui.create.div(".button.character", position);
+                }
+                node._link = item;
+                node.link = item;
+
+                const func = function (node, item) {
+                    const currentPlayer = game.findPlayer(current => current.getSeatNum() == seat);
+                    if (currentPlayer.classList.contains("unseen_show")) {
+                        node.setBackground("hidden_image", "character");
+                    } else if (item != "unknown") {
+                        node.setBackground(item, "character");
+                    }
+                    if (node.node) {
+                        node.node.name.remove();
+                        node.node.hp.remove();
+                        node.node.group.remove();
+                        node.node.intro.remove();
+                        if (node.node.replaceButton) {
+                            node.node.replaceButton.remove();
+                        }
+                    }
+                    node.node = {
+                        name: ui.create.div(".name", node),
+                        group: ui.create.div(".identity", node),
+                        intro: ui.create.div(".intro", node),
+                    };
+                    const infoitem = [currentPlayer.sex, currentPlayer.group, `${currentPlayer.hp}/${currentPlayer.maxHp}/${currentPlayer.hujia}`];
+                    node.node.name.innerHTML = get.slimName(item);
+                    if (lib.config.buttoncharacter_style == "default" || lib.config.buttoncharacter_style == "simple") {
+                        if (lib.config.buttoncharacter_style == "simple") {
+                            node.node.group.style.display = "none";
+                        }
+                        node.classList.add("newstyle");
+                        node.node.name.dataset.nature = get.groupnature(get.bordergroup(infoitem));
+                        node.node.group.dataset.nature = get.groupnature(get.bordergroup(infoitem), "raw");
+                    }
+                    node.node.name.style.top = "8px";
+                    if (node.node.name.querySelectorAll("br").length >= 4) {
+                        node.node.name.classList.add("long");
+                        if (lib.config.buttoncharacter_style == "old") {
+                            node.addEventListener("mouseenter", ui.click.buttonnameenter);
+                            node.addEventListener("mouseleave", ui.click.buttonnameleave);
+                        }
+                    }
+                    node.node.intro.innerHTML = lib.config.intro;
+                    if (!noclick) {
+                        lib.setIntro(node);
+                    }
+                    node.node.group.innerHTML = `<div>${get.cnNumber(seat, true)}号</div>`;
+                    node.node.group.style.backgroundColor = get.translation(`${get.bordergroup(infoitem)}Color`);
+                };
+                node.refresh = func;
+                node.refresh(node, item);
+
+                node.link = _item;
+                node.seatNumber = seat;
+                node._customintro = uiintro => {
+                    uiintro.add(`${get.translation(node._link)}(原${get.cnNumber(node.seatNumber, true)}号位)`);
+                };
+                return node;
             },
         },
         //什么均贫卡
@@ -2421,29 +2426,24 @@ let lmCharacter = {
         old_sbanguo: {
             audio: "sbanguo",
             trigger: { global: "phaseBefore", player: "enterGame" },
-            forced: true,
-            locked: false,
-            direct: true,
             group: ["old_sbanguo_move", "old_sbanguo_damage", "old_sbanguo_dying"],
+            logAudio: () => 2,
             filter(event, player) {
                 return game.hasPlayer(current => current != player) && (event.name != "phase" || game.phaseNumber == 0);
             },
+            async cost(event, trigger, player) {
+                event.result = await player.chooseTarget("安国：令一名其他角色获得“安国”标记", lib.filter.notMe, true).forResult();
+            },
             content() {
-                "step 0";
-                player.chooseTarget("安国：令一名其他角色获得“安国”标记", lib.filter.notMe, true);
-                "step 1";
-                if (result.bool) {
-                    var target = result.targets[0];
-                    player.logSkill("old_sbanguo", target);
-                    target.addMark("old_sbanguo_mark", 1, false);
-                    target.addAdditionalSkill("old_sbanguo_" + player.playerid, "old_sbanguo_mark");
-                    target.addMark("old_sbanguo_marked", 1, false);
-                }
+                const target = event.targets[0];
+                target.addMark("old_sbanguo_mark", 1, false);
+                target.addAdditionalSkill("old_sbanguo_" + player.playerid, "old_sbanguo_mark");
+                target.addMark("old_sbanguo_marked", 1, false);
             },
             subSkill: {
                 mark: {
                     onremove: true,
-                    marktext: "安国",
+                    marktext: "安",
                     charlotte: true,
                     intro: {
                         name: "安国",
@@ -2457,7 +2457,7 @@ let lmCharacter = {
                     },
                 },
                 move: {
-                    audio: "sbanguo",
+                    audio: ["sbanguo1.mp3", "sbanguo2.mp3"],
                     direct: true,
                     trigger: { player: "phaseUseBegin" },
                     filter(event, player) {
@@ -2469,12 +2469,16 @@ let lmCharacter = {
                         var prompt2 = targets.length == 1 ? "将" + get.translation(targets[0]) + "的“安国”交给一名未获得过“安国”的其他角色" : "选择一名有“安国”的角色，将该标记交给一名未获得过“安国”的其他角色";
                         player
                             .chooseTarget(get.prompt("old_sbanguo"), prompt2, targets.length == 1 ? 1 : 2, (card, player, target) => {
-                                if (ui.selected.targets.length == 0 && _status.event.targets.length > 1) return target.hasSkill("old_sbanguo_mark");
+                                if (ui.selected.targets.length == 0 && _status.event.targets.length > 1) {
+                                    return target.hasSkill("old_sbanguo_mark");
+                                }
                                 return !target.hasMark("old_sbanguo_marked") && target != player;
                             })
                             .set("ai", target => {
                                 var player = _status.event.player;
-                                if (ui.selected.targets.length == 0 && _status.event.targets.length > 1) return -get.attitude(player, target);
+                                if (ui.selected.targets.length == 0 && _status.event.targets.length > 1) {
+                                    return -get.attitude(player, target);
+                                }
                                 return get.attitude(player, _status.event.targets[0]) < get.attitude(player, target);
                             })
                             .set("targets", targets);
@@ -2492,7 +2496,9 @@ let lmCharacter = {
                             player.line2([target1, target2], "green");
                             var map = target1.additionalSkills;
                             for (var key in map) {
-                                if (key.indexOf("old_sbanguo_") != 0) continue;
+                                if (key.indexOf("old_sbanguo_") != 0) {
+                                    continue;
+                                }
                                 var id = parseInt(key.slice(8));
                                 target1.removeAdditionalSkill("old_sbanguo_" + id);
                                 target2.addMark("old_sbanguo_mark", 1, false);
@@ -2503,13 +2509,17 @@ let lmCharacter = {
                     },
                 },
                 damage: {
-                    audio: "sbanguo",
+                    audio: ["sbanguo1.mp3", "sbanguo2.mp3"],
                     forced: true,
                     locked: false,
                     trigger: { player: "damageBegin4" },
                     filter(event, player) {
-                        if (!game.hasPlayer(current => current.hasSkill("old_sbanguo_mark"))) return false;
-                        if (event.source && event.source.isIn() && event.source.hasSkill("old_sbanguo_mark")) return false;
+                        if (!game.hasPlayer(current => current.hasSkill("old_sbanguo_mark"))) {
+                            return false;
+                        }
+                        if (event.source && event.source.isIn() && event.source.hasSkill("old_sbanguo_mark")) {
+                            return false;
+                        }
                         return event.num >= player.hp;
                     },
                     content() {
@@ -2521,10 +2531,16 @@ let lmCharacter = {
                         nodamage: true,
                         effect: {
                             target(card, player, target, current) {
-                                if (!game.hasPlayer(current => current.hasSkill("old_sbanguo_mark"))) return;
-                                if (player.hasSkill("old_sbanguo_mark")) return;
+                                if (!game.hasPlayer(current => current.hasSkill("old_sbanguo_mark"))) {
+                                    return;
+                                }
+                                if (player.hasSkill("old_sbanguo_mark")) {
+                                    return;
+                                }
                                 if (get.tag(card, "damage")) {
-                                    if (target.hp <= 1) return [0, 0];
+                                    if (target.hp <= 1) {
+                                        return [0, 0];
+                                    }
                                     return 0.5;
                                 }
                             },
@@ -2532,7 +2548,7 @@ let lmCharacter = {
                     },
                 },
                 dying: {
-                    audio: "sbanguo",
+                    audio: "sbanguo3.mp3",
                     forced: true,
                     locked: false,
                     trigger: { global: "dying" },
@@ -3613,6 +3629,78 @@ let lmCharacter = {
                     },
                 },
             },
+        },
+        //SP辛毗
+        old_spyinju: {
+            audio: "spyinju",
+            enable: "phaseUse",
+            usable: 1,
+            filterTarget: lib.filter.notMe,
+            content() {
+                "step 0";
+                target
+                    .chooseToUse(function (card, player, event) {
+                        if (get.name(card) != "sha") {
+                            return false;
+                        }
+                        return lib.filter.filterCard.apply(this, arguments);
+                    }, "引裾：对" + get.translation(player) + "使用一张杀，或跳过下回合的出牌阶段和弃牌阶段")
+                    .set("targetRequired", true)
+                    .set("complexSelect", true)
+                    .set("complexTarget", true)
+                    .set("filterTarget", function (card, player, target) {
+                        if (target != _status.event.sourcex && !ui.selected.targets.includes(_status.event.sourcex)) {
+                            return false;
+                        }
+                        return lib.filter.filterTarget.apply(this, arguments);
+                    })
+                    .set("sourcex", player);
+                "step 1";
+                if (!result.bool) {
+                    target.addSkill("old_spyinju2");
+                }
+            },
+            ai: {
+                order: 1,
+                expose: 0.2,
+                result: {
+                    target: -1.5,
+                    player(player, target) {
+                        if (!target.canUse("sha", player)) {
+                            return 0;
+                        }
+                        if (target.countCards("h") == 0) {
+                            return 0;
+                        }
+                        if (target.countCards("h") == 1) {
+                            return -0.1;
+                        }
+                        if (player.countCards("h", "shan") == 0) {
+                            return -1;
+                        }
+                        if (player.hp < 2) {
+                            return -2;
+                        }
+                        return -0.5;
+                    },
+                },
+                threaten: 1.1,
+            },
+        },
+        old_spyinju2: {
+            trigger: { player: "phaseZhunbeiBegin" },
+            forced: true,
+            charlotte: true,
+            sourceSkill: "old_spyinju",
+            content() {
+                player.skip("phaseUse");
+                player.skip("phaseDiscard");
+                player.removeSkill("old_spyinju2");
+                game.log(player, "跳过了出牌阶段");
+                game.log(player, "跳过了弃牌阶段");
+            },
+            mark: true,
+            intro: { content: "衣襟被拽住了，下个准备阶段开始时跳过出牌阶段和弃牌阶段" },
         },
         //手杀桥公
         old_yizhu: {
@@ -5201,6 +5289,7 @@ let lmCharacter = {
             filterTarget(card, player, target) {
                 return target != player && !target.getSkills().some(skill => skill.indexOf("old_sbtianxiang_") == 0);
             },
+            position: "he",
             discard: false,
             lose: false,
             delay: 0,
@@ -7902,93 +7991,53 @@ let lmCharacter = {
         old_sbluanwu: {
             audio: "sbluanwu",
             logAudio: () => 2,
-            unique: true,
-            enable: "phaseUse",
-            limited: true,
-            skillAnimation: "epic",
-            animationColor: "thunder",
-            filterTarget(card, player, target) {
-                return target !== player;
-            },
-            selectTarget: -1,
-            multitarget: true,
-            multiline: true,
-            contentBefore() {
-                player.addTempSkill("old_sbluanwu_add");
+            inherit: "luanwu",
+            async contentBefore(event, trigger, player) {
+                player.addTempSkill(event.skill + "_add");
+                player.awakenSkill(event.skill);
             },
             async content(event, trigger, player) {
-                player.awakenSkill(event.name);
-                const currented = [player];
-                let current = player.next;
-                do {
-                    currented.push(current);
-                    current.addTempClass("target");
-                    const bool = await current
-                        .chooseToUse(
-                            "乱武：对除" + get.translation(player) + "以外的一名其他角色使用一张杀或失去1点体力",
-                            function (card) {
-                                if (get.name(card) !== "sha") return false;
-                                return lib.filter.cardEnabled.apply(this, arguments);
-                            },
-                            function (card, player, target) {
-                                if (target === player || target === get.event("jx")) return false;
-                                const dist = get.distance(player, target);
-                                if (dist > 1) {
-                                    if (
-                                        game.hasPlayer(function (current) {
-                                            return current != player && get.distance(player, current) < dist;
-                                        })
-                                    ) {
-                                        return false;
-                                    }
+                const { target } = event;
+                const { result } = await target
+                    .chooseToUse(
+                        "乱武：使用一张【杀】或失去1点体力",
+                        function (card) {
+                            if (get.name(card) != "sha") {
+                                return false;
+                            }
+                            return lib.filter.filterCard.apply(this, arguments);
+                        },
+                        function (card, player, target) {
+                            if (player == target || target == get.event("targetx")) {
+                                return false;
+                            }
+                            const dist = get.distance(player, target);
+                            if (dist > 1) {
+                                if (game.hasPlayer(current => current != player && get.distance(player, current) < dist)) {
+                                    return false;
                                 }
-                                return lib.filter.filterTarget.apply(this, arguments);
                             }
-                        )
-                        .set("jx", player)
-                        .set("ai2", function () {
-                            return get.effect_use.apply(this, arguments) + 0.01;
-                        })
-                        .set("addCount", false)
-                        .forResultBool();
-                    if (!bool) await current.loseHp();
-                    current = current.next;
-                } while (!currented.includes(current) && !void (await game.delay(0.5)));
-            },
-            ai: {
-                order: 1,
-                result: {
-                    player(player) {
-                        if (lib.config.mode === "identity" && game.zhu.isZhu && player.identity === "fan") {
-                            if (game.zhu.hp === 1 && game.zhu.countCards("h") <= 2) return 1;
+                            return lib.filter.filterTarget.apply(this, arguments);
                         }
-                        const players = game.filterPlayer(cur => cur !== player);
-                        let num = 0;
-                        for (let i = 0; i < players.length; i++) {
-                            let att = get.sgnAttitude(player, players[i]);
-                            if (players[i].hp <= 3) {
-                                const hs = players[i].countCards("hs");
-                                if (hs === 0) num += att / players[i].hp;
-                                else if (hs === 1) num += att / 2 / players[i].hp;
-                                else if (hs === 2) num += att / 4 / players[i].hp;
-                            }
-                            if (players[i].hp === 1) num += att * 1.5;
-                        }
-                        if (player.hp === 1) {
-                            return -num;
-                        }
-                        return -game.players.length / 4 - num;
-                    },
-                },
+                    )
+                    .set("ai2", function () {
+                        return get.effect_use.apply(this, arguments) - get.event("effect");
+                    })
+                    .set("effect", get.effect(target, { name: "losehp" }, target, target))
+                    .set("addCount", false)
+                    .set("targetx", player);
+                if (!result?.bool) {
+                    await target.loseHp();
+                }
             },
             subSkill: {
                 add: {
                     audio: ["sbluanwu3.mp3", "sbluanwu4.mp3"],
-                    trigger: {
-                        global: "loseHpEnd",
-                    },
+                    trigger: { global: "loseHpEnd" },
                     filter(event, player) {
-                        if (event.getParent().name != "old_sbluanwu") return false;
+                        if (event.getParent().name != "old_sbluanwu") {
+                            return false;
+                        }
                         return ["old_sbwansha", "old_sbweimu"].some(skill => player.hasSkill(skill, null, null, false) && !player.storage[skill]);
                     },
                     async cost(event, trigger, player) {
@@ -7998,7 +8047,9 @@ let lmCharacter = {
                         for (let i = 0; i < 2; i++) {
                             if (!player.hasSkill(list[i], null, null, false) || player.storage[list[i]]) {
                                 choiceList[i] = '<span style="opacity:0.5;">' + choiceList[i] + "</span>";
-                            } else choices.push(`选项${get.cnNumber(i + 1, true)}`);
+                            } else {
+                                choices.push(`选项${get.cnNumber(i + 1, true)}`);
+                            }
                         }
                         const control = await player
                             .chooseControl(choices, "cancel2")
@@ -8753,10 +8804,6 @@ let lmCharacter = {
         //谋吕布
         old_sbwushuang: {
             audio: "sbwushuang",
-            inherit: "wushuang",
-            init(player) {
-                player.storage.old_sbwushuangCount = false;
-            },
             trigger: { source: "damageBegin1" },
             filter(event, player) {
                 const target = event.player;
@@ -8766,19 +8813,14 @@ let lmCharacter = {
                 if (!card || !["sha", "juedou"].includes(name)) {
                     return false;
                 }
-                if (target == player) {
-                    return false;
-                }
                 if (name == "sha") {
                     return !target.hasHistory("useCard", evt => {
                         return evt.card.name == "shan" && evt.respondTo && evt.getParent(3) == evtx;
                     });
-                } else if (name == "juedou") {
-                    return !target.hasHistory("respond", evt => {
-                        return evt.card.name == "sha" && evt.respondTo && evt.getParent(3) == evtx;
-                    });
                 }
-                return false;
+                return !target.hasHistory("respond", evt => {
+                    return evt.card.name == "sha" && evt.respondTo && evt.getParent(3) == evtx;
+                });
             },
             forced: true,
             logTarget: "player",
@@ -8790,97 +8832,116 @@ let lmCharacter = {
             preHidden: ["old_sbwushuang_1", "old_sbwushuang_2"],
             subSkill: {
                 1: {
-                    audio: "old_sbwushuang",
-                    logAudio(event, player) {
-                        const storage = player.storage.old_sbwushuangCount;
-                        if (storage) {
-                            return ["sbwushuang2.mp3", "sbwushuang3.mp3"];
-                        }
-                        return ["sbwushuang1.mp3", "sbwushuang6.mp3"];
-                    },
+                    audio: "sbwushuang",
+                    sourceSkill: "old_sbwushuang",
+                    logAudio: () => ["sbwushuang1.mp3", "sbwushuang6.mp3"],
                     inherit: "wushuang1",
                 },
                 2: {
-                    audio: "old_sbwushuang",
-                    logAudio(event, player) {
-                        const storage = player.storage.old_sbwushuangCount;
-                        if (storage) {
-                            return ["sbwushuang2.mp3", "sbwushuang3.mp3"];
-                        }
-                        return ["sbwushuang1.mp3", "sbwushuang6.mp3"];
-                    },
+                    audio: "sbwushuang",
+                    sourceSkill: "old_sbwushuang",
+                    logAudio: () => ["sbwushuang1.mp3", "sbwushuang6.mp3"],
                     inherit: "wushuang2",
                 },
             },
         },
         old_sbliyu: {
             audio: "sbliyu",
-            logAudio: index => (typeof index === "number" ? "old_sbliyu" + index + ".mp3" : 2),
+            logAudio: index => (typeof index === "number" ? "sbliyu" + index + ".mp3" : 2),
             trigger: { source: "damageSource" },
             filter(event, player) {
                 return event.player != player && event?.card?.name == "sha" && event.player.countGainableCards(player, "hej") > 0 && event.player.isIn();
             },
-            popup: false,
             async cost(event, trigger, player) {
-                event.result = await player.gainPlayerCard(get.prompt2(event.skill), trigger.player, "hej", [1, trigger.num]).set("chooseOnly", true).forResult();
+                const target = trigger.player;
+                event.result = await player
+                    .gainPlayerCard(get.prompt2(event.skill), trigger.player, "hej", [1, trigger.num])
+                    .set("logSkill", [event.skill, [target], null, null, [get.rand(1, 2)]])
+                    .forResult();
             },
+            popup: false,
             async content(event, trigger, player) {
                 const cards = event.cards;
                 const target = trigger.player;
-                await player.gain(cards, target, "bySelf");
                 const draw = await target.draw(cards.length).forResult();
-                let types = [cards, draw]
-                    .map(list => list.map(card => get.type2(card)))
-                    .flat()
-                    .unique();
-                player.logSkill("old_sbliyu", [target], null, null, [get.rand(1, 2)]);
-                if (types.length >= 3) {
-                    let list = [`${get.translation(player)}视为对你指定的另一名其他角色使用一张【决斗】`, `你获得技能〖无双〗直至你下个回合结束`];
-                    let result;
-                    if (
-                        !game.hasPlayer(function (current) {
-                            return current != player && current != target && player.canUse("juedou", current);
-                        })
-                    ) {
-                        result = {
-                            bool: true,
-                            control: "选项二",
-                        };
-                    } else {
-                        result = await target
-                            .chooseControl()
-                            .set("choiceList", list)
-                            .set("ai", () => {
-                                //ai待补充
-                                return ["选项一", "选项二"].randomGet();
-                            })
-                            .forResult();
-                    }
-                    player.logSkill("old_sbliyu", null, null, null, [result.control == "选项一" ? get.rand(3, 4) : 5]);
-                    if (result.control == "选项一") {
-                        const result2 = await target
-                            .chooseTarget(
-                                true,
-                                (card, player, target) => {
-                                    var evt = get.event().getParent();
-                                    return evt.player.canUse({ name: "juedou" }, target) && target != get.player();
-                                },
-                                "利驭：请选择一名角色，视为" + get.translation(player) + "对其使用【决斗】"
-                            )
-                            .set("ai", function (target) {
-                                var evt = get.event().getParent();
-                                return get.effect(target, { name: "juedou" }, evt.player, get.player()) - 2;
-                            })
-                            .forResult();
-                        target.line(player);
-                        await player.useCard({ name: "juedou", isCard: true }, result2.targets[0], "noai");
-                    } else {
-                        await target.addTempSkills("old_sbwushuang", { player: "phaseAfter" });
-                        target.storage.old_sbwushuangCount = true;
+                if (Array.isArray(cards) && Array.isArray(draw)) {
+                    let types = [cards, draw]
+                        .map(list => list.map(card => get.type2(card)))
+                        .flat()
+                        .unique();
+                    if (types.length >= 3) {
+                        let list = [`${get.translation(player)}视为对你指定的另一名其他角色使用一张【决斗】`, `你获得技能〖无双〗直至你下个回合结束`];
+                        let result;
+                        const juedou = game.hasPlayer(current => current != player && current != target && player.canUse(new lib.element.VCard({ name: "juedou", isCard: true }), current, false));
+                        const wushuang = !target.hasSkill("wushuang", null, false, false);
+                        if (juedou || wushuang) {
+                            if (!juedou) {
+                                result = { control: "选项二" };
+                            } else if (!wushuang) {
+                                result = { control: "选项一" };
+                            } else {
+                                result = await target
+                                    .chooseControl()
+                                    .set("prompt", get.translation(event.name) + "：请选择一项")
+                                    .set("choiceList", list)
+                                    .set("ai", () => {
+                                        const player = get.player();
+                                        const source = get.event().getParent().player;
+                                        const juedou = new lib.element.VCard({ name: "juedou", isCard: true });
+                                        return game.hasPlayer(target => {
+                                            return ![player, source].includes(target) && source.canUse(juedou, target, false) && get.effect(target, juedou, source, player) > 0;
+                                        })
+                                            ? "选项一"
+                                            : "选项二";
+                                    })
+                                    .forResult();
+                            }
+                            player.logSkill("old_sbliyu", null, null, null, [result.control == "选项一" ? get.rand(3, 4) : 5]);
+                            if (result.control == "选项一") {
+                                const result2 = await target
+                                    .chooseTarget(
+                                        true,
+                                        (card, player, target) => {
+                                            var evt = get.event().getParent();
+                                            return evt.player.canUse({ name: "juedou" }, target) && target != get.player();
+                                        },
+                                        "利驭：请选择一名角色，视为" + get.translation(player) + "对其使用【决斗】"
+                                    )
+                                    .set("ai", function (target) {
+                                        var evt = get.event().getParent();
+                                        return get.effect(target, { name: "juedou" }, evt.player, get.player());
+                                    })
+                                    .set("animate", false)
+                                    .forResult();
+                                if (result2?.bool && result2.targets?.length) {
+                                    target.line2([player, result2.targets[0]]);
+                                    await game.delayx();
+                                    await player.useCard(new lib.element.VCard({ name: "juedou", isCard: true }), result2.targets[0], false, "noai").set("animate", false);
+                                }
+                            } else {
+                                const skill = event.name + "_effect";
+                                await target.addAdditionalSkills(skill, "wushuang");
+                                target.addTempSkill(skill, { player: "phaseAfter" });
+                            }
+                        }
                     }
                 }
             },
             derivation: "old_sbwushuang",
+            subSkill: {
+                effect: {
+                    charlotte: true,
+                    init(player) {
+                        game.broadcastAll(player => Array.isArray(player.tempname) && player.tempname.add("sb_lvbu"), player);
+                    },
+                    onremove(player) {
+                        game.broadcastAll(player => Array.isArray(player.tempname) && player.tempname.remove("sb_lvbu"), player);
+                    },
+                    mark: true,
+                    audio: ["sbwushuang2.mp3", "sbwushuang3.mp3"],
+                    intro: { content: "这熟悉的力量！！！" },
+                },
+            },
         },
         //蒋干
         old_spdaoshu: {
@@ -9148,79 +9209,6 @@ let lmCharacter = {
             },
         },
         //族钟会
-        old_clanyuzhi: {
-            mod: {
-                aiOrder(player, card, num) {
-                    if (card.name == "tao") return num / 114514;
-                },
-            },
-            audio: "clanyuzhi",
-            trigger: { global: "roundStart" },
-            direct: true,
-            locked: true,
-            content() {
-                "step 0";
-                player.unmarkSkill("old_clanyuzhi");
-                var num1 = 0,
-                    num2 = 0,
-                    num3 = 0,
-                    bool = true;
-                var history = player.actionHistory;
-                for (var i = history.length - 2; i >= 0; i--) {
-                    for (var evt of history[i].gain) {
-                        if (evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi") {
-                            if (bool) num1 += evt.cards.length;
-                            else num2 += evt.cards.length;
-                        }
-                    }
-                    if (bool) num3 += history[i].useCard.length;
-                    if (history[i].isRound) {
-                        if (bool) bool = false;
-                        else break;
-                    }
-                }
-                event.num1 = num1;
-                if ((num1 > 0 && num2 > 0 && num1 > num2) || num1 > num3) {
-                    player.logSkill("old_clanyuzhi");
-                    if (num2 > 0 && num1 > num2) game.log(player, "的野心已开始膨胀", "#y(" + num1 + "张>" + num2 + "张)");
-                    if (num1 > num3) game.log(player, "的行动未达到野心", "#y(" + num3 + "张<" + num1 + "张)");
-                    if (player.hasSkill("clanbaozu", null, false, false)) player.chooseBool("迂志：是否失去〖保族〗？", "若选择“否”，则你失去1点体力").set("choice", player.awakenedSkills.includes("clanbaozu"));
-                    else event._result = { bool: false };
-                } else event.goto(2);
-                "step 1";
-                if (result.bool) {
-                    player.removeSkills("clanbaozu");
-                } else player.loseHp();
-                "step 2";
-                if (!player.countCards("h")) event.finish();
-                "step 3";
-                player
-                    .chooseCard("迂志：请展示一张手牌", "摸此牌牌名字数的牌。下一轮开始时，若本轮你使用的牌数或上一轮你以此法摸的牌数小于此牌牌名字数，则你失去1点体力。", true, function (card, player) {
-                        var num = get.cardNameLength(card);
-                        return typeof num == "number" && num > 0;
-                    })
-                    .set("ai", function (card) {
-                        if (_status.event.dying && _status.event.num > 0 && get.cardNameLength(card) > _status.event.num) return 1 / get.cardNameLength(card); //怂
-                        return get.cardNameLength(card); //勇
-                    })
-                    .set("dying", player.hp + player.countCards("hs", { name: ["tao", "jiu"] }) < 1)
-                    .set("num", event.num1);
-                "step 4";
-                if (result.bool) {
-                    player.logSkill("old_clanyuzhi");
-                    player.showCards(result.cards, get.translation(player) + "发动了【迂志】");
-                    player.draw(get.cardNameLength(result.cards[0]));
-                    player.storage.old_clanyuzhi = get.cardNameLength(result.cards[0]);
-                    player.markSkill("old_clanyuzhi");
-                }
-            },
-            ai: {
-                threaten: 3,
-                nokeep: true,
-            },
-            onremove: true,
-            intro: { content: "本轮野心：#张" },
-        },
         // old_clanyuzhi: {
         //     mod: {
         //         aiOrder(player, card, num) {
@@ -9228,87 +9216,160 @@ let lmCharacter = {
         //         },
         //     },
         //     audio: "clanyuzhi",
-        //     trigger: { global: ["roundStart", "roundEnd"] },
-        //     filter(event, player, name) {
-        //         if (name === "roundStart") return player.countCards("h");
-        //         if (player.hasCard(card => card.hasGaintag("old_clanyuzhi") && lib.filter.cardDiscardable(card, player), "h")) return true;
-        //         const num1 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi").reduce((sum, evt) => sum + evt.cards.length, 0);
-        //         const num2 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi", 1).reduce((sum, evt) => sum + evt.cards.length, 0);
-        //         const num3 = player.getRoundHistory("useCard").length;
-        //         return (num1 > 0 && num2 > 0 && num1 > num2) || num1 > num3;
-        //     },
-        //     forced: true,
-        //     async content(event, trigger, player) {
-        //         const name = event.triggername;
-        //         const num1 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi", name === "roundStart" ? 1 : 0).reduce((sum, evt) => sum + evt.cards.length, 0);
-        //         switch (name) {
-        //             case "roundStart":
-        //                 const result = await player
-        //                     .chooseCard(
-        //                         "迂志：请展示一张手牌",
-        //                         "摸此牌牌名字数的牌。本轮结束时弃置此牌，若本轮你使用的牌数或上一轮你以此法摸的牌数小于此牌牌名字数，则你受到1点雷属性伤害或失去〖保族〗。",
-        //                         function (card, player) {
-        //                             var num = get.cardNameLength(card);
-        //                             return typeof num == "number" && num > 0;
-        //                         },
-        //                         true
-        //                     )
-        //                     .set("ai", function (card) {
-        //                         if (_status.event.dying && _status.event.num > 0 && get.cardNameLength(card) > _status.event.num) return 1 / get.cardNameLength(card); //怂
-        //                         return get.cardNameLength(card); //勇
-        //                     })
-        //                     .set(
-        //                         "dying",
-        //                         player.hp +
-        //                         player.countCards("hs", {
-        //                             name: ["tao", "jiu"],
-        //                         }) <
-        //                         1
-        //                     )
-        //                     .set("num", event.num1)
-        //                     .forResult();
-        //                 if (result?.bool && result.cards?.length) {
-        //                     await player.showCards(result.cards, get.translation(player) + "发动了【迂志】");
-        //                     player.addGaintag(result.cards, "old_clanyuzhi");
-        //                     await player.draw(get.cardNameLength(result.cards[0]));
-        //                     player.storage.old_clanyuzhi_mark = get.cardNameLength(result.cards[0]);
-        //                     player.addTempSkill("old_clanyuzhi_mark", "roundStart");
+        //     trigger: { global: "roundStart" },
+        //     direct: true,
+        //     locked: true,
+        //     content() {
+        //         "step 0";
+        //         player.unmarkSkill("old_clanyuzhi");
+        //         var num1 = 0,
+        //             num2 = 0,
+        //             num3 = 0,
+        //             bool = true;
+        //         var history = player.actionHistory;
+        //         for (var i = history.length - 2; i >= 0; i--) {
+        //             for (var evt of history[i].gain) {
+        //                 if (evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi") {
+        //                     if (bool) num1 += evt.cards.length;
+        //                     else num2 += evt.cards.length;
         //                 }
-        //                 break;
-        //             case "roundEnd":
-        //                 const cards = player.getCards("h", card => card.hasGaintag("old_clanyuzhi"));
-        //                 if (cards.length) player.removeGaintag("old_clanyuzhi");
-        //                 const num2 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi", 1).reduce((sum, evt) => sum + evt.cards.length, 0);
-        //                 const num3 = player.getRoundHistory("useCard").length;
-        //                 if ((num1 > 0 && num2 > 0 && num1 > num2) || num1 > num3) {
-        //                     let result2;
-        //                     if (num2 > 0 && num1 > num2) game.log(player, "的野心已开始膨胀", "#y(" + num1 + "张>" + num2 + "张)");
-        //                     if (num1 > num3) game.log(player, "的行动未达到野心", "#y(" + num3 + "张<" + num1 + "张)");
-        //                     if (player.hasSkill("clanbaozu", null, false, false)) result2 = await player.chooseBool("迂志：是否失去〖保族〗？", "若选择“否”，则你受到1点雷属性伤害").set("choice", player.awakenedSkills.includes("clanbaozu")).forResult();
-        //                     else result2 = { bool: false };
-        //                     if (result2?.bool) await player.removeSkills("clanbaozu");
-        //                     else await player.loseHp();
-        //                 }
-        //                 break;
+        //             }
+        //             if (bool) num3 += history[i].useCard.length;
+        //             if (history[i].isRound) {
+        //                 if (bool) bool = false;
+        //                 else break;
+        //             }
+        //         }
+        //         event.num1 = num1;
+        //         if ((num1 > 0 && num2 > 0 && num1 > num2) || num1 > num3) {
+        //             player.logSkill("old_clanyuzhi");
+        //             if (num2 > 0 && num1 > num2) game.log(player, "的野心已开始膨胀", "#y(" + num1 + "张>" + num2 + "张)");
+        //             if (num1 > num3) game.log(player, "的行动未达到野心", "#y(" + num3 + "张<" + num1 + "张)");
+        //             if (player.hasSkill("clanbaozu", null, false, false)) player.chooseBool("迂志：是否失去〖保族〗？", "若选择“否”，则你失去1点体力").set("choice", player.awakenedSkills.includes("clanbaozu"));
+        //             else event._result = { bool: false };
+        //         } else event.goto(2);
+        //         "step 1";
+        //         if (result.bool) {
+        //             player.removeSkills("clanbaozu");
+        //         } else player.loseHp();
+        //         "step 2";
+        //         if (!player.countCards("h")) event.finish();
+        //         "step 3";
+        //         player
+        //             .chooseCard("迂志：请展示一张手牌", "摸此牌牌名字数的牌。下一轮开始时，若本轮你使用的牌数或上一轮你以此法摸的牌数小于此牌牌名字数，则你失去1点体力。", true, function (card, player) {
+        //                 var num = get.cardNameLength(card);
+        //                 return typeof num == "number" && num > 0;
+        //             })
+        //             .set("ai", function (card) {
+        //                 if (_status.event.dying && _status.event.num > 0 && get.cardNameLength(card) > _status.event.num) return 1 / get.cardNameLength(card); //怂
+        //                 return get.cardNameLength(card); //勇
+        //             })
+        //             .set("dying", player.hp + player.countCards("hs", { name: ["tao", "jiu"] }) < 1)
+        //             .set("num", event.num1);
+        //         "step 4";
+        //         if (result.bool) {
+        //             player.logSkill("old_clanyuzhi");
+        //             player.showCards(result.cards, get.translation(player) + "发动了【迂志】");
+        //             player.draw(get.cardNameLength(result.cards[0]));
+        //             player.storage.old_clanyuzhi = get.cardNameLength(result.cards[0]);
+        //             player.markSkill("old_clanyuzhi");
         //         }
         //     },
         //     ai: {
         //         threaten: 3,
         //         nokeep: true,
         //     },
-        //     onremove(player, skill) {
-        //         player.removeGaintag(skill);
-        //         player.removeSkill(skill + "_mark");
-        //     },
-        //     subSkill: {
-        //         mark: {
-        //             charlotte: true,
-        //             onremove: true,
-        //             mark: true,
-        //             intro: { content: "本轮野心：#张" },
-        //         },
-        //     },
+        //     onremove: true,
+        //     intro: { content: "本轮野心：#张" },
         // },
+        old_clanyuzhi: {
+            mod: {
+                aiOrder(player, card, num) {
+                    if (card.name == "tao") return num / 114514;
+                },
+            },
+            audio: "clanyuzhi",
+            trigger: { global: ["roundStart", "roundEnd"] },
+            filter(event, player, name) {
+                if (name === "roundStart") return player.countCards("h");
+                if (player.hasCard(card => card.hasGaintag("old_clanyuzhi") && lib.filter.cardDiscardable(card, player), "h")) return true;
+                const num1 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi").reduce((sum, evt) => sum + evt.cards.length, 0);
+                const num2 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi", 1).reduce((sum, evt) => sum + evt.cards.length, 0);
+                const num3 = player.getRoundHistory("useCard").length;
+                return (num1 > 0 && num2 > 0 && num1 > num2) || num1 > num3;
+            },
+            forced: true,
+            async content(event, trigger, player) {
+                const name = event.triggername;
+                const num1 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi", name === "roundStart" ? 1 : 0).reduce((sum, evt) => sum + evt.cards.length, 0);
+                switch (name) {
+                    case "roundStart":
+                        const result = await player
+                            .chooseCard(
+                                "迂志：请展示一张手牌",
+                                "摸此牌牌名字数的牌。本轮结束时弃置此牌，若本轮你使用的牌数或上一轮你以此法摸的牌数小于此牌牌名字数，则你受到1点雷属性伤害或失去〖保族〗。",
+                                function (card, player) {
+                                    var num = get.cardNameLength(card);
+                                    return typeof num == "number" && num > 0;
+                                },
+                                true
+                            )
+                            .set("ai", function (card) {
+                                if (_status.event.dying && _status.event.num > 0 && get.cardNameLength(card) > _status.event.num) return 1 / get.cardNameLength(card); //怂
+                                return get.cardNameLength(card); //勇
+                            })
+                            .set(
+                                "dying",
+                                player.hp +
+                                player.countCards("hs", {
+                                    name: ["tao", "jiu"],
+                                }) <
+                                1
+                            )
+                            .set("num", event.num1)
+                            .forResult();
+                        if (result?.bool && result.cards?.length) {
+                            await player.showCards(result.cards, get.translation(player) + "发动了【迂志】");
+                            player.addGaintag(result.cards, "old_clanyuzhi");
+                            await player.draw(get.cardNameLength(result.cards[0]));
+                            player.storage.old_clanyuzhi_mark = get.cardNameLength(result.cards[0]);
+                            player.addTempSkill("old_clanyuzhi_mark", "roundStart");
+                        }
+                        break;
+                    case "roundEnd":
+                        const cards = player.getCards("h", card => card.hasGaintag("old_clanyuzhi"));
+                        if (cards.length) player.removeGaintag("old_clanyuzhi");
+                        const num2 = player.getRoundHistory("gain", evt => evt.getParent().name == "draw" && evt.getParent(2).name == "old_clanyuzhi", 1).reduce((sum, evt) => sum + evt.cards.length, 0);
+                        const num3 = player.getRoundHistory("useCard").length;
+                        if ((num1 > 0 && num2 > 0 && num1 > num2) || num1 > num3) {
+                            let result2;
+                            if (num2 > 0 && num1 > num2) game.log(player, "的野心已开始膨胀", "#y(" + num1 + "张>" + num2 + "张)");
+                            if (num1 > num3) game.log(player, "的行动未达到野心", "#y(" + num3 + "张<" + num1 + "张)");
+                            if (player.hasSkill("clanbaozu", null, false, false)) result2 = await player.chooseBool("迂志：是否失去〖保族〗？", "若选择“否”，则你受到1点雷属性伤害").set("choice", player.awakenedSkills.includes("clanbaozu")).forResult();
+                            else result2 = { bool: false };
+                            if (result2?.bool) await player.removeSkills("clanbaozu");
+                            else await player.loseHp();
+                        }
+                        break;
+                }
+            },
+            ai: {
+                threaten: 3,
+                nokeep: true,
+            },
+            onremove(player, skill) {
+                player.removeGaintag(skill);
+                player.removeSkill(skill + "_mark");
+            },
+            subSkill: {
+                mark: {
+                    charlotte: true,
+                    onremove: true,
+                    mark: true,
+                    intro: { content: "本轮野心：#张" },
+                },
+            },
+        },
         old_clanxieshu: {
             audio: "clanxieshu",
             trigger: { player: "damageEnd", source: "damageSource" },
@@ -13171,13 +13232,15 @@ let lmCharacter = {
                 const cardPile = Array.from(ui.cardPile.childNodes).reverse();
                 return cardPile[0] && get.color(cardPile[0]) === "red";
             },
+            frequent: true,
+            /*
             async cost(event, trigger, player) {
                 const cardPile = Array.from(ui.cardPile.childNodes).reverse();
                 const redCards = [];
                 for (const card of cardPile) {
                     if (get.color(card) == "red") {
                         redCards.push(card);
-                        if (redCards.length >= 5) break;
+                        if (redCards.length >= 3) break;
                     } else break;
                 }
                 const { result } = await player
@@ -13194,15 +13257,28 @@ let lmCharacter = {
                     };
                 }
             },
+            */
             async content(event, trigger, player) {
+                let cards = [];
                 const cardPile = Array.from(ui.cardPile.childNodes).reverse();
-                const cards = [];
-                const number = event.cost_data;
                 for (const card of cardPile) {
                     if (get.color(card) == "red") {
                         cards.push(card);
-                        if (cards.length >= number) break;
-                    } else break;
+                        if (cards.length >= 5 /*event.cost_data*/) {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (!cards.length) {
+                    return;
+                }
+                const next = game.cardsGotoOrdering(cards);
+                await next;
+                cards = next.cards.slice();
+                if (!cards.length) {
+                    return;
                 }
                 await player.showCards(cards, get.translation(player) + "发动了【思泣】");
                 while (cards.length) {
@@ -13214,13 +13290,16 @@ let lmCharacter = {
                             }
                             return true;
                         })
-                    )
+                    ) {
                         break;
+                    }
                     const { result: result2 } = await player
                         .chooseCardButton(cards, true, "思泣：请选择要使用的牌")
                         .set("filterButton", button => {
                             const card = button.link;
-                            if (["tao", "wuzhong"].includes(card.name) || get.type(card) == "equip") return game.hasPlayer(target => lib.filter.targetEnabled2(card, get.player(), target));
+                            if (["tao", "wuzhong"].includes(card.name) || get.type(card) == "equip") {
+                                return game.hasPlayer(target => lib.filter.targetEnabled2(card, get.player(), target));
+                            }
                             return false;
                         })
                         .set("ai", button => {
@@ -13232,8 +13311,9 @@ let lmCharacter = {
                             lib.skill.old_olsiqi_backup.viewAs = card;
                             lib.skill.old_olsiqi_backup.viewAs.cards = [card];
                         }, card);
+                        player.addTempSkill("old_olsiqi_target");
                         const next = player.chooseToUse();
-                        next.set("openskilldialog", `思泣：是否使用${get.translation(card)}？`);
+                        next.set("openskilldialog", `思泣：请选择${get.translation(card)}的目标`);
                         next.set("forced", true);
                         next.set("norestore", true);
                         next.set("_backupevent", "old_olsiqi_backup");
@@ -13248,6 +13328,7 @@ let lmCharacter = {
                             .filter(evt => evt === next)
                             .then(() => (trigger.filterCard = () => false));
                         const { result: result3 } = await next;
+                        player.removeSkill("old_olsiqi_target");
                         if (result3.bool) {
                             cards.remove(card);
                             continue;
@@ -13256,60 +13337,17 @@ let lmCharacter = {
                     break;
                 }
                 if (cards.length) {
-                    await game.cardsDiscard(cards);
                     await player.draw(cards.length);
                 }
             },
-            mod: {
-                selectTarget(card, player, range) {
-                    if (_status._old_olsiqi_check) return;
-                    const event = get.event();
-                    if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") return;
-                    _status._old_olsiqi_check = true;
-                    const bool = game.countPlayer(target => lib.filter.targetEnabled2(card, player, target)) > 1;
-                    delete _status._old_olsiqi_check;
-                    if (bool) {
-                        if (range[0] !== 1) range[0] = 1;
-                        if (range[1] !== 1) range[1] = 1;
-                    }
-                },
-                cardEnabled2(card, player) {
-                    if (_status._old_olsiqi_check) return;
-                    const event = get.event();
-                    if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") return;
-                    _status._old_olsiqi_check = true;
-                    const bool = game.hasPlayer(target => lib.filter.targetEnabled2(card, player, target));
-                    delete _status._old_olsiqi_check;
-                    if (bool) return true;
-                },
-                cardEnabled(card, player) {
-                    if (_status._old_olsiqi_check) return;
-                    const event = get.event();
-                    if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") return;
-                    _status._old_olsiqi_check = true;
-                    const bool = game.hasPlayer(target => lib.filter.targetEnabled2(card, player, target));
-                    delete _status._old_olsiqi_check;
-                    if (bool) return true;
-                },
-                playerEnabled(card, player, target) {
-                    if (_status._old_olsiqi_check) return;
-                    const event = get.event();
-                    if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") return;
-                    _status._old_olsiqi_check = true;
-                    const bool = lib.filter.targetEnabled2(card, player, target);
-                    delete _status._old_olsiqi_check;
-                    if (bool) return true;
-                },
-            },
-            locked: false,
             group: "old_olsiqi_lose",
             subSkill: {
                 backup: {
                     filterCard: () => false,
                     selectCard: -1,
                     filterTarget: lib.filter.targetEnabled2,
+                    log: false,
                     precontent() {
-                        delete event.result.skill;
                         const name = event.result.card.name,
                             cards = event.result.card.cards.slice(),
                             rcard = cards[0];
@@ -13318,13 +13356,13 @@ let lmCharacter = {
                     },
                 },
                 lose: {
-                    audio: "olsiqi",
+                    audio: "old_olsiqi",
                     trigger: {
                         player: "loseAfter",
                         global: ["loseAsyncAfter", "cardsDiscardAfter", "equipAfter", "addJudgeAfter", "addToExpansionAfter"],
                     },
                     filter(event, player) {
-                        return event.getd(player).some(i => get.color(i, player) === "red");
+                        return event.getd(player, "cards2").some(i => get.color(i, player) === "red");
                     },
                     forced: true,
                     locked: true,
@@ -13333,6 +13371,76 @@ let lmCharacter = {
                         await game.cardsGotoPile(list);
                         game.log(player, "将", list, "置入了牌堆底");
                     },
+                },
+                target: {
+                    mod: {
+                        selectTarget(card, player, range) {
+                            if (_status._old_olsiqi_check) {
+                                return;
+                            }
+                            const event = get.event();
+                            if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") {
+                                return;
+                            }
+                            _status._old_olsiqi_check = true;
+                            const bool = game.countPlayer(target => lib.filter.targetEnabled2(card, player, target)) > 1;
+                            delete _status._old_olsiqi_check;
+                            if (bool) {
+                                if (range[0] !== 1) {
+                                    range[0] = 1;
+                                }
+                                if (range[1] !== 1) {
+                                    range[1] = 1;
+                                }
+                            }
+                        },
+                        cardEnabled2(card, player) {
+                            if (_status._old_olsiqi_check) {
+                                return;
+                            }
+                            const event = get.event();
+                            if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") {
+                                return;
+                            }
+                            _status._old_olsiqi_check = true;
+                            const bool = game.hasPlayer(target => lib.filter.targetEnabled2(card, player, target));
+                            delete _status._old_olsiqi_check;
+                            if (bool) {
+                                return true;
+                            }
+                        },
+                        cardEnabled(card, player) {
+                            if (_status._old_olsiqi_check) {
+                                return;
+                            }
+                            const event = get.event();
+                            if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") {
+                                return;
+                            }
+                            _status._old_olsiqi_check = true;
+                            const bool = game.hasPlayer(target => lib.filter.targetEnabled2(card, player, target));
+                            delete _status._old_olsiqi_check;
+                            if (bool) {
+                                return true;
+                            }
+                        },
+                        playerEnabled(card, player, target) {
+                            if (_status._old_olsiqi_check) {
+                                return;
+                            }
+                            const event = get.event();
+                            if (!event || event.name !== "chooseToUse" || event.getParent().name !== "old_olsiqi") {
+                                return;
+                            }
+                            _status._old_olsiqi_check = true;
+                            const bool = lib.filter.targetEnabled2(card, player, target);
+                            delete _status._old_olsiqi_check;
+                            if (bool) {
+                                return true;
+                            }
+                        },
+                    },
+                    charlotte: false,
                 },
             },
         },
@@ -13355,7 +13463,7 @@ let lmCharacter = {
                 const name = event.triggername;
                 if (name == "useCardToPlayer") {
                     event.result = await player
-                        .chooseToDiscard(`###${get.prompt(event.skill, trigger.target)}###弃置任意张红色牌并令其弃置等量红色手牌，否则不能响应该牌`, [1, Infinity], "he", "chooseonly", card => get.color(card, player) == "red")
+                        .chooseToDiscard(`###${get.prompt(event.skill, trigger.target)}###弃置任意张红色牌并令其弃置等量红色手牌，否则不能响应该牌`, [1, Infinity], "he", "chooseonly", (card, player) => get.color(card, player) == "red")
                         .set("ai", card => {
                             const player = get.player(),
                                 target = get.event().getTrigger().target,
@@ -13367,7 +13475,7 @@ let lmCharacter = {
                         .forResult();
                 } else {
                     event.result = await player
-                        .chooseToDiscard(`###${get.prompt(event.skill)}###弃置一张黑色牌并视为使用一张【杀】`, "he", "chooseonly", card => get.color(card, player) == "black")
+                        .chooseToDiscard(`###${get.prompt(event.skill)}###弃置一张黑色牌并视为使用一张【杀】`, "he", "chooseonly", (card, player) => get.color(card, player) == "black")
                         .set("ai", card => {
                             if (!get.player().hasValueTarget({ name: "sha", isCard: true }, false, false)) return 0;
                             return 6 - get.value(card);
@@ -16405,6 +16513,223 @@ let lmCharacter = {
                 },
             },
         },
+        //新杀夏侯玄
+        old_dcyizheng: {
+            audio: "dcyizheng",
+            trigger: { player: ["phaseBegin", "phaseEnd"] },
+            filter(event, player) {
+                return (
+                    player.countCards("h") &&
+                    game.hasPlayer(target => {
+                        return target != player && target.countCards("h");
+                    })
+                );
+            },
+            async cost(event, trigger, player) {
+                event.result = await player
+                    .chooseTarget(get.prompt2(event.skill), [1, Infinity], (card, player, target) => {
+                        return target != player && target.countCards("h");
+                    })
+                    .set("ai", target => {
+                        if (player.hp == 1) {
+                            return 0;
+                        }
+                        return -get.attitude(get.player(), target);
+                    })
+                    .forResult();
+            },
+            async content(event, trigger, player) {
+                const targets = [player].concat(event.targets).sortBySeat();
+                //先选牌
+                let showEvent = player
+                    .chooseCardOL(targets, "议政：请选择要展示的牌", true)
+                    .set("ai", function (card) {
+                        return -get.value(card);
+                    })
+                    .set("source", player);
+                showEvent.aiCard = function (target) {
+                    const hs = target.getCards("h");
+                    return { bool: true, cards: [hs.randomGet()] };
+                };
+                showEvent._args.remove("glow_result");
+                const result = await showEvent.forResult();
+                const cards = [];
+                for (var i = 0; i < targets.length; i++) {
+                    cards.push(result[i].cards[0]);
+                }
+                //新建showCards事件，不然没法兼容庞宏、OL罗宪这些角色的技能
+                let next = game.createEvent("showCards");
+                next.set("player", player);
+                next.set("targets", targets);
+                next.set("cards", cards);
+                next.set("skill", event.name);
+                next.setContent(() => {
+                    //照搬showCards的事件然后改动了一下dialog
+                    "step 0";
+                    event.dialog = ui.create.dialog(`${get.translation(player)} 发动了〖${get.translation(event.skill)}〗`, cards);
+                    event.dialogid = lib.status.videoId++;
+                    event.dialog.videoId = event.dialogid;
+                    game.broadcastAll(
+                        function (skill, targets, cards, id, player) {
+                            let dialog = ui.create.dialog(`${get.translation(player)} 发动了〖${get.translation(skill)}〗`, cards);
+                            dialog.videoId = id;
+                            const getName = function (target) {
+                                if (target._tempTranslate) {
+                                    return target._tempTranslate;
+                                }
+                                const name = target.name;
+                                if (lib.translate[name + "_ab"]) {
+                                    return lib.translate[name + "_ab"];
+                                }
+                                return get.translation(name);
+                            };
+                            for (let i = 0; i < targets.length; i++) {
+                                dialog.buttons[i].querySelector(".info").innerHTML = getName(targets[i]) + get.translation(cards[i].suit) + cards[i].number;
+                            }
+                        },
+                        event.skill,
+                        targets,
+                        cards,
+                        event.dialogid,
+                        player
+                    );
+                    for (let i = 0; i < targets.length; i++) {
+                        game.log(targets[i], "展示了", cards[i]);
+                    }
+                    game.addCardKnower(cards, "everyone");
+                    game.delay(4);
+                    game.addVideo("showCards", player, [get.translation(player) + "发动了〖议政〗", get.cardsInfo(cards)]);
+                    "step 1";
+                    game.broadcastAll("closeDialog", event.dialogid);
+                    event.dialog.close();
+                });
+                await next;
+                if (cards.map(card => get.type2(card)).unique().length == 1) {
+                    player.popup("洗具");
+                    const result = await player
+                        .chooseTarget(true)
+                        .set("createDialog", [`议政：令一名角色获得这些牌`, cards])
+                        .set("ai", target => get.attitude(get.player(), target))
+                        .forResult();
+                    if (result?.targets) {
+                        const target = result.targets[0];
+                        player.line(target);
+                        let gainEvent = target.gain(cards);
+                        gainEvent.set(
+                            "givers",
+                            targets.filter(i => i != target)
+                        );
+                        gainEvent.set("animate", function (event) {
+                            const player = event.player,
+                                cards = event.cards,
+                                givers = event.givers;
+                            for (let i = 0; i < givers.length; i++) {
+                                givers[i].$give(cards[i], player);
+                            }
+                            return 500;
+                        });
+                        await gainEvent;
+                    }
+                } else {
+                    player.popup("杯具");
+                    await game
+                        .loseAsync({
+                            lose_list: targets.map((target, index) => {
+                                return [target, [cards[index]]];
+                            }),
+                            discarder: player,
+                        })
+                        .setContent("discardMultiple");
+                }
+            },
+        },
+        old_dcguilin: {
+            audio: "dcguilin",
+            derivation: ["dcboxuan_rewrite"],
+            limited: true,
+            unique: true,
+            skillAnimation: true,
+            animationColor: "thunder",
+            enable: "phaseUse",
+            trigger: { player: "dying" },
+            filter(event, player) {
+                if (event.name == "dying") {
+                    return player.isDying();
+                }
+                return true;
+            },
+            async content(event, trigger, player) {
+                player.awakenSkill(event.name);
+                const num = player.getDamagedHp();
+                await player.recover(num);
+                await player.draw(num);
+                await player.removeSkills("old_dcyizheng");
+                if (player.hasSkill("dcboxuan")) {
+                    player.storage.dcboxuan = true;
+                }
+                game.log(player, `修改了〖博玄〗`);
+            },
+            ai: {
+                order: 5,
+                result: {
+                    player: 1,
+                },
+            },
+        },
+        //新杀诸葛均
+        old_dcgumai: {
+            audio: "dcgumai",
+            trigger: {
+                player: "damageBegin3",
+                source: "damageBegin1",
+            },
+            usable: 1,
+            filter(event, player) {
+                return player.countCards("h");
+            },
+            async content(event, trigger, player) {
+                const suit = get.suit(player.getCards("h")[0], player),
+                    bool = player.getCards("h").every(i => get.suit(i, player) == suit);
+                await player.showHandcards(`${get.translation(player)}发动了【孤脉】`);
+                const result = await player
+                    .chooseControl("+1", "-1")
+                    .set("prompt", "令此伤害+1或-1")
+                    .set("ai", () => {
+                        if (_status.event.eff < 0) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    .set("eff", get.damageEffect(trigger.player, trigger.source, player))
+                    .forResult();
+                if (result.index == 0) {
+                    trigger.num++;
+                    player.popup(" +1 ", "fire");
+                    game.log(player, "令此伤害+1");
+                }
+                if (result.index == 1) {
+                    trigger.num--;
+                    player.popup(" -1 ", "water");
+                    game.log(player, "令此伤害-1");
+                }
+                if (bool) {
+                    const result2 = await player
+                        .chooseToDiscard("h", "是否弃置一张手牌并重置【孤脉】？")
+                        .set("ai", card => {
+                            const { player, eff } = get.event();
+                            if (eff) {
+                                return 7 - get.value(card);
+                            }
+                            return 0;
+                        })
+                        .set("eff", player.countCards("hs", card => player.hasValueTarget(card) && get.tag(card, "damage")) > 0)
+                        .forResult();
+                    if (result2.bool) {
+                        player.storage.counttrigger.old_dcgumai--;
+                    }
+                }
+            },
+        },
         //TW霍峻
         old_twjieyu: {
             audio: "twjieyu",
@@ -17679,8 +18004,10 @@ let lmCharacter = {
             audioname: ["huan_caoang"],
             trigger: { player: ["phaseZhunbeiBegin", "phaseUseBegin"] },
             filter(event, player) {
-                if (event.name == "phaseZhunbei") return player.hasDisabledSlot();
-                return player.getStorage("old_twhuangzhu_effect").length;
+                if (event.name == "phaseZhunbei") {
+                    return player.hasDisabledSlot();
+                }
+                return player.getStorage("old_twhuangzhu_effect").length && player.hasDisabledSlot();
             },
             async cost(event, trigger, player) {
                 if (trigger.name == "phaseZhunbei") {
@@ -17704,10 +18031,53 @@ let lmCharacter = {
                         cost_data: control,
                     };
                 } else {
-                    const storag = player.getStorage("old_twhuangzhu_effect");
+                    const storage = player.getStorage("old_twhuangzhu_effect");
+                    const st2 = player.getStorage("old_twhuangzhu_equip").slice().map(equip => equip[2]);
+                    let virtualList = {};
+                    let disabled = [1, 2, 3, 4, 5].filter(num => player.countDisabledSlot(num)).map(num => "equip" + num);
+                    for (let i of disabled) virtualList[i] = [];
+                    console.log(disabled);
+                    if (st2?.length) {
+                        for (let i of st2) {
+                            if (disabled.includes(get.subtype(i))) {
+                                virtualList[get.subtype(i)].add(i);
+                            }
+                        }
+                    }
+                    let chooseList = [];
+                    chooseList.push('###煌烛###<div class="text center">为至多两个已废除的装备栏选择或替换牌名</div>');
+                    for (let i of disabled) {
+                        let str = get.translation(i) + "栏：";
+                        if (virtualList[i]?.length) {
+                            str += "已视为装备" + get.translation(virtualList[i]);
+                        } else {
+                            str += "未视为装备任何牌";
+                        }
+                        chooseList.push(str);
+                        let equips = storage.slice().filter(name => get.subtypes(name).includes(i));
+                        let list = [equips, "vcard"]
+                        if (equips.length) {
+                            chooseList.push(list);
+                        }
+                    }
+                    console.log(chooseList);
                     const {
                         result: { bool, links },
-                    } = await player.chooseButton(['###煌烛：是否选择或替换至多两个牌名？###<div class="text center">你视为拥有选择牌名的技能</div>', [storag, "vcard"]], [1, 2]).set("ai", button => get.equipValue({ name: button.link[2] }, get.player()));
+                    } = await player.chooseButton(chooseList, [1, 2])
+                        .set("filterButton", button => {
+                            let st2 = get.event("st2");
+                            if (st2.includes(button.link[2])) {
+                                return false;
+                            }
+                            if (ui.selected.buttons.length) {
+                                if (get.subtype(ui.selected.buttons[0].link[2]) == get.subtype(button.link[2])) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        })
+                        .set("st2", st2)
+                        .set("ai", button => get.equipValue({ name: button.link[2] }, get.player()));
                     event.result = {
                         bool: bool,
                         cost_data: links,
@@ -19264,44 +19634,6 @@ let lmCharacter = {
             },
         },
     },
-    //动态翻译
-    dynamicTranslate: {
-        old_sblongdan(player) {
-            if (player.hasSkill("old_sblongdan_mark", null, null, false)) return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
-            return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后若你以此法使用牌，你摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
-        },
-        old_mbzuoyou(player) {
-            const old_mbzuoyou = player.storage.old_mbzuoyou;
-            if (old_mbzuoyou) return "转换技。出牌阶段限一次，阳：你可以令一名角色摸三张牌，然后其弃置两张牌；<span class='bluetext'>阴：你可以令一名角色获得1点护甲。</span>";
-            return "转换技。出牌阶段限一次，<span class='bluetext'>阳：你可以令一名角色摸三张牌，然后其弃置两张牌；</span>阴：你可以令一名角色获得1点护甲。";
-        },
-        old_sbwansha(player) {
-            const storage = player.storage.old_sbwansha;
-            var str = "①你的回合内，不处于濒死状态的其他角色不能使用【桃】。②一名角色进入濒死状态时，你可以观看其手牌并选择其";
-            str += storage ? "区域内" : "中";
-            str += "零至";
-            str += storage ? "三" : "两";
-            str += "张牌（其他角色不可见），然后其选择一项：1.你将这些牌分配给任意名不为其的角色；2.其弃置除这些牌以外的牌。";
-            return str;
-        },
-        old_sbweimu(player) {
-            const storage = player.storage.old_sbweimu;
-            var str = "锁定技。";
-            str += storage ? "①" : "";
-            str += "当你成为黑色锦囊牌的目标时，取消之。";
-            if (storage) {
-                str += "②每轮开始时，若你上一轮成为其他角色使用牌的目标的次数不大于2，你从弃牌堆中随机获得一张黑色锦囊牌或防具牌。";
-            }
-            return str;
-        },
-        old_dcsbshimou(player) {
-            let str1 = `阳：手牌数全场最低的角色`,
-                str2 = `阴：手牌数全场最高的角色`;
-            if (!player.storage.old_dcsbshimou) str1 = `<span class=thundertext>${str1}</span>`;
-            else str2 = `<span class=thundertext>${str2}</span>`;
-            return `转换技，游戏开始可自选阴阳状态，出牌阶段限一次，你可令一名{${str1}；${str2}}将手牌调整至体力上限（至多摸五张）并视为使用一张仅指定单目标的普通锦囊牌（此牌牌名与目标由你指定）。若以此法摸牌，此牌可额外增加一个目标；若以此法弃牌，此牌额外结算一次。`;
-        },
-    },
     //翻译
     translate: {
         mb_old: "手杀怀旧",
@@ -19312,7 +19644,7 @@ let lmCharacter = {
 
         old_new_simayi: "旧应天神司马懿",
         old_new_simayi_ab: "旧神司马懿",
-        old_new_simayi_prefix: "旧神",
+        old_new_simayi_prefix: "旧|神",
         old_jilin: "戢鳞",
         old_jilin_info: "①游戏开始时，你将牌堆顶三张牌暗置于你的武将牌上，称为“志”。②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
         old_yingyou: "英猷",
@@ -19320,7 +19652,7 @@ let lmCharacter = {
         old_yingtian: "应天",
         old_yingtian_info: "觉醒技。一名角色死亡后，若场上势力数不大于2，则你获得〖鬼才〗、〖完杀〗、〖连破〗并失去〖英猷〗且你本局游戏使用牌没有距离限制。",
         old_shen_lusu: "旧神鲁肃",
-        old_shen_lusu_prefix: "旧神",
+        old_shen_lusu_prefix: "旧|神",
         old_dingzhou: "定州",
         old_dingzhou_info: "出牌阶段限一次。你可以将X张牌交给一名场上有牌的角色，然后你获得其场上的所有牌（X为其场上的牌数）。",
         old_tamo: "榻谟",
@@ -19331,19 +19663,19 @@ let lmCharacter = {
         old_zhimeng_info: "回合结束后，你可以选择一名其他角色。若如此做，你与其将各自所有手牌置于处理区，然后你随机获得这些牌中的一半（向上取整），其获得剩余的牌。",
         old_mb_jushou: "旧手杀界沮授",
         old_mb_jushou_ab: "旧界沮授",
-        old_mb_jushou_prefix: "旧界",
+        old_mb_jushou_prefix: "旧|界",
         old_xinjianying: "渐营",
         old_xinjianying_info: "①当你于出牌阶段内使用与此阶段你使用的上一张牌点数或花色相同的牌时，你可以摸一张牌。②出牌阶段限一次，你可以将一张牌当做任意基本牌使用（不计入次数限制）。若你于此阶段内使用的上一张牌有花色，则此牌的花色视为上一张牌的花色。",
         xinshibei: "矢北",
         xinshibei_info: "锁定技，当你受到伤害后：若此伤害是你本回合第一次受到的伤害，则你回复1点体力；否则你失去1点体力。",
         old_mb_zhuzhi: "旧手杀界朱治",
         old_mb_zhuzhi_ab: "旧界朱治",
-        old_mb_zhuzhi_prefix: "旧界",
+        old_mb_zhuzhi_prefix: "旧|界",
         old_sbanguo: "安国",
         old_sbanguo_info: "①游戏开始时，你令一名其他角色获得1枚“安国”标记（有“安国”的角色手牌上限基数等于体力上限）。②出牌阶段开始时，你可以将一名有“安国”的角色的所有“安国”移动给一名本局游戏未获得过“安国”的其他角色。③当你受到伤害时，若有有“安国”的角色且伤害值不小于你的体力值且此伤害没有来源或来源没有“安国”，防止此伤害。④一名角色进入濒死状态时，若其有你因〖安国①〗获得的“安国”，你移去其该“安国”，令其将体力回复至1点。然后你选择一项：1.若你的体力值大于1，你失去体力至1点；2.若你的体力上限大于1，你将体力上限减至1。最后你令其获得X点护甲（X为你以此法失去的体力值或减少的体力上限）。",
         old_mb_sp_zhenji: "手杀SP甄宓",
         old_mb_sp_zhenji_ab: "旧SP甄宓",
-        old_mb_sp_zhenji_prefix: "旧SP",
+        old_mb_sp_zhenji_prefix: "旧|SP",
         old_mbbojian: "博鉴",
         old_mbbojian_info: "锁定技。出牌阶段结束时，若你本阶段使用牌数与花色数与上个出牌阶段皆不同，你摸两张牌；否则你将一张弃牌堆中本阶段你因使用而失去的牌交给一名角色。",
         old_mbjiwei: "济危",
@@ -19383,13 +19715,19 @@ let lmCharacter = {
         old_wangling_prefix: "旧",
         old_sp_wangshuang: "旧手杀王双",
         old_sp_wangshuang_ab: "旧勇王双",
-        old_sp_wangshuang_prefix: "旧勇",
+        old_sp_wangshuang_prefix: "旧|勇",
         old_shanxie: "擅械",
         old_shanxie_info: "①出牌阶段限一次，你可选择一项：⒈从牌堆中获得一张武器牌。⒉获得一名其他角色装备区内的一张武器牌并使用，然后其将一张手牌当做【杀】对你使用。②当其他角色使用【闪】响应你使用的【杀】时，若此【闪】没有点数或点数不大于你攻击范围的二倍，则你令此【闪】无效。",
         old_wujing: "旧吴景",
         old_wujing_prefix: "旧",
         old_liubing: "流兵",
         old_liubing_info: "锁定技。①当你声明使用【杀】后，若此牌是你本回合使用的第一张有唯一对应实体牌的【杀】，则你将此牌的花色改为♦。②其他角色于其出牌阶段内使用的非转化黑色杀结算结束后，若此【杀】未造成伤害，则你获得之。",
+        old_sp_xinpi: "旧手杀辛毗",
+        old_sp_xinpi_ab: "旧信辛毗",
+        old_sp_xinpi_prefix: "旧|信",
+        old_spyinju: "引裾",
+        old_spyinju2: "引裾",
+        old_spyinju_info: "出牌阶段限一次，你可令一名其他角色选择一项：①对你使用一张【杀】。②其下个回合的准备阶段开始时，跳过出牌阶段和弃牌阶段。",
         old_qiaogong: "旧桥公",
         old_qiaogong_prefix: "旧",
         old_yizhu: "遗珠",
@@ -19397,16 +19735,16 @@ let lmCharacter = {
         old_gonghuan: "共患",
         old_gonghuan_info: "锁定技。每回合限一次，一名其他角色受到伤害时，若其拥有“姻”标记且其体力值小于你，则你将伤害转移给自己。此伤害结算结束后，若你与其体力值相等，则你与其移去“姻”标记。",
         old_sp_lvfan: "旧严吕范",
-        old_sp_lvfan_prefix: "旧严",
+        old_sp_lvfan_prefix: "旧|严",
         old_xin_zhangzhongjing: "旧张机",
         old_xin_zhangzhongjing_prefix: "旧",
         old_sp_zhujun: "旧手杀朱儁",
         old_sp_zhujun_ab: "旧严朱儁",
-        old_sp_zhujun_prefix: "旧严",
+        old_sp_zhujun_prefix: "旧|严",
         old_yj_weiyan: "旧☆魏延",
-        old_yj_weiyan_prefix: "旧☆",
+        old_yj_weiyan_prefix: "旧|☆",
         old_yj_zhoubuyi: "旧☆周不疑",
-        old_yj_zhoubuyi_prefix: "旧☆",
+        old_yj_zhoubuyi_prefix: "旧|☆",
         old_mbhuiyao: "慧夭",
         old_mbhuiyao_info: "出牌阶段限一次。你可以受到1点无来源伤害，然后你选择一名其他角色，令其视为对另一名角色造成过1点伤害。",
         old_mbquesong: "雀颂",
@@ -19414,7 +19752,7 @@ let lmCharacter = {
         old_shenpei: "旧审配",
         old_shenpei_prefix: "旧",
         old_mb_sp_guanqiujian: "旧玄毌丘俭",
-        old_mb_sp_guanqiujian_prefix: "旧玄",
+        old_mb_sp_guanqiujian_prefix: "旧|玄",
         old_mbcuizhen: "摧阵",
         old_mbcuizhen_info: "①游戏开始时，你可以废除至多三名其他角色的武器栏。②当你于出牌阶段使用伤害类牌指定其他角色为目标后，若目标角色的手牌数不小于体力值，你可以废除其武器栏。③摸牌阶段，你令额定摸牌数+X（X为所有角色被废除的武器栏数之和+1，至多为4）。",
         old_mb_wangjing: "旧王经",
@@ -19447,86 +19785,86 @@ let lmCharacter = {
         old_mbanda_info: "每回合限一次，当一名角色进入濒死状态时，你可令伤害来源交给其两张颜色不同的牌，否则该角色回复1点体力。",
 
         old_sb_huangyueying: "旧谋黄月英",
-        old_sb_huangyueying_prefix: "旧谋",
+        old_sb_huangyueying_prefix: "旧|谋",
         old_sbqicai: "奇才",
         old_sbqicai_backup: "奇才",
         old_sbqicai_info: "①出牌阶段限一次。你可以将手牌中或弃牌堆中的一张装备牌置于一名其他角色的对应装备栏，然后其获得如下效果：当其得到普通锦囊牌后，其将此牌交给你（限三张）。②你使用锦囊牌无距离限制。",
         old_sb_huangzhong: "旧谋黄忠",
-        old_sb_huangzhong_prefix: "旧谋",
+        old_sb_huangzhong_prefix: "旧|谋",
         old_sbliegong: "烈弓",
         old_sbliegong_info: "①你使用【杀】可以选择你距离不大于此【杀】点数的角色为目标。②当你使用牌时，或成为其他角色使用牌的目标后，你记录此牌的花色。③当你使用【杀】指定唯一目标后，若你〖烈弓②〗的记录不为空，则你可亮出牌堆顶的X张牌（X为你〖烈弓②〗记录过的花色数-1），令此【杀】的伤害值基数+Y（Y为亮出牌中被〖烈弓②〗记录过花色的牌的数量），且目标角色不能使用〖烈弓②〗记录过花色的牌响应此【杀】。此【杀】使用结算结束后，你清除〖烈弓②〗的记录。",
         old_sb_gongsunzan: "旧谋公孙瓒",
-        old_sb_gongsunzan_prefix: "旧谋",
+        old_sb_gongsunzan_prefix: "旧|谋",
         old_sbqiaomeng: "趫猛",
         old_sbqiaomeng_info: "当你使用【杀】造成伤害后，若你有〖义从〗，你可以选择一项：⒈弃置受伤角色区域里的一张牌并摸两张牌；⒉获得4点蓄力值。",
         old_sb_sunquan: "旧谋孙权",
-        old_sb_sunquan_prefix: "旧谋",
+        old_sb_sunquan_prefix: "旧|谋",
         old_sbzhiheng: "制衡",
         old_sbzhiheng_info: "出牌阶段限一次。你可以弃置任意张牌并摸等量的牌，若你以此法弃置的牌包括你所有手牌，则你多摸X张牌（X为你的“业”数+1）。",
         old_sbtongye: "统业",
         old_sbtongye_info: "锁定技。结束阶段，你猜测场上装备牌数与你下一个准备阶段的场上装备牌数是否相等，并获得以下效果：你下一个准备阶段，若你猜对且“业”数小于4，你获得1枚“业”；若你猜错，你弃1枚“业”。",
         old_sb_huanggai: "旧谋黄盖",
-        old_sb_huanggai_prefix: "旧谋",
+        old_sb_huanggai_prefix: "旧|谋",
         old_sb_ganning: "旧谋甘宁",
-        old_sb_ganning_prefix: "旧谋",
+        old_sb_ganning_prefix: "旧|谋",
         old_sbqixi: "奇袭",
         old_sbqixi_info: "你可以将一张黑色牌当作【过河拆桥】使用。你使用非转化非虚拟的【过河拆桥】可以改为：出牌阶段，对一名区域内有牌的角色使用，你弃置其区域内的所有牌。",
         old_sbfenwei: "奋威",
         old_sbfenwei_info: "限定技，当一名角色使用的锦囊牌指定了至少两名角色为目标时，你可以令此牌对其中任意名角色无效，然后你获得牌堆中的X张【过河拆桥】（X为你选择的角色数且X至多为4）。",
         old_sb_xiaoqiao: "旧谋小乔",
-        old_sb_xiaoqiao_prefix: "旧谋",
+        old_sb_xiaoqiao_prefix: "旧|谋",
         old_sbtianxiang: "天香",
         old_sbtianxiang_info: "①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸X张牌（X为移去的“天香”标记数+3）。",
         old_sb_daqiao: "旧谋大乔",
-        old_sb_daqiao_prefix: "旧谋",
+        old_sb_daqiao_prefix: "旧|谋",
         old_sbguose: "国色",
         old_sbguose_info: "出牌阶段限四次，你可以将一张♦牌当【乐不思蜀】使用或弃置场上一张【乐不思蜀】，然后你摸两张牌并弃置一张牌。",
         old_sb_sunce: "旧谋孙策",
-        old_sb_sunce_prefix: "旧谋",
+        old_sb_sunce_prefix: "旧|谋",
         old_sbhunzi: "魂姿",
         old_sbhunzi_info: "觉醒技。当你脱离濒死状态后，你减1点体力上限，获得2点护甲，摸三张牌。然后你获得〖英姿〗和〖英魂〗。",
         old_sb_sp_zhugeliang: "旧谋卧龙诸葛亮·初版",
         old_sb_sp_zhugeliang_ab: "旧谋卧龙",
-        old_sb_sp_zhugeliang_prefix: "旧谋",
+        old_sb_sp_zhugeliang_prefix: "旧|谋",
         old_sbhuoji: "火计",
         old_sbhuoji_info: "使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已对其他角色造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得〖观星〗和〖空城〗。③失败：使命成功前进入濒死状态。",
         old_sbkanpo: "看破",
         old_sbkanpo_info: "①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录共计三个未于本次清除过的非装备牌牌名（对其他角色不可见）。②当其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录，令此牌无效。",
         old_sb_zhugeliang: "旧谋诸葛亮·初版",
         old_sb_zhugeliang_ab: "旧谋诸葛亮",
-        old_sb_zhugeliang_prefix: "旧谋",
+        old_sb_zhugeliang_prefix: "旧|谋",
         old_sbguanxing: "观星",
         old_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”。然后你可以将任意张“星”置于牌堆顶（X为你此次移去的“星”数+1且至多为7，若你此前未发动过〖观星①〗则X为7）。②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。",
         old_sbkongcheng: "空城",
         old_sbkongcheng_info: "锁定技。当你受到伤害时，若你有〖观星〗，且若你：有“星”，你判定，若结果点数不大于你的“星”数，此伤害-1；没有“星”，此伤害+1。",
         oldx_sb_sp_zhugeliang: "旧谋卧龙诸葛亮",
         oldx_sb_sp_zhugeliang_ab: "旧谋卧龙",
-        oldx_sb_sp_zhugeliang_prefix: "旧谋",
+        oldx_sb_sp_zhugeliang_prefix: "旧|谋",
         oldx_sbhuoji: "火计",
         oldx_sbhuoji_info: "使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得〖观星〗和〖空城〗。③失败：使命成功前进入濒死状态。",
         oldx_sbkanpo: "看破",
         oldx_sbkanpo_info: "①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录10个牌名）。②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。",
         oldx_sb_zhugeliang: "旧谋诸葛亮",
-        oldx_sb_zhugeliang_prefix: "旧谋",
+        oldx_sb_zhugeliang_prefix: "旧|谋",
         oldx_sbguanxing: "观星",
         oldx_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”（X为7-此前发动〖观星①〗次数的两倍，且X至少为0）。然后你可以将任意张“星”置于牌堆顶。②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。",
         oldx_sbkongcheng: "空城",
         oldx_sbkongcheng_info: "锁定技。当你受到伤害时，若你拥有技能〖观星〗，且若你：有“星”，你判定，若结果点数不大于你的“星”数，此伤害-1；没有“星”，此伤害+1。",
         old_sb_menghuo: "旧谋孟获",
-        old_sb_menghuo_prefix: "旧谋",
+        old_sb_menghuo_prefix: "旧|谋",
         old_sbzaiqi: "再起",
         old_sbzaiqi_info: "蓄力技（3/7）。①弃牌阶段结束时，你可以消耗任意点蓄力值并选择等量名角色，然后令这些角色选择一项：1.令你摸一张牌；2.弃置一张牌，然后你回复1点体力。②每回合限一次。当你造成伤害后，你获得1点蓄力值。",
         old_sb_zhurong: "旧谋祝融",
-        old_sb_zhurong_prefix: "旧谋",
+        old_sb_zhurong_prefix: "旧|谋",
         old_sbjuxiang: "巨象",
         old_sbjuxiang_info: "锁定技。①【南蛮入侵】对你无效。②当其他角色使用【南蛮入侵】结算结束后，你获得此牌对应的所有实体牌。③结束阶段，若你未于本回合使用过【南蛮入侵】，你将一张游戏外的随机【南蛮入侵】（共八张）交给一名角色。",
         old_sb_guanyu: "旧谋关羽",
-        old_sb_guanyu_prefix: "旧谋",
+        old_sb_guanyu_prefix: "旧|谋",
         old_sbwusheng: "武圣",
         old_sbwusheng_wusheng_backup: "武圣",
         old_sbwusheng_info: "你可以将一张手牌当作任意【杀】使用或打出。出牌阶段开始时，你可以选择一名非主公的其他角色，本阶段对其使用【杀】无距离和次数限制，使用【杀】指定其为目标后摸一张牌，对其使用五张【杀】后不能对其使用【杀】。",
         old_sb_zhaoyun: "旧谋赵云",
-        old_sb_zhaoyun_prefix: "旧谋",
+        old_sb_zhaoyun_prefix: "旧|谋",
         old_sblongdan: "龙胆",
         old_sblongdan_info: "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。",
         old_sbjizhu: "积著",
@@ -19534,23 +19872,23 @@ let lmCharacter = {
         old_sblongdan_shabi: "龙胆",
         old_sblongdan_shabi_info: "蓄力技（1/4）。①你可以消耗1点蓄力值，将一张基本牌当做任意基本牌使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。",
         old_sb_fazheng: "旧谋法正",
-        old_sb_fazheng_prefix: "旧谋",
+        old_sb_fazheng_prefix: "旧|谋",
         old_sbxuanhuo: "眩惑",
         old_sbxuanhuo_info: "①出牌阶段限一次。你可以将一张牌交给一名没有“眩”标记的其他角色，然后令其获得“眩”标记。②当有“眩”的其他角色于摸牌阶段外得到牌后，若你以此法于其本次获得“眩”的期间内得到其的牌数小于5，你随机获得其一张手牌。",
         old_sbenyuan: "恩怨",
         old_sbenyuan_info: "锁定技。准备阶段，若场上存在有“眩”的角色，你移去该角色的“眩”，且你于其本次获得“眩”的期间内得到其的牌数：不小于3，你交给其两张牌；小于3，其失去1点体力，你回复1点体力。",
         old_sb_xuhuang: "旧谋徐晃",
-        old_sb_xuhuang_prefix: "旧谋",
+        old_sb_xuhuang_prefix: "旧|谋",
         old_sbduanliang: "断粮",
         old_sbduanliang_info: "出牌阶段限两次。你可以与一名其他角色进行谋弈。若你赢，且你选择的选项为：“围城断粮”，若其判定区没有【兵粮寸断】，你将牌堆顶牌当【兵粮寸断】对其使用，否则你获得其一张牌；“擂鼓进军”，你视为对其使用一张【决斗】。",
         old_sb_yuanshao: "旧谋袁绍",
-        old_sb_yuanshao_prefix: "旧谋",
+        old_sb_yuanshao_prefix: "旧|谋",
         old_sbluanji: "乱击",
         old_sbluanji_info: "①出牌阶段限一次。你可以将两张手牌当【万箭齐发】使用。②当其他角色因响应你使用的【万箭齐发】而打出【闪】时，你摸一张牌。",
         old_sbxueyi: "血裔",
         old_sbxueyi_info: "主公技，锁定技。①你的手牌上限+2X（X为场上其他群势力角色数）。②当你使用牌指定其他群势力角色为目标后，你摸一张牌。",
         // old_sb_zhangjiao: "旧谋张角",
-        // old_sb_zhangjiao_prefix: "旧谋",
+        // old_sb_zhangjiao_prefix: "旧|谋",
         // old_sbleiji: "雷击",
         // old_sbleiji_info: "出牌阶段，你可以选择一名其他角色并弃4枚“道兵”，对其造成1点雷电伤害。",
         // old_sbguidao: "鬼道",
@@ -19558,13 +19896,13 @@ let lmCharacter = {
         // old_sbhuangtian: "黄天",
         // old_sbhuangtian_info: "主公技，锁定技。①回合开始时，若本回合为你的第一个回合且游戏轮数为1，且游戏内没有【太平要术】，你装备【太平要术】。②其他群势力角色造成伤害后，若你拥有〖鬼道〗，你获得2枚“道兵”（每轮你至多以此法获得4枚“道兵”）。",
         old_sb_huaxiong: "旧谋华雄",
-        old_sb_huaxiong_prefix: "旧谋",
+        old_sb_huaxiong_prefix: "旧|谋",
         old_sb_handang: "旧谋韩当",
-        old_sb_handang_prefix: "旧谋",
+        old_sb_handang_prefix: "旧|谋",
         old_sbjiefan: "解烦",
         old_sbjiefan_info: "出牌阶段限一次。你可以令一名角色选择一项：⒈令所有攻击范围内含有其的角色依次弃置两张牌；⒉其摸等同于攻击范围内含有其的角色数+2的牌；⒊背水：此技能失效直到你杀死一名角色，然后依次执行上述所有选项。",
         // old_sb_caopi: "旧谋曹丕",
-        // old_sb_caopi_prefix: "旧谋",
+        // old_sb_caopi_prefix: "旧|谋",
         // old_sbxingshang: "行殇",
         // old_sbxingshang_info: "①当一名角色受到伤害后（每回合限一次）或死亡时，你获得2个“颂”标记（你至多拥有9个“颂”标记）。②出牌阶段限两次，你可以：1.移去2个“颂”标记，令一名角色复原武将牌；2.移去2个“颂”标记，令一名角色摸X张牌（X为场上阵亡角色数，且X至少为2，至多为5）；3.移去5个“颂”标记，令一名体力上限小于10的角色回复1点体力，增加1点体力上限，随机恢复一个已废除的装备栏；4.移去5个“颂”标记，获得一名阵亡角色武将牌上的所有技能，然后你失去〖行殇〗〖放逐〗〖颂威〗。",
         // old_sbfangzhu: "放逐",
@@ -19573,7 +19911,7 @@ let lmCharacter = {
         // old_sbsongwei: "颂威",
         // old_sbsongwei_info: "主公技。①出牌阶段开始时，你获得Y个“颂”标记（Y为场上其他魏势力角色数的两倍）。②每局游戏限一次，出牌阶段，你可以令一名其他魏势力角色失去所有其武将牌上的技能。",
         old_sb_jiaxu: "旧谋贾诩",
-        old_sb_jiaxu_prefix: "旧谋",
+        old_sb_jiaxu_prefix: "旧|谋",
         old_sbwansha: "完杀",
         old_sbwansha_info: "①你的回合内，不处于濒死状态的其他角色不能使用【桃】。②一名角色进入濒死状态时，你可以观看其手牌并选择其中零至两张牌（其他人不可见），然后其选择一项：1.你将这些牌分配给任意名不为其的角色；2.其弃置除这些牌以外的牌。",
         old_sbwansha_rewrite: "完杀·改",
@@ -19585,7 +19923,7 @@ let lmCharacter = {
         old_sbweimu_rewrite: "帷幕·改",
         old_sbweimu_rewrite_info: "锁定技。①当你成为黑色锦囊牌的目标时，取消之。②每轮开始时，若你上一轮成为其他角色使用牌的目标的次数不大于2，你从弃牌堆中随机获得一张黑色锦囊牌或防具牌。",
         old_sb_zhugejin: "旧谋诸葛瑾",
-        old_sb_zhugejin_prefix: "旧谋",
+        old_sb_zhugejin_prefix: "旧|谋",
         old_sbhuanshi: "缓释",
         old_sbhuanshi_info: "一名角色的判定牌生效前，你可以观看牌堆顶X张牌（X为你的体力值），然后可以用此牌代替之或用一张手牌替换之。",
         old_sbhuanshi_tag: "牌堆顶",
@@ -19594,39 +19932,39 @@ let lmCharacter = {
         old_sbmingzhe: "明哲",
         old_sbmingzhe_info: "锁定技，每轮限三次，你于回合外失去牌时，你选择一名角色：若其有蓄力技，其获得1点蓄力值；若你失去的牌中有非基本牌，其摸一张牌。",
         old_sb_zhangliao: "旧谋张辽",
-        old_sb_zhangliao_prefix: "旧谋",
+        old_sb_zhangliao_prefix: "旧|谋",
         old_sbtuxi: "突袭",
         old_sbtuxi_info: "你的回合限三次，当你不因此技能获得牌后，你可以将其中任意张牌置入弃牌堆，然后获得至多X名其他角色各一张手牌（X为你以此法置入弃牌堆的牌数）。",
         old_sbdengfeng: "登锋",
         old_sbdengfeng_info: "准备阶段，你可以选择一名其他角色并选择一项：①令其获得其装备区的至多两张牌。②你获得牌堆中的一张【杀】。③背水：你失去1点体力。",
         old_sb_guojia: "旧谋郭嘉",
-        old_sb_guojia_prefix: "旧谋",
+        old_sb_guojia_prefix: "旧|谋",
         old_sbyiji: "遗计",
         old_sbyiji_info: "当你受到伤害后，你可以摸两张牌，然后你可以将至多等量张手牌交给任意名其他角色。当你每轮首次进入濒死状态时，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。",
         old_sb_gaoshun: "旧谋高顺",
-        old_sb_gaoshun_prefix: "旧谋",
+        old_sb_gaoshun_prefix: "旧|谋",
         old_sbxianzhen: "陷阵",
         old_sbxianzhen_info: "出牌阶段限一次。你可以选择一名其他角色，你于本阶段获得如下效果：⒈你对其使用牌无距离限制；⒉当你使用【杀】指定其为目标后，你可以与其拼点：若你赢，此【杀】无视防具且不计入次数，且若你本回合以此法对其造成的伤害小于2，你对其造成1点伤害；若其拼点牌为【杀】，则你获得之；若其拼点牌为其最后的手牌，则此【杀】对其造成伤害时，此伤害+1。",
         old_sb_luxun: "旧谋陆逊",
-        old_sb_luxun_prefix: "旧谋",
+        old_sb_luxun_prefix: "旧|谋",
         old_sblianying: "连营",
         old_sblianying_info: "其他角色的回合结束时，你可以观看牌堆顶的X张牌，然后将这些牌交给任意角色（X为你本回合失去的牌数+1，至多为5）。",
         old_sb_xiahouyuan: "旧谋夏侯渊",
-        old_sb_xiahouyuan_prefix: "旧谋",
+        old_sb_xiahouyuan_prefix: "旧|谋",
         old_sbzhengzi: "整辎",
         old_sbzhengzi_info: "回合结束时，若你本回合造成的伤害不少于你的体力值，则你可以复原武将牌并摸两张牌。",
         old_sb_lvbu: "旧谋吕布",
-        old_sb_lvbu_prefix: "旧谋",
+        old_sb_lvbu_prefix: "旧|谋",
         old_sbwushuang: "无双",
         old_sbwushuang_info: "锁定技，你使用的【杀】需两张【闪】才能抵消；与你进行【决斗】的角色每次需要打出两张【杀】。此【杀】或【决斗】造成伤害时，若受伤角色没有使用或打出过【杀】或【闪】响应，此伤害+1。",
         old_sbliyu: "利驭",
         old_sbliyu_info: "当你使用【杀】对一名其他角色造成伤害后，你可获得其区域内至多等同于伤害值张牌，然后其摸等量张牌。若你与其因此获得了全部类型的牌，其选择一项:1.你视为对其指定的另一名其他角色使用一张【决斗】；2.其获得〖无双〗直至其下个回合结束。",
         old_friend_xushu: "旧友徐庶",
-        old_friend_xushu_prefix: "旧友",
+        old_friend_xushu_prefix: "旧|友",
         old_friendxiaxing: "侠行",
         old_friendxiaxing_info: "游戏开始时，你获得并使用【玄剑】；当【玄剑】进入弃牌堆时，你可以移除1个“启诲”标记并获得之。",
         old_pot_taishici: "旧势太史慈",
-        old_pot_taishici_prefix: "旧势",
+        old_pot_taishici_prefix: "旧|势",
         old_pothanzhan: "酣战",
         old_pothanzhan_info: "出牌阶段限一次，你可以选择一名其他角色，你与其将手牌数摸至X张（X为各自体力上限且至多摸三张），然后你视为对其使用一张【决斗】。",
         old_potzhanlie: "战烈",
@@ -19634,42 +19972,42 @@ let lmCharacter = {
         old_potzhenfeng: "振锋",
         old_potzhenfeng_info: "限定技，出牌阶段，你可以选择一项：①回复2点体力；②修改〖酣战〗和〖战烈〗描述中的“X”为当前体力值、已损失体力值、场上人数中的一项（拥有对应技能方可选择）。",
         old_pot_lougui: "旧势娄圭",
-        old_pot_lougui_prefix: "旧势",
+        old_pot_lougui_prefix: "旧|势",
         old_potjiyu: "急御",
         old_potjiyu_info: "①出牌阶段限一次，你可以弃置一张手牌，从牌堆中随机获得与此牌类别不同的牌各一张。②当你失去本阶段因〖急御①〗获得的所有牌后，你重置〖急御①〗。",
         old_pot_chendao: "旧势陈到",
-        old_pot_chendao_prefix: "旧势",
+        old_pot_chendao_prefix: "旧|势",
         old_potwanglie: "往烈",
         old_potwanglie_info: "出牌阶段开始时，你可以选择一张手牌，你此阶段使用此牌无距离限制且不可被响应，且你使用此牌结算结束后，你于此阶段不能对其他角色使用牌。",
         old_pothongyi: "弘毅",
         old_pothongyi_info: "锁定技。①游戏开始时，你获得2个「毅」标记；当你造成或受到1点伤害后，你获得1个「毅」标记；你至多拥有4个「毅」标记。②准备阶段，你选择一项：1.摸X张牌（X为你拥有的「毅」标记数）；2.移去所有「毅」标记，视为使用等量的【杀】。",
         old_pot_yuji: "旧势于吉",
-        old_pot_yuji_prefix: "旧势",
+        old_pot_yuji_prefix: "旧|势",
         old_potdaozhuan: "道转",
         old_potdaozhuan_info: "每轮每种牌名限一次，你可以将你与当前回合角色的共X张牌置入弃牌堆（X为本回合所有角色使用牌的类别数，X为0则跳过此步骤），视为使用一张基本牌。若X不为0且当前回合角色因此失去了X张牌，则本轮此技能失效。",
         old_potfuji: "符济",
         old_potfuji_info: "出牌阶段限一次，你可以展示全场共计Y张手牌并令等量角色获得之（Y为场上其他角色数）。因此获得【杀】的角色使用【杀】造成的伤害+1直到你的下个回合开始；因此获得【闪】的角色使用【闪】结算完毕后摸一张牌直到你的下个回合开始。然后若你的手牌数为全场最低，则你获得摸两张牌，获得这两项效果直到你的下个回合开始。",
 
         oldx_clan_xuncai: "旧族荀采",
-        oldx_clan_xuncai_prefix: "旧族",
+        oldx_clan_xuncai_prefix: "旧|族",
         oldx_clanlieshi: "烈誓",
         oldx_clanlieshi_info: "出牌阶段，你可以执行其中一项：『受到1点火焰伤害并废除判定区；弃置手牌中的所有【闪】；弃置手牌中的所有【杀】』，然后你令一名其他角色选择执行另一项（不能选择无法执行的选项）。",
         oldx_clandianzhan: "点盏",
         oldx_clandianzhan_info: "锁定技，当你于每轮第一次使用一种花色的牌后，你横置此牌的唯一目标并重铸手牌中所有与此牌花色相同的牌。",
         old_clan_zhonghui: "旧族钟会",
-        old_clan_zhonghui_prefix: "旧族",
+        old_clan_zhonghui_prefix: "旧|族",
         old_clanyuzhi: "迂志",
         old_clanyuzhi_info: "锁定技。①每轮开始时，你展示一张手牌，然后摸X张牌（X为此牌牌名字数）。②每轮结束时，若你本轮使用的牌数或你上一轮因〖迂志〗摸的牌数小于你本轮因〖迂志〗摸的牌数，你失去1点体力或失去〖保族〗。",
         old_clanxieshu: "挟术",
         old_clanxieshu_info: "当你使用牌造成伤害后，或受到来自牌造成的伤害后，你可以弃置Y张牌并摸你已损失体力值张牌（Y为此牌牌名字数）。",
         old_clan_hanshao: "旧族韩韶",
-        old_clan_hanshao_prefix: "旧族",
+        old_clan_hanshao_prefix: "旧|族",
         old_fangzhen: "放赈",
         old_fangzhen_info: "出牌阶段限一次，你可以横置一名角色，将手牌数摸至X张并交给其任意张牌，然后若本次为你第X次发动此技能，你翻面（X为其座位号）。",
         old_liuju: "留驹",
         old_liuju_info: "出牌阶段限一次，你可以与一名角色A拼点并使用拼点牌中的非基本牌。然后若你没赢或你与A相互之间的距离发生了变化，你复原武将牌或武将牌上的一个技能。",
         old_clan_hanrong: "旧族韩融",
-        old_clan_hanrong_prefix: "旧族",
+        old_clan_hanrong_prefix: "旧|族",
         old_lianhe: "连和",
         old_lianhe_info: "出牌阶段限一次，你可以横置两名未被横置的角色并令其同时选择一项：1，令你摸一张牌；2，令你获得其一张牌并翻面。其下个出牌阶段结束时，其重复进行上述选择，直至其本次选择的选项序号总和大于X（X为其此阶段内获得牌的总数，且至多为5）。",
         old_huanjia: "缓颊",
@@ -19716,10 +20054,10 @@ let lmCharacter = {
         old_oltuishi: "侻失",
         old_oltuishi_info: "锁定技。①你不能使用【无懈可击】。②当你使用点数为字母的牌后，你摸两张牌，且你使用的下一张牌无距离和次数限制。",
         old_sp_sunce: "旧SP孙策",
-        old_sp_sunce_prefix: "旧SP",
+        old_sp_sunce_prefix: "旧|SP",
         old_ol_yufan: "旧OL界虞翻",
         old_ol_yufan_ab: "旧界虞翻",
-        old_ol_yufan_prefix: "旧界",
+        old_ol_yufan_prefix: "旧|界",
         old_olzongxuan: "纵玄",
         old_olzongxuan_info: "当你或你的上家因弃置而失去牌后，你可以将位于弃牌堆的这些牌中的任意牌以任意顺序置于牌堆顶。",
         old_olzhiyan: "直言",
@@ -19747,7 +20085,7 @@ let lmCharacter = {
         old_olkuansai_info: "当一张牌指定第一个目标后，若目标数大于你的体力值，你可以令其中一个目标选择一项：1.交给你一张牌；2.令你回复1点体力。",
         old_ol_sb_dongzhuo: "旧OL谋董卓",
         old_ol_sb_dongzhuo_ab: "旧谋董卓",
-        old_ol_sb_dongzhuo_prefix: "旧谋",
+        old_ol_sb_dongzhuo_prefix: "旧|谋",
         old_olguanbian: "观变",
         old_olguanbian_info: "锁定技。①游戏开始时，你的手牌上限、其他角色计算与你的距离、你计算与其他角色的距离+X（X为游戏人数）。②第二轮游戏开始时，或当你发动〖凶逆〗或〖封赏〗后，你失去〖观变〗。",
         old_olxiongni: "凶逆",
@@ -19769,14 +20107,14 @@ let lmCharacter = {
         old_olshoushu_info: "出牌阶段限一次，你可以将一册未发动过的“天书”交给一名其他角色（此“天书”其仅可发动一次）。",
         old_ol_sb_dengai: "旧OL谋邓艾",
         old_ol_sb_dengai_ab: "旧谋邓艾",
-        old_ol_sb_dengai_prefix: "旧谋",
+        old_ol_sb_dengai_prefix: "旧|谋",
         old_olsbjiewan: "解腕",
         old_olsbjiewan_info: "出牌阶段限一次，你可以减1点体力上限以检索一张伤害类锦囊，然后你可令手牌中的一张伤害牌于本回合内造成的伤害+1。",
         olsbpixian: "僻险",
         olsbpixian_info: "锁定技，出牌阶段结束时，若你的体力值不为全场最高，你加1点体力上限或回复1点体力。",
         old_ol_wangyi: "旧OL界王异",
         old_ol_wangyi_ab: "旧界王异",
-        old_ol_wangyi_prefix: "旧界",
+        old_ol_wangyi_prefix: "旧|界",
         old_olzhenlie: "贞烈",
         old_olzhenlie_info: "当你成为其他角色使用的【杀】或非延时锦囊牌的目标后，你可以失去一点体力令此牌对你无效，然后选择一项：1，获得使用者的一张牌；2，发动一次【秘计】。",
         // olchunlao: "醇醪",
@@ -19788,25 +20126,27 @@ let lmCharacter = {
         old_olsiqi_info: "你的红色牌进入弃牌堆时，将之置于牌堆底。当你受到伤害后，你可以亮出牌堆底至多五张连续的红色牌，使用其中【桃】、【无中生有】与装备牌（可指定其他角色为目标），然后你摸剩余不可使用的牌数张牌。",
         old_ol_sb_yl_luzhi: "旧OL谋卢植",
         old_ol_sb_yl_luzhi_ab: "旧谋卢植",
-        old_ol_sb_yl_luzhi_prefix: "旧谋",
+        old_ol_sb_yl_luzhi_prefix: "旧|谋",
         old_olsibing: "司兵",
         old_olsibing_info: "①当你使用伤害牌指定唯一目标时，你可以弃置任意张红色牌令目标弃置等量红色手牌，否则不能响应该牌；②以你为目标的伤害牌结算完成后，若未对你造成伤害，你可以弃置一张黑色牌并视为使用一张【杀】。",
         old_olliance: "敛策",
         old_olliance_info: "每回合限一次，当你的手牌数变化后，若为全场最少，你可将手牌摸至体力上限，然后本回合下一次有角色造成伤害时，此伤害+1",
         old_ol_liubiao: "旧OL界刘表",
         old_ol_liubiao_ab: "旧界刘表",
-        old_ol_liubiao_prefix: "旧界",
+        old_ol_liubiao_prefix: "旧|界",
         old_olzishou: "自守",
         old_olzishou_info: "摸牌阶段，你可以多摸X张牌，你以此法摸牌的结束阶段，若你本回合对其他角色造成过伤害，你弃置X张牌（X为全场势力数）。",
         old_olzongshi: "宗室",
         old_olzongshi_info: "锁定技。①你的手牌上限+X（X为全场势力数）。②每种势力限一次，当其他角色对你造成伤害时，你防止此伤害并令其摸一张牌。",
+        old_kongshu: "旧孔淑",
+        old_kongshu_prefix: "旧",
 
         old_re_caorui: "旧界曹叡",
-        old_re_caorui_prefix: "旧界",
+        old_re_caorui_prefix: "旧|界",
         old_re_zhangchunhua: "旧界张春华",
-        old_re_zhangchunhua_prefix: "旧界",
+        old_re_zhangchunhua_prefix: "旧|界",
         old_dc_xushu: "旧界徐庶",
-        old_dc_xushu_prefix: "旧界",
+        old_dc_xushu_prefix: "旧|界",
         old_rezhuhai: "诛害",
         old_rezhuhai_info: "其他角色的结束阶段，若其本回合造成过伤害，你可以视为对其使用一张【杀】或【过河拆桥】。",
         old_yuechen: "旧乐綝",
@@ -19834,18 +20174,18 @@ let lmCharacter = {
         old_dcdehua: "德化",
         old_dcdehua_info: "锁定技。①一轮游戏开始时，若有你可以使用的非延时类伤害类牌的牌名，你选择其中一个并视为使用之，然后你不能从手牌中使用此牌名的牌，然后若你已选择过所有的伤害类牌牌名，你失去〖德化〗。②你的手牌上限+Y（Y为你〖德化①〗选择过的牌名数）。",
         old_yue_miheng: "旧乐祢衡",
-        old_yue_miheng_prefix: "旧乐",
+        old_yue_miheng_prefix: "旧|乐",
         old_dcjigu: "激鼓",
         old_dcjigu_info: "锁定技。①游戏开始时，你将所有手牌标记为“激鼓”。②你的“激鼓”牌不计入手牌上限。③当你造成或受到伤害后，若你的“激鼓”牌数等于你的装备区牌数，则你可以摸X张牌（X为你的空置装备栏数）。",
         old_wu_zhugeliang: "旧武诸葛亮",
-        old_wu_zhugeliang_prefix: "旧武",
+        old_wu_zhugeliang_prefix: "旧|武",
         old_dcqingshi: "情势",
         old_dcqingshi_info: "当你于出牌阶段使用牌时，若你手牌中有同名牌，你可以选择一项：1.令此牌对其中一个目标角色造成的伤害+1；2.令任意名其他角色各摸一张牌；3.摸X张牌，然后【情势】于本回合失效（X为你的体力值）。",
         old_dczhizhe: "智哲",
         old_dczhizhe_clear: "invisible",
         old_dczhizhe_info: "限定技。出牌阶段，你可以选择一张手牌并复制之。该复制牌不计入你的手牌上限，且当你使用或打出此牌结算结束后，你获得之，然后你本回合不能再使用或打出此牌。",
         old_wu_guanyu: "旧武关羽",
-        old_wu_guanyu_prefix: "旧武",
+        old_wu_guanyu_prefix: "旧|武",
         old_dcjuewu: "绝武",
         old_dcjuewu_info: "①你可以将一张点数为2的牌当任意伤害类牌使用（包括【水淹七军】）。②当你得到其他角色区域内的牌后，你令这些牌的点数均视为2直到你失去这些牌。",
         old_dcwuyou: "灵显",
@@ -19853,7 +20193,7 @@ let lmCharacter = {
         old_dcyixian: "义贤",
         old_dcyixian_info: "限定技。出牌阶段，你可以获得场上和其他角色手牌中的所有武器和防具牌。然后你依次选择是否令被你以此法获得牌的角色摸X张牌或回复1点体力（X为其以此法失去的牌数）。",
         old_wu_huangfusong: "旧武皇甫嵩",
-        old_wu_huangfusong_prefix: "旧武",
+        old_wu_huangfusong_prefix: "旧|武",
         old_dcchaozhen: "朝镇",
         old_dcchaozhen_info: "准备阶段或当你进入濒死状态时，你可以获得牌堆里或场上点数最小的牌，若此牌点数为A，你回复1点体力并令〖朝镇〗本回合失效。",
         old_dclianjie: "连捷",
@@ -19861,7 +20201,7 @@ let lmCharacter = {
         old_dcjiangxian: "将贤",
         old_dcjiangxian_info: "限定技，出牌阶段，你可以获得以下效果直到本回合结束：当你使用因〖连捷〗获得的牌造成伤害时，此伤害+X（X为你本回合造成伤害的次数且至多为5）。若如此做，本回合结束后你失去〖连捷〗或〖朝镇〗。",
         old_dc_shen_huatuo: "旧神华佗",
-        old_dc_shen_huatuo_prefix: "旧神",
+        old_dc_shen_huatuo_prefix: "旧|神",
         old_jingyu: "静域",
         old_jingyu_info: "锁定技。每个技能每回合限一次，当一名角色发动不为【静域】的技能时，你摸一张牌。",
         old_xunyuxunyou: "旧荀彧荀攸",
@@ -19875,7 +20215,7 @@ let lmCharacter = {
         old_dcpijian: "辟剑",
         old_dcpijian_info: "锁定技，结束阶段，若你的“研作”牌数不小于存活人数，你可以弃置这些牌，对一名角色造成2点伤害。",
         old_xin_zhonghui: "旧界钟会",
-        old_xin_zhonghui_prefix: "旧界",
+        old_xin_zhonghui_prefix: "旧|界",
         old_xinquanji: "权计",
         old_xinquanji_info: "①当你受到1点伤害后，或其他角色不因你的赠予而得到你的牌后，你可以摸一张牌，然后将一张手牌置于武将牌上，称为“权”。②你的手牌上限+X（X为“权”的数量）。",
         old_xinzili: "自立",
@@ -19888,11 +20228,11 @@ let lmCharacter = {
         old_jingyi: "精益",
         old_jingyi_info: "锁定技。当有实体牌进入你的装备区后，你摸X张牌，然后弃置两张牌（X为你装备区内实体牌的数量）。",
         old_star_fazheng: "旧星法正",
-        old_star_fazheng_prefix: "旧星",
+        old_star_fazheng_prefix: "旧|星",
         old_staranji: "谙计",
         old_staranji_info: "锁定技，一名角色使用牌时，若此花色的牌本轮游戏使用的最少，则你摸一张牌。",
         old_star_dingfeng: "旧星丁奉",
-        old_star_dingfeng_prefix: "旧星",
+        old_star_dingfeng_prefix: "旧|星",
         old_stardangchen: "荡尘",
         old_stardangchen_info: "出牌阶段开始时，你可以令一名角色交给你任意张牌，然后你本回合使用基本牌或普通锦囊牌时，可以进行一次判定，若判定的点数为其他角色此次其交给你牌的数量的倍数，则此牌额外结算一次。",
         old_pangfengyi: "旧庞凤衣",
@@ -19902,13 +20242,13 @@ let lmCharacter = {
         old_dcpeiniang: "醅酿",
         old_dcpeiniang_info: "①你可以将〖异瞳〗记录花色的牌当作【酒】使用（无任何次数限制）。②其他角色处于濒死状态时，你可以对其使用【酒】（回复效果）。③因你使用【酒】执行的体力回复效果至少令目标角色将体力值回复至1点。",
         old_dc_sp_zhurong: "旧SP祝融",
-        old_dc_sp_zhurong_prefix: "旧SP",
+        old_dc_sp_zhurong_prefix: "旧|SP",
         old_dcremanhou: "蛮后",
         old_dcremanhou_info: "出牌阶段限一次，你可以摸至多四张牌并根据摸牌数依次执行以下等量项：①失去〖探乱〗；②弃置一张手牌；③失去1点体力，获得一名其他角色的一张手牌；④弃置场上的一张牌，获得〖探乱〗。",
         old_dcretanluan: "探乱",
         old_dcretanluan_info: "出牌阶段限一次，你可以使用本回合弃牌堆中因弃置进入弃牌堆的一张牌，若你因此造成伤害，则你重置〖蛮后〗。",
         old_v_sunquan: "旧威孙权",
-        old_v_sunquan_prefix: "旧威",
+        old_v_sunquan_prefix: "旧|威",
         old_dcwoheng: "斡衡",
         old_dcwoheng_info: "出牌阶段或当你受到伤害后，你可令一名角色摸或弃置X张牌，选择其他角色结算后其手牌数与你不同或选择自己时，此技能失效至本回合结束(X为此技能本轮发动的次数)。",
         old_dcjizheng: "集征",
@@ -19919,9 +20259,21 @@ let lmCharacter = {
         old_dcllqixin_info: "当你不因本技能使用基本牌时/摸两张牌后，你可以摸两张牌/使用一张基本牌。",
         old_dc_sb_xunyu: "旧新杀谋荀彧",
         old_dc_sb_xunyu_ab: "旧谋荀彧",
-        old_dc_sb_xunyu_prefix: "旧谋",
+        old_dc_sb_xunyu_prefix: "旧|谋",
         old_dcsbshimou: "势谋",
         old_dcsbshimou_info: "转换技，游戏开始可自选阴阳状态，出牌阶段限一次，你可令一名{阳：手牌数全场最低的角色；阴：手牌数全场最高的角色}将手牌调整至体力上限（至多摸五张）并视为使用一张仅指定单目标的普通锦囊牌（此牌牌名与目标由你指定）。若以此法摸牌，此牌可额外增加一个目标；若以此法弃牌，此牌额外结算一次。",
+        old_dc_xiahouxuan: "旧新杀夏侯玄",
+        old_dc_xiahouxuan_ab: "旧夏侯玄",
+        old_dc_xiahouxuan_prefix: "旧",
+        old_dcyizheng: "议政",
+        old_dcyizheng_info: "你的回合开始和结束时，你可与任意名其他角色各展示一张手牌，若展示的牌类型均相同，你可将这些牌交给一名角色，否则，你弃置这些牌。",
+        old_dcguilin: "归林",
+        old_dcguilin_info: "限定技，出牌阶段或你进入濒死状态时，你可以回满体力并摸回复值张牌，然后失去〖议政〗并修改〖博玄〗。",
+        old_dc_zhugejun: "旧新杀诸葛均",
+        old_dc_zhugejun_ab: "旧诸葛均",
+        old_dc_zhugejun_prefix: "旧",
+        old_dcgumai: "孤脉",
+        old_dcgumai_info: "每回合限一次，你造成或受到伤害时，若你有手牌，你可以展示所有手牌并令此伤害+1/-1。若展示的牌花色均相同，你可以弃置一张手牌令此技能视为未发动过。",
 
         old_tw_huojun: "旧TW霍峻",
         old_tw_huojun_ab: "旧霍峻",
@@ -19930,7 +20282,7 @@ let lmCharacter = {
         old_twjieyu_info: "结束阶段开始时，或当你于一轮内第一次受到伤害后，你可以弃置所有手牌，然后从弃牌堆中获得不同牌名的基本牌各一张。",
         old_tw_guohuai: "旧TW界郭淮",
         old_tw_guohuai_ab: "旧界郭淮",
-        old_tw_guohuai_prefix: "旧界",
+        old_tw_guohuai_prefix: "旧|界",
         old_twjingce: "精策",
         old_twjingce_info: "当你于出牌阶段使用第X张牌时，你可以摸X张牌（X为你的体力值）。若此阶段你此前摸过牌或本回合造成过伤害，你获得一枚“策”标记。",
         old_yuzhang: "御嶂",
@@ -19963,24 +20315,24 @@ let lmCharacter = {
         old_twxiongjun: "凶军",
         old_twxiongjun_info: "锁定技，当你造成伤害后，所有拥有【凶军】的角色摸一张牌。",
         old_xia_tongyuan: "旧侠童渊",
-        old_xia_tongyuan_prefix: "旧侠",
+        old_xia_tongyuan_prefix: "旧|侠",
         old_twchuanshu: "传术",
         old_twchuanshu_info: "准备阶段，你可以选择一名角色。直到你的下回合开始，其获得以下效果：1.当其拼点牌亮出时，此牌点数+3；2.其使用的下一张【杀】对除你外的角色造成伤害时，此伤害+1；3.若其不为你，其使用的下一张【杀】结算结束后，你摸等同于其因此【杀】造成的伤害值数的牌。",
         old_xia_guanyu: "旧侠关羽",
-        old_xia_guanyu_prefix: "旧侠",
+        old_xia_guanyu_prefix: "旧|侠",
         old_twzhongyi: "忠义",
         old_twzhongyi_info: "锁定技。①你使用【杀】无距离限制。②当你使用【杀】结算完毕后，你选择一项：⒈摸X张牌；⒉回复X点体力；⒊背水：失去Y点体力，依次执行以上两项（X为此牌造成的伤害值，Y为你本局游戏此前选择此项的次数+1）。",
         old_twchue: "除恶",
         old_twchue_info: "①当你使用【杀】指定唯一目标时，若场上存在可成为此【杀】目标的非目标角色，则你可以失去1点体力，为此牌额外指定Z个目标。②当你受到伤害或失去体力后，你摸一张牌并获得1个“勇”标记。③回合结束时，若你的“勇”标记数大于等于Z，则你可以失去Z个“勇”标记，视为使用一张伤害+1且可以额外指定Z个目标的【杀】。（Z为你的体力值）",
         old_huan_zhugeliang: "旧幻诸葛亮",
-        old_huan_zhugeliang_prefix: "旧幻",
+        old_huan_zhugeliang_prefix: "旧|幻",
         old_twhunyou: "魂游",
         old_twhunyou_info: "限定技，当你处于濒死状态时，你可以将体力值回复至1点，若如此做，本回合当你受到伤害时或失去体力时，取消之；当前回合结束后，你入幻：摸X张牌并进行一个额外的回合（X为〖北定〗记录牌名数，且至多为7）。",
         old_twchanggui: "怅归",
         old_twchanggui_info: "锁定技，结束阶段，若你的体力值为全场最低且不等于体力上限，你须退幻：将体力上限调整为当前体力值。",
 
         old_huan_caoang: "旧幻曹昂",
-        old_huan_caoang_prefix: "旧幻",
+        old_huan_caoang_prefix: "旧|幻",
         old_twchihui: "炽灰",
         old_twchihui_info: "其他角色的回合开始时，你可废除一个装备栏并选择一项:1.弃置其区域内的一张牌；2.將牌堆中的一张与此次废除的装备栏相同副类别的装备牌置入其装备区。若如此做，你失去1点体力，然后摸X张牌（X为你已损失的体力值）。",
         old_twfuxi: "赴曦",
@@ -19993,16 +20345,16 @@ let lmCharacter = {
         old_twjifa_info: "锁定技，当你进入濒死状态时，你减X点体力上限（X为你上次发动〖赴曦〗选择的项数），保留〖煌烛〗或〖离渊〗直到下次入幻， 然后退幻：将体力值回复至体力上限。",
 
         old_huan_weiyan: "旧幻魏延",
-        old_huan_weiyan_prefix: "旧幻",
+        old_huan_weiyan_prefix: "旧|幻",
         old_twpiankuang: "偏狂",
         old_twpiankuang_info: "锁定技，你使用的牌造成的伤害+Y（Y为你本回合使用过的且造成过伤害的相同牌名的牌的数量，且至多为3）。",
         old_huan_zhugeguo: "旧幻诸葛果",
-        old_huan_zhugeguo_prefix: "旧幻",
+        old_huan_zhugeguo_prefix: "旧|幻",
         old_rexianyuan: "仙援",
         old_rexianyuan_info: "①一轮游戏开始时，你获得4枚“仙援”标记（一名角色至多拥有4枚“仙援”标记）。②出牌阶段，你可以将“仙援”标记分配给其他角色。③拥有“仙援”标记的角色的出牌阶段开始时，你选择一项：⒈观看其手牌，将其中至多X张牌置于牌堆顶；⒉令其摸X张牌（X为其拥有的“仙援”标记数）。然后若当前回合角色不为你，则移去其所有“仙援”标记。",
         old_tw_shen_lvmeng: "旧TW神吕蒙",
         old_tw_shen_lvmeng_ab: "旧神吕蒙",
-        old_tw_shen_lvmeng_prefix: "旧神",
+        old_tw_shen_lvmeng_prefix: "旧|神",
         old_twshelie: "涉猎",
         old_twshelie_info: "①摸牌阶段，你可放弃摸牌并亮出牌堆顶的五张牌，然后选择获得其中每种花色的牌各一张。②每轮限一次。结束阶段，若你本回合使用的花色数不小于你的体力值，你执行一个额外的摸牌阶段或出牌阶段。",
         old_twgongxin: "攻心",
@@ -20042,78 +20394,14 @@ let lmCharacter = {
 
         lmCharacter_diy: "修改",
         lmCharacter_sw: "神武",
-        lmCharacter_head: "头像",
         lmCharacter_other: "其他",
 
-        //头像
-        aaAronaPurana: "Arona&Purana",
-        aaAqua: "阿夸",
-        abAqua: "阿库娅",
-        aamomo: "桃",
-        aamidori: "绿",
-        aahikari: "光",
-        aanozomi: "望",
-        aaNina: "仁菜",
-        aaKotone: "琴音",
 
         wangtaowangyue: "王桃王悦",
         lm_old_caocao: "旧神曹操·修改",
         lm_old_caocao_ab: "凌神曹操",
-        lm_old_caocao_prefix: "凌神",
-        lm_sb_menghuo: "谋孟获·修改",
-        lm_sb_menghuo_ab: "凌谋孟获",
-        lm_sb_menghuo_prefix: "凌谋",
-        lm_sb_xiahoudun: "谋夏侯惇·修改",
-        lm_sb_xiahoudun_ab: "凌谋夏侯惇",
-        lm_sb_xiahoudun_prefix: "凌谋",
-        lm_sb_jiangwei: "谋姜维·修改",
-        lm_sb_jiangwei_ab: "凌谋姜维",
-        lm_sb_jiangwei_prefix: "凌谋",
-        lm_re_fazheng: "界法正·修改",
-        lm_re_fazheng_ab: "凌界法正",
-        lm_re_fazheng_prefix: "凌界",
-        lm_re_caopi: "界曹丕·修改",
-        lm_re_caopi_ab: "凌界曹丕",
-        lm_re_caopi_prefix: "凌界",
-        lm_re_zhangjiao: "界张角·修改",
-        lm_re_zhangjiao_ab: "凌界张角",
-        lm_re_zhangjiao_prefix: "凌界",
-        lm_re_sunxiu: "界孙休·修改",
-        lm_re_sunxiu_ab: "凌界孙休",
-        lm_re_sunxiu_prefix: "凌界",
-        lm_re_liuchen: "界刘谌·修改",
-        lm_re_liuchen_ab: "凌界刘谌",
-        lm_re_liuchen_prefix: "凌界",
-        lm_sunliang: "孙亮·修改",
-        lm_sunliang_ab: "凌孙亮",
-        lm_sunliang_prefix: "凌",
-        lm_zhangxiu: "张绣·修改",
-        lm_zhangxiu_ab: "凌张绣",
-        lm_zhangxiu_prefix: "凌",
-        lm_yl_yuanshu: "袁术·修改",
-        lm_yl_yuanshu_ab: "凌袁术",
-        lm_yl_yuanshu_prefix: "凌",
-        lm_liuyu: "刘虞·修改",
-        lm_liuyu_ab: "凌刘虞",
-        lm_liuyu_prefix: "凌",
-        lm_liuyao: "刘繇·修改",
-        lm_liuyao_ab: "凌刘繇",
-        lm_liuyao_prefix: "凌",
-        lm_zhanglu: "张鲁·修改",
-        lm_zhanglu_ab: "凌张鲁",
-        lm_zhanglu_prefix: "凌",
-        lm_liuxie: "刘协·修改",
-        lm_liuxie_ab: "凌刘协",
-        lm_liuxie_prefix: "凌",
-        lm_tw_mateng: "马腾·修改",
-        lm_tw_mateng_ab: "凌马腾",
-        lm_tw_mateng_prefix: "凌",
-        lm_jsrg_hansui: "韩遂·修改",
-        lm_jsrg_hansui_ab: "凌韩遂",
-        lm_jsrg_hansui_prefix: "凌",
-        lm_lvbu: "吕布·修改",
-        lm_lvbu_ab: "凌吕布",
-        lm_lvbu_prefix: "凌",
+        lm_old_caocao_prefix: "凌|神",
+
 
         sw_guanyu: "神关羽·神武",
         sw_guanyu_ab: "☆神关羽",
