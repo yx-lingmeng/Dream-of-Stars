@@ -13004,7 +13004,7 @@ let lmCharacter = {
             derivation: "old_olhedao_faq",
         },
         old_olshoushu: {
-            audio: "lshoushu",
+            audio: "olshoushu",
             enable: "phaseUse",
             filter(event, player) {
                 return (
