@@ -558,7 +558,7 @@ window.lm_import(function (lib, game, ui, get, ai, _status) {
 		}
 		var node = ui.create.div();
 		node.innerHTML = lib.config.log_highlight ? str : str2;
-		ui.sidebar.insertBefore(node, ui.sidebar.firstChild);
+		ui.sidebar.appendChild(node);
 		game.addVideo('log', null, lib.config.log_highlight ? str : str2);
 		if (giveLog) {
 			game.broadcast(function (arg) {
