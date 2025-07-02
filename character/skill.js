@@ -13018,7 +13018,7 @@ let lmCharacter = {
             async content(event, trigger, player) {
                 const { target } = event;
                 const skills = player.getSkills(null, false, false).filter(skill => {
-                    return get.info(skill)?.olhedao && get.info(skill).nopop;
+                    return get.info(skill)?.old_olhedao && get.info(skill).nopop;
                 });
                 if (!skills.length) return;
                 const result =
