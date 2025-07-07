@@ -3005,7 +3005,6 @@ let lmCharacter = {
                         player.gain(cards, target, "giveAuto");
                         target.addMark("old_yichong_" + player.playerid, cards.length, false);
                     },
-                    sourceSkill: "old_yichong",
                 },
                 clear: {
                     charlotte: true,
@@ -3014,7 +3013,6 @@ let lmCharacter = {
                             current.removeSkill("old_yichong_" + player.playerid);
                         });
                     },
-                    sourceSkill: "old_yichong",
                 },
             },
         },
@@ -3067,15 +3065,11 @@ let lmCharacter = {
                         if (!target) delete trigger.source;
                         else trigger.source = target;
                     },
-                    sub: true,
-                    sourceSkill: "old_wufei",
-                    _priority: 0,
                 },
             },
             ai: {
                 combo: "old_yichong",
             },
-            _priority: 0,
         },
         //手杀陈珪
         old_guimou: {
@@ -5511,9 +5505,6 @@ let lmCharacter = {
                             },
                         },
                     },
-                    sub: true,
-                    sourceSkill: "old_sbhuoji",
-                    "_priority": 0,
                 },
                 achieve: {
                     audio: "sbhuoji2",
@@ -5532,9 +5523,6 @@ let lmCharacter = {
                         player.changeSkills(["old_sbguanxing", "old_sbkongcheng"], ["old_sbhuoji", "old_sbkanpo"]);
 
                     },
-                    sub: true,
-                    sourceSkill: "old_sbhuoji",
-                    "_priority": 0,
                 },
                 fail: {
                     audio: "sbhuoji3",
@@ -5933,9 +5921,6 @@ let lmCharacter = {
                             },
                         },
                     },
-                    sub: true,
-                    sourceSkill: "oldx_sbhuoji",
-                    "_priority": 0,
                 },
                 achieve: {
                     audio: "sbhuoji2",
@@ -11261,9 +11246,6 @@ let lmCharacter = {
                         trigger.directHit.addArray(game.players);
                         game.log(trigger.card, "不可被响应");
                     },
-                    sub: true,
-                    sourceSkill: "old_qiaoli",
-                    _priority: 0,
                 },
                 effect: {
                     charlotte: true,
@@ -11344,7 +11326,6 @@ let lmCharacter = {
                             return lib.sort.seat(a.player, b.player);
                         });
                     },
-                    sourceSkill: "old_qiaoli",
                 },
                 // gain: {
                 // 	charlotte: true,
@@ -12245,7 +12226,7 @@ let lmCharacter = {
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), (card, player, target) => {
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
                                     return target.countCards("hej");
                                 })
                                 .set("ai", target => {
@@ -12281,7 +12262,7 @@ let lmCharacter = {
                             }, "he");
                         },
                         async cost(event, trigger, player) {
-                            const name = event.name.slice(0, -"_cost".length);
+                            const name = event.skill;
                             event.result = await player.chooseToDiscard(get.prompt2(name), "he", [1, Infinity], "chooseonly").set("ai", lib.skill.zhiheng.check).set("logSkill", name).forResult();
                         },
                         popup: false,
@@ -12337,7 +12318,7 @@ let lmCharacter = {
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), (card, player, target) => {
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
                                     return target.countCards("hej");
                                 })
                                 .set("ai", target => {
@@ -12397,7 +12378,7 @@ let lmCharacter = {
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), (card, player, target) => {
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
                                     return !target.hasSkill("fengyin");
                                 })
                                 .set("ai", target => {
@@ -12425,7 +12406,7 @@ let lmCharacter = {
                     effect: {
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)))
+                                .chooseTarget(get.prompt2(event.skill))
                                 .set("ai", target => {
                                     const player = get.player(),
                                         draw = 2;
@@ -12479,7 +12460,7 @@ let lmCharacter = {
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), lib.filter.notMe)
+                                .chooseTarget(get.prompt2(event.skill), lib.filter.notMe)
                                 .set("ai", target => {
                                     const player = get.player();
                                     if (target.hasSkill("hongyan")) return 0;
@@ -12511,7 +12492,7 @@ let lmCharacter = {
                             const {
                                 result: { bool, cards },
                             } = await player
-                                .chooseCard(get.translation(trigger.player) + "的" + (trigger.judgestr || "") + "判定为" + get.translation(trigger.player.judging[0]) + "，" + get.prompt(event.name.slice(0, -"_cost".length)), "hs", card => {
+                                .chooseCard(get.translation(trigger.player) + "的" + (trigger.judgestr || "") + "判定为" + get.translation(trigger.player.judging[0]) + "，" + get.prompt(event.skill), "hs", card => {
                                     const player = _status.event.player;
                                     const mod2 = game.checkMod(card, player, "unchanged", "cardEnabled2", player);
                                     if (mod2 != "unchanged") return mod2;
@@ -12597,7 +12578,7 @@ let lmCharacter = {
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), (card, player, target) => {
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
                                     return target.isDamaged() && player.canCompare(target);
                                 })
                                 .set("ai", target => {
@@ -12630,7 +12611,7 @@ let lmCharacter = {
                     effect: {
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), [1, 2])
+                                .chooseTarget(get.prompt2(event.skill), [1, 2])
                                 .set("ai", target => {
                                     const player = get.player();
                                     return get.effect(target, { name: "draw" }, player, player);
@@ -12653,7 +12634,7 @@ let lmCharacter = {
                     effect: {
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)))
+                                .chooseTarget(get.prompt2(event.skill))
                                 .set("ai", target => {
                                     const player = get.player();
                                     return get.effect(target, { name: "draw" }, player, player) * (1 + target.countCards("h"));
@@ -12709,14 +12690,14 @@ let lmCharacter = {
                     },
                 },
                 {
-                    name: "你可令你对一名角色使用牌无距离和次数限制直到回合结束",
+                    name: "你可令你对一名角色使用牌无距离和任何次数限制直到回合结束",
                     effect: {
                         filter(event, player) {
                             return game.hasPlayer(target => !player.getStorage("old_olhedao_effect").includes(target));
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
-                                .chooseTarget(get.prompt2(event.name.slice(0, -"_cost".length)), (card, player, target) => {
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
                                     return !player.getStorage("old_olhedao_effect").includes(target);
                                 })
                                 .set("ai", target => {
@@ -12746,7 +12727,7 @@ let lmCharacter = {
                         async cost(event, trigger, player) {
                             event.result = await player
                                 .chooseCardTarget({
-                                    prompt: get.prompt2(event.name.slice(0, -"_cost".length)),
+                                    prompt: get.prompt2(event.skill),
                                     filterTarget: lib.filter.notMe,
                                     filterCard: lib.filter.cardDiscardable,
                                     selectCard: 2,
@@ -12809,7 +12790,7 @@ let lmCharacter = {
                         async cost(event, trigger, player) {
                             event.result = await player
                                 .chooseTarget(
-                                    get.prompt2(event.name.slice(0, -"_cost".length)),
+                                    get.prompt2(event.skill),
                                     (card, player, target) => {
                                         if (!ui.selected.targets.length) return true;
                                         return target.countCards("h") + ui.selected.targets[0].countCards("h") > 0;
@@ -12839,7 +12820,7 @@ let lmCharacter = {
                         async cost(event, trigger, player) {
                             event.result = await player
                                 .chooseTarget(
-                                    get.prompt2(event.name.slice(0, -"_cost".length)),
+                                    get.prompt2(event.skill),
                                     (card, player, target) => {
                                         if (!ui.selected.targets.length) return true;
                                         return target.countVCards("e") + ui.selected.targets[0].countVCards("e") > 0;
@@ -12913,7 +12894,22 @@ let lmCharacter = {
                             if (player.getStorage("old_olhedao_effect").includes(target)) return Infinity;
                         },
                     },
-                    intro: { content: "对$使用牌无距离和次数限制" },
+                    intro: {
+                        name: "天书",
+                        content: "对$使用牌无距离和任何次数限制",
+                    },
+                    trigger: { player: "useCard1" },
+                    filter(event, player) {
+                        return event.addCount !== false && Array.isArray(event.targets) && event.targets.some(target => player.getStorage("olhedao_effect").includes(target));
+                    },
+                    forced: true,
+                    popup: false,
+                    silent: true,
+                    firstDo: true,
+                    async content(event, trigger, player) {
+                        trigger.addCount = false;
+                        player.getStat("card")[trigger.card.name]--;
+                    },
                 },
             },
             ai: {
@@ -12955,20 +12951,26 @@ let lmCharacter = {
                 }
                 game.broadcastAll(
                     (skill, from, to) => {
-                        lib.skill[skill] = { nopop: true, old_olhedao: true, charlotte: true, onremove: true, ...from.effect, ...to.effect };
+                        const { filter: filterFrom, ...otherFrom } = from.effect;
+                        const { filter: filterTo, ...otherTo } = to.effect;
+                        lib.skill[skill] = { nopop: true, old_olhedao: true, charlotte: true, onremove: true, ...otherFrom, ...otherTo };
                         lib.skill[skill].filter = function (...args) {
-                            return (from.filter ? from.filter(...args) : true) && (to.filter ? to.filter(...args) : true);
+                            return (filterFrom ? filterFrom(...args) : true) && (filterTo ? filterTo(...args) : true);
                         };
                         lib.skill[skill].init = (player, skill) => (player.storage[skill] = player.storage[skill] || [0, skill]);
                         lib.skill[skill].intro = {
                             markcount: (storage = [0]) => storage[0],
                             content(storage, player) {
                                 const book = storage?.[1];
-                                if (!book) return "查无此书";
+                                if (!book) {
+                                    return "查无此书";
+                                }
                                 return [
                                     "此书还可使用" + storage[0] + "次",
                                     (() => {
-                                        if (!player.isUnderControl(true) && get.info(book)?.nopop) return "此书仍是个秘密";
+                                        if (!player.isUnderControl(true) && get.info(book)?.nopop) {
+                                            return "此书仍是个秘密";
+                                        }
                                         return lib.translate[book + "_info"];
                                     })(),
                                 ]
@@ -14352,12 +14354,8 @@ let lmCharacter = {
                             if (name == "phaseDiscard" && get.tag(card, "damage")) return false;
                         },
                     },
-                    sub: true,
-                    sourceSkill: "old_dcdehua",
-                    "_priority": 0,
                 },
             },
-            "_priority": 0,
         },
         //乐祢衡
         old_dcjigu: {
@@ -14557,16 +14555,13 @@ let lmCharacter = {
                             if (player.storage.old_dcqingshi_ex[i][1] == trigger.card) player.storage.old_dcqingshi_ex.splice(i--, 1);
                         }
                     },
-                    sourceSkill: "old_dcqingshi",
                 },
                 clear: {
                     onremove: true,
                     charlotte: true,
-                    sourceSkill: "old_dcqingshi",
                 },
                 blocker: {
                     charlotte: true,
-                    sourceSkill: "old_dcqingshi",
                 },
             },
             ai: {
@@ -16878,7 +16873,6 @@ let lmCharacter = {
                         player.removeMark("old_twjingce", 1);
                         trigger.cancel();
                     },
-                    sourceSkill: "old_yuzhang",
                 },
                 dontuse: {
                     charlotte: true,
@@ -16891,7 +16885,6 @@ let lmCharacter = {
                     intro: {
                         content: "不能使用或打出牌",
                     },
-                    sourceSkill: "old_yuzhang",
                 },
             },
             ai: {
@@ -20394,14 +20387,24 @@ let lmCharacter = {
 
         lmCharacter_diy: "修改",
         lmCharacter_sw: "神武",
+        lmCharacter_head: "头像",
         lmCharacter_other: "其他",
 
+        //头像
+        aaAronaPurana: "Arona&Purana",
+        aaAqua: "阿夸",
+        abAqua: "阿库娅",
+        aamomo: "桃",
+        aamidori: "绿",
+        aahikari: "光",
+        aanozomi: "望",
+        aaNina: "仁菜",
+        aaKotone: "琴音",
 
         wangtaowangyue: "王桃王悦",
         lm_old_caocao: "旧神曹操·修改",
         lm_old_caocao_ab: "凌神曹操",
         lm_old_caocao_prefix: "凌|神",
-
 
         sw_guanyu: "神关羽·神武",
         sw_guanyu_ab: "☆神关羽",
