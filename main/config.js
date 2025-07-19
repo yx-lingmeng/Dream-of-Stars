@@ -25,6 +25,12 @@ export let config = {
 		init: true,
 		intro: "开启后，神将与魔将能够在斗地主，对决以及单挑模式选择势力。",
 	},
+	filterexpand: {
+		//搬运自搬运自用
+		name: "自由选将-筛选按钮扩充",
+		intro: "扩充自由选将筛选按钮：男性、女性、双性，可根据性别筛选（统计）武将；主公（可筛选主公武将）；护甲（可筛选带护甲的武将）、不同体力上限筛选，实现更加自由灵活地禁选将。",
+		init: false,
+	},
 	ewhh: {
 		name: "<span style='text-decoration: underline;'>点击获得一个额外的回合</span>",
 		clear: true,

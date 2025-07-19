@@ -30,6 +30,233 @@ export async function precontent(config, pack) {
     if (lib.config.extension_星之梦_cancelwindow) {
         window.onerror = function (msg, src, line, column, err) { };
     }
+    // 自由选将-筛选按钮扩充
+    if (lib.config.extension_星之梦_filterexpand) {
+        lib.characterDialogGroup = {
+            // 原版
+            '收藏': function (name, capt) {
+                return lib.config.favouriteCharacter.includes(name) ? capt : null;
+            },
+            '最近': function (name, capt) {
+                var list = get.config('recentCharacter') || [];
+                return list.includes(name) ? capt : null;
+            },
+            // 扩充
+            '<span style=\"color:#00ADE7\">♂</span>': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (lib.character[i][0] == "male") {
+                        list.push(i);
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '<span style=\"color:#E56587\">♀</span>': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (lib.character[i][0] == "female") {
+                        list.push(i);
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '<span style=\"color:#00ADE7\">♂</span><span style=\"color:#E56587\">♀</span>': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (lib.character[i][0] == "double") {
+                        list.push(i);
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '主公': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (lib.character[i][4].includes('zhu')) {
+                        list.push(i);
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '护甲': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (list1.length == 3) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '体力≠上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[0]) != Number(list1[1])) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '1上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 1) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 1) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '2上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 2) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 2) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '3上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 3) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 3) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '4上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 4) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 4) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '5上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 5) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 5) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '6上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 6) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 6) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '7上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 7) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 7) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '8上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) == 8) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] == 8) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+            '>8上限': function (name, capt) {
+                var list = [];
+                for (var i in lib.character) {
+                    if (typeof lib.character[i][2] == typeof "") {
+                        var list1 = lib.character[i][2].split('/');
+                        if (Number(list1[1]) > 8) {
+                            list.push(i);
+                        }
+                    }
+                    if (typeof lib.character[i][2] == typeof 0) {
+                        if (lib.character[i][2] > 8) {
+                            list.push(i);
+                        }
+                    }
+                }
+                return list.includes(name) ? capt : null;
+            },
+        };
+    }
     // 下面是一键导入的代码
     // 原理：根据extension目录下的扩展文件夹名写入游戏设置，完成后自动重启
     game.yjdrcqgn = function (bool) {
@@ -293,6 +520,17 @@ export async function precontent(config, pack) {
         color: "#def7ca",
         nature: "watermm",
         showName: "信",
+    });
+    lib.namePrefix.set("ddd", {
+        getSpan: () => {
+            const span = document.createElement("span"),
+                style = span.style;
+            style.writingMode = style.webkitWritingMode = "horizontal-tb";
+            style.fontFamily = "MotoyaLMaru";
+            style.transform = "scaleY(0.85)";
+            span.textContent = "3D";
+            return span.outerHTML;
+        },
     });
     //添加卡牌包
     lib.init.js(
@@ -873,7 +1111,6 @@ export async function precontent(config, pack) {
     //十常侍增强
     if (lib.config.extension_星之梦_scsEnhance) {
         lib.skill.mbdanggu = {
-            audio: 2,
             trigger: {
                 player: "enterGame",
                 global: "phaseBefore",
@@ -881,7 +1118,7 @@ export async function precontent(config, pack) {
             filter(event, player) {
                 return event.name != "phase" || game.phaseNumber == 0;
             },
-            derivation: ["mbdanggu_faq", "mbdanggu_faq2", "scstaoluan", "scschiyan", "scszimou", "scspicai", "scsyaozhuo", "scsxiaolu", "scskuiji", "scschihe", "scsniqu", "scsmiaoyu"],
+            derivation: ["mbdanggu_faq", "mbdanggu_faq2", "scstaoluan", "scschiyan", "scszimou", "scspicai", "scsyaozhuo", "scsxiaolu", "scskuiji", "scschihe", "scsniqu", "scsanruo"],
             forced: true,
             unique: true,
             onremove(player) {
@@ -890,10 +1127,12 @@ export async function precontent(config, pack) {
                 if (lib.skill.mbdanggu.isSingleShichangshi(player)) {
                     game.broadcastAll(function (player) {
                         player.name1 = player.name;
+                        player.skin.name = player.name;
                         player.smoothAvatar(false);
                         player.node.avatar.setBackground(player.name, "character");
                         player.node.name.innerHTML = get.slimName(player.name);
                         delete player.name2;
+                        delete player.skin.name2;
                         player.classList.remove("fullskin2");
                         player.node.avatar2.classList.add("hidden");
                         player.node.name2.innerHTML = "";
@@ -939,15 +1178,14 @@ export async function precontent(config, pack) {
                 }
                 return _status.changshiMap;
             },
-            content() {
-                "step 0";
-                var list = lib.skill.mbdanggu.changshi.map(i => i[0]);
+            async content(event, trigger, player) {
+                const list = lib.skill.mbdanggu.changshi.map(i => i[0]);
                 player.markAuto("mbdanggu", list);
                 game.broadcastAll(
                     function (player, list) {
-                        var cards = [];
-                        for (var i = 0; i < list.length; i++) {
-                            var cardname = "huashen_card_" + list[i];
+                        const cards = [];
+                        for (let i = 0; i < list.length; i++) {
+                            const cardname = "huashen_card_" + list[i];
                             lib.card[cardname] = {
                                 fullimage: true,
                                 image: "character/" + list[i],
@@ -960,64 +1198,70 @@ export async function precontent(config, pack) {
                     player,
                     list
                 );
-                ("step 1");
-                var next = game.createEvent("mbdanggu_clique");
+                const next = game.createEvent("mbdanggu_clique");
                 next.player = player;
                 next.setContent(lib.skill.mbdanggu.contentx);
+                await next;
             },
-            contentx() {
-                "step 0";
-                var list = player.getStorage("mbdanggu").slice();
-                var first = list.randomRemove();
-                event.first = first;
-                var others = list.randomGets(4);
-                if (others.length == 1) event._result = { bool: true, links: others };
-                else {
-                    var map = {
+            async contentx(event, trigger, player) {
+                let list = player.getStorage("mbdanggu").slice();
+                const first = list.randomRemove();
+                const others = list.randomGets(4);
+                let result;
+                if (others.length == 1) {
+                    result = { bool: true, links: others };
+                } else {
+                    const map = {
                         scs_bilan: "scs_hankui",
                         scs_hankui: "scs_bilan",
                         scs_duangui: "scs_guosheng",
                         scs_guosheng: "scs_duangui",
                     },
                         map2 = lib.skill.mbdanggu.conflictMap(player);
-                    var conflictList = others.filter(changshi => {
-                        if (map[first] && others.some(changshi2 => map[first] == changshi2)) return map[first] == changshi;
-                        else return map2[first].includes(changshi);
-                    }),
-                        list = others.slice();
+                    const conflictList = others.filter(changshi => {
+                        if (map[first] && others.some(changshi2 => map[first] == changshi2)) {
+                            return map[first] == changshi;
+                        } else {
+                            return map2[first].includes(changshi);
+                        }
+                    });
+                    list = others.slice();
                     if (conflictList.length) {
-                        var conflict = conflictList.randomGet();
+                        const conflict = conflictList.randomGet();
                         list.remove(conflict);
                         game.broadcastAll(
                             function (changshi, player) {
                                 if (lib.config.background_speak) {
-                                    if (player.isUnderControl(true)) game.playAudio("skill", changshi + "_enter");
+                                    if (player.isUnderControl(true)) {
+                                        game.playAudio("skill", changshi + "_enter");
+                                    }
                                 }
                             },
                             conflict,
                             player
                         );
                     }
-                    player
-                        .chooseButton(["党锢：请选择结党对象", [[first], "character"], "<div class='text center'>可选常侍</div>", [others, "character"]], true)
+                    result = await player
+                        .chooseButton(["党锢：请选择结党对象", [[first], "character"], '<div class="text center">可选常侍</div>', [others, "character"]], true)
                         .set("filterButton", button => {
                             return _status.event.canChoose.includes(button.link);
                         })
                         .set("canChoose", list)
-                        .set("ai", button => Math.random() * 10);
+                        .set("ai", button => Math.random() * 10)
+                        .forResult();
                 }
-                ("step 1");
-                if (result.bool) {
-                    var first = event.first;
-                    var chosen = result.links[0];
-                    var skills = [];
-                    var list = lib.skill.mbdanggu.changshi;
-                    var changshis = [first, chosen];
+                if (result?.bool) {
+                    const chosen = result.links[0];
+                    const skills = [];
+                    list = lib.skill.mbdanggu.changshi;
+                    const changshis = [first, chosen];
                     player.unmarkAuto("mbdanggu", changshis);
                     player.storage.mbdanggu_current = changshis;
-                    for (var changshi of changshis) {
-                        for (var cs of list) {
-                            if (changshi == cs[0]) skills.push(cs[1]);
+                    for (const changshi of changshis) {
+                        for (const cs of list) {
+                            if (changshi == cs[0]) {
+                                skills.push(cs[1]);
+                            }
                         }
                     }
                     if (lib.skill.mbdanggu.isSingleShichangshi(player)) {
@@ -1027,6 +1271,8 @@ export async function precontent(config, pack) {
                                 player.node.avatar.setBackground(first, "character");
                                 player.node.name.innerHTML = get.slimName(first);
                                 player.name2 = chosen;
+                                player.skin.name = first;
+                                player.skin.name2 = chosen;
                                 player.classList.add("fullskin2");
                                 player.node.avatar2.classList.remove("hidden");
                                 player.node.avatar2.setBackground(chosen, "character");
@@ -1043,8 +1289,8 @@ export async function precontent(config, pack) {
                     game.log(player, "选择了常侍", "#y" + get.translation(changshis));
                     if (skills.length) {
                         player.addAdditionalSkill("mbdanggu", skills);
-                        var str = "";
-                        for (var i of skills) {
+                        let str = "";
+                        for (const i of skills) {
                             str += "【" + get.translation(i) + "】、";
                             player.popup(i);
                         }
@@ -1059,7 +1305,9 @@ export async function precontent(config, pack) {
             },
             mod: {
                 aiValue(player, card, num) {
-                    if (["shan", "tao", "wuxie", "caochuan"].includes(card.name)) return num / 10;
+                    if (["shan", "tao", "wuxie", "caochuan"].includes(card.name)) {
+                        return num / 10;
+                    }
                 },
                 aiUseful() {
                     return lib.skill.mbdanggu.mod.aiValue.apply(this, arguments);
@@ -1081,125 +1329,27 @@ export async function precontent(config, pack) {
             },
         };
         lib.skill.mbmowang = {
-            audio: 2,
-            trigger: { player: "dieBefore" },
-            filter(event, player) {
+            trigger: {
+                player: ["dieBefore", "rest"],
+            },
+            filter(event, player, name) {
+                if (name == "rest") {
+                    return true;
+                }
                 return event.getParent().name != "giveup" && player.maxHp > 0;
             },
             derivation: "mbmowang_faq",
             forced: true,
+            forceDie: true,
+            forceOut: true,
             direct: true,
             priority: 15,
             group: ["mbmowang_die", "mbmowang_return"],
-            content() {
-                if (_status.mbmowang_return && _status.mbmowang_return[player.playerid]) {
-                    trigger.cancel();
-                } else {
-                    if (player.getStorage("mbdanggu").length) {
-                        player.logSkill("mbmowang");
-                        game.broadcastAll(function () {
-                            if (lib.config.background_speak) game.playAudio("die", "shichangshiRest");
-                        });
-                        trigger.setContent(lib.skill.mbmowang.dieContent);
-                        trigger.includeOut = true;
-                    } else player.changeSkin("mbmowang", "shichangshi_dead");
-                }
-            },
-            ai: {
-                combo: "mbdanggu",
-                neg: true,
-            },
-            dieContent() {
-                "step 0";
-                event.forceDie = true;
-                if (source) {
-                    game.log(player, "被", source, "杀害");
-                    if (source.stat[source.stat.length - 1].kill == undefined) {
-                        source.stat[source.stat.length - 1].kill = 1;
-                    } else {
-                        source.stat[source.stat.length - 1].kill++;
-                    }
-                } else {
-                    game.log(player, "阵亡");
-                }
-                if (player.isIn() && (!_status.mbmowang_return || !_status.mbmowang_return[player.playerid])) {
-                    event.reserveOut = true;
-                    game.log(player, "进入了修整状态");
-                    game.log(player, "移出了游戏");
-                    //game.addGlobalSkill('mbmowang_return');
-                    if (!_status.mbmowang_return) _status.mbmowang_return = {};
-                    _status.mbmowang_return[player.playerid] = 1;
-                } else event.finish();
-                if (!game.countPlayer()) game.over();
-                else if (player.hp != 0) {
-                    player.changeHp(0 - player.hp, false).forceDie = true;
-                }
-                game.broadcastAll(function (player) {
-                    if (player.isLinked()) {
-                        if (get.is.linked2(player)) {
-                            player.classList.toggle("linked2");
-                        } else {
-                            player.classList.toggle("linked");
-                        }
-                    }
-                    if (player.isTurnedOver()) {
-                        player.classList.toggle("turnedover");
-                    }
-                }, player);
-                game.addVideo("link", player, player.isLinked());
-                game.addVideo("turnOver", player, player.classList.contains("turnedover"));
-                "step 1";
-                event.trigger("die");
-                "step 2";
-                if (event.reserveOut) {
-                    if (!game.reserveDead) {
-                        for (var mark in player.marks) {
-                            if (mark == "mbdanggu") continue;
-                            player.unmarkSkill(mark);
-                        }
-                        var count = 1;
-                        var list = Array.from(player.node.marks.childNodes);
-                        if (list.some(i => i.name == "mbdanggu")) count++;
-                        while (player.node.marks.childNodes.length > count) {
-                            var node = player.node.marks.lastChild;
-                            if (node.name == "mbdanggu") {
-                                node = node.previousSibling;
-                            }
-                            node.remove();
-                        }
-                        game.broadcast(
-                            function (player, count) {
-                                while (player.node.marks.childNodes.length > count) {
-                                    var node = player.node.marks.lastChild;
-                                    if (node.name == "mbdanggu") {
-                                        node = node.previousSibling;
-                                    }
-                                    node.remove();
-                                }
-                            },
-                            player,
-                            count
-                        );
-                    }
-                    for (var i in player.tempSkills) {
-                        player.removeSkill(i);
-                    }
-                    var skills = player.getSkills();
-                    for (var i = 0; i < skills.length; i++) {
-                        if (lib.skill[skills[i]].temp) {
-                            player.removeSkill(skills[i]);
-                        }
-                    }
-                    event.cards = player.getCards("hejsx");
-                    if (event.cards.length) {
-                        player.discard(event.cards).forceDie = true;
-                    }
-                }
-                "step 3";
-                if (event.reserveOut) {
+            async content(event, trigger, player) {
+                if (event.triggername == "rest") {
                     game.broadcastAll(
                         function (player, list) {
-                            player.classList.add("out");
+                            //player.classList.add("out");
                             if (list.includes(player.name1) || player.name1 == "shichangshi") {
                                 player.smoothAvatar(false);
                                 player.skin.name = player.name1 + "_dead";
@@ -1214,41 +1364,36 @@ export async function precontent(config, pack) {
                         player,
                         lib.skill.mbdanggu.changshi.map(i => i[0])
                     );
+                    return;
                 }
-                if (source && lib.config.border_style == "auto" && (lib.config.autoborder_count == "kill" || lib.config.autoborder_count == "mix")) {
-                    switch (source.node.framebg.dataset.auto) {
-                        case "gold":
-                        case "silver":
-                            source.node.framebg.dataset.auto = "gold";
-                            break;
-                        case "bronze":
-                            source.node.framebg.dataset.auto = "silver";
-                            break;
-                        default:
-                            source.node.framebg.dataset.auto = lib.config.autoborder_start || "bronze";
-                    }
-                    if (lib.config.autoborder_count == "kill") {
-                        source.node.framebg.dataset.decoration = source.node.framebg.dataset.auto;
+                if (_status._rest_return?.[player.playerid]) {
+                    trigger.cancel();
+                } else {
+                    if (player.getStorage("mbdanggu").length) {
+                        player.logSkill("mbmowang");
+                        // game.broadcastAll(function () {
+                        //     if (lib.config.background_speak) {
+                        //         game.playAudio("die", "shichangshiRest");
+                        //     }
+                        // });
+                        //煞笔十常侍
+                        trigger.restMap = {
+                            type: "round",
+                            count: 1,
+                            // audio: "shichangshiRest",
+                        };
+                        trigger.excludeMark.add("mbdanggu");
+                        // trigger.noDieAudio = true;
+
+                        trigger.includeOut = true;
                     } else {
-                        var dnum = 0;
-                        for (var j = 0; j < source.stat.length; j++) {
-                            if (source.stat[j].damage != undefined) dnum += source.stat[j].damage;
-                        }
-                        source.node.framebg.dataset.decoration = "";
-                        switch (source.node.framebg.dataset.auto) {
-                            case "bronze":
-                                if (dnum >= 4) source.node.framebg.dataset.decoration = "bronze";
-                                break;
-                            case "silver":
-                                if (dnum >= 8) source.node.framebg.dataset.decoration = "silver";
-                                break;
-                            case "gold":
-                                if (dnum >= 12) source.node.framebg.dataset.decoration = "gold";
-                                break;
-                        }
+                        player.changeSkin("mbmowang", "shichangshi_dead");
                     }
-                    source.classList.add("topcount");
                 }
+            },
+            ai: {
+                combo: "mbdanggu",
+                neg: true,
             },
             subSkill: {
                 die: {
@@ -1256,8 +1401,7 @@ export async function precontent(config, pack) {
                     trigger: { player: "phaseAfter" },
                     forced: true,
                     forceDie: true,
-                    content() {
-                        "step 0";
+                    async content(event, trigger, player) {
                         if (lib.skill.mbdanggu.isSingleShichangshi(player)) {
                             if (!player.getStorage("mbdanggu").length) {
                                 game.broadcastAll(function (player) {
@@ -1278,31 +1422,22 @@ export async function precontent(config, pack) {
                             }
                         }
                         if (!player.getStorage("mbdanggu").length) {
-                            game.delay();
+                            await game.delay();
                         }
-                        "step 1";
-                        player.die();
+                        await player.die();
                     },
                 },
                 return: {
-                    trigger: { player: "phaseBefore" },
+                    trigger: { player: "restEnd" },
                     forced: true,
                     charlotte: true,
                     silent: true,
                     forceDie: true,
                     forceOut: true,
                     filter(event, player) {
-                        return !event._mbmowang_return && event.player.isOut() && _status.mbmowang_return[event.player.playerid];
+                        return event.player == player && player.hasSkill("mbdanggu", null, null, false);
                     },
-                    content() {
-                        "step 0";
-                        trigger._mbmowang_return = true;
-                        game.broadcastAll(function (player) {
-                            player.classList.remove("out");
-                        }, trigger.player);
-                        game.log(trigger.player, "移回了游戏");
-                        delete _status.mbmowang_return[trigger.player.playerid];
-                        trigger.player.recover(trigger.player.maxHp - trigger.player.hp);
+                    async content(event, trigger, player) {
                         game.broadcastAll(function (player) {
                             if (player.name1 == "shichangshi") {
                                 player.smoothAvatar(false);
@@ -1318,11 +1453,7 @@ export async function precontent(config, pack) {
                                     player.skin.name2 = player.name2;
                                 }
                             }
-                        }, trigger.player);
-                        "step 1";
-                        event.trigger("restEnd");
-                        if (!player.hasSkill("mbdanggu", null, null, false)) event.finish();
-                        "step 2";
+                        }, player);
                         delete player.storage.mbdanggu_current;
                         if (lib.skill.mbdanggu.isSingleShichangshi(player)) {
                             game.broadcastAll(function (player) {
@@ -1341,12 +1472,11 @@ export async function precontent(config, pack) {
                                 }
                             }, player);
                         }
-                        "step 3";
-                        var next = game.createEvent("mbdanggu_clique");
+                        const next = game.createEvent("mbdanggu_clique");
                         next.player = player;
                         next.setContent(lib.skill.mbdanggu.contentx);
-                        "step 4";
-                        player.draw(2);
+                        await next;
+                        await player.draw(2);
                     },
                 },
             },

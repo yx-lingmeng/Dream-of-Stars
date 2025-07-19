@@ -137,6 +137,8 @@ let lmCharacter = {//武将切换
     kongshu: ["old_kongshu"],
     xiahouxuan: ["old_dc_xiahouxuan"],
     tw_zhugejun: ["old_dc_zhugejun"],
+    madai: ["old_ol_madai"],
+    pot_weiyan: ["old_pot_weiyan"],
 
     shen_huatuo: ["old_dc_shen_huatuo"],
     shen_lusu: ["shen_lusu", "old_shen_lusu"],

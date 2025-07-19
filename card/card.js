@@ -2,7 +2,7 @@ game.import("card", (lib, game, ui, get, ai, _status) => {
     let swCard = {
         name: "swCard",
         connect: true,
-        //主要搬运自猫猫叹气、民间卡牌
+        //部分搬运修改自猫猫叹气、民间卡牌
         card: {
             sw_guilongzhanyuedao: {
                 image: "ext:星之梦/image/card/sw_guilongzhanyuedao.png",
@@ -487,6 +487,33 @@ game.import("card", (lib, game, ui, get, ai, _status) => {
             },
         },
         skill: {
+            monkey: {
+                equipSkill: true,
+                trigger: {
+                    global: "useCardToBegin",
+                },
+                audio: "ext:星之梦/audio/skill:true",
+                filter(event, player) {
+                    var card = player.getEquip(5);
+                    if (card) {
+                        var name = card.name;
+                        if (name && name.indexOf("monkey") !== -1 && event.name === "tao" && event.player !== player && event.cards.filterInD().length > 0) {
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                check(event, player) {
+                    return get.attitude(player, event.player) <= 0;
+                },
+                async content(event, trigger, player) {
+                    player.$fullscreenpop("猴子偷桃", "fire");
+                    trigger.untrigger();
+                    trigger.finish();
+                    await player.discard(player.getEquip(5));
+                    await player.gain(trigger.cards.filterInD(), "gain2", "log");
+                },
+            },
             chiyanzhenhunqin: {
                 equipSkill: true,
                 trigger: { source: "damageBegin1" },

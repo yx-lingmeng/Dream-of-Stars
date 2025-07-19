@@ -10,7 +10,7 @@ let lmCharacter = {//武将分类
         other_old: ["old_gaowang", "diy_zhujun", "diy_liaohua", "diy_zhangfei"],
         lm_scs: ["lm_shichangshi", "lm_zhangrang", "lm_zhaozhong", "lm_sunzhang", "lm_bilan", "lm_xiayun", "lm_hankui", "lm_lisong", "lm_duangui", "lm_guosheng", "lm_gaowang"],
         lmCharacter_sw: ["sw_guanyu", "sw_lvmeng", "sw_zhugeliang", "sw_zhouyu", "sw_simayi", "sw_zhaoyun", "sw_caocao", "sw_lvbu", "sw_liubei", "sw_luxun", "sw_zhangliao", "sw_ganning", "sw_caopi", "sw_zhenji", "sw_zhangjiao", "sw_diaochan", "sw_tw_guanyu", "sw_tw_lvmeng", "sw_wechat_zhugeliang", "lm_xurong"],
-        lmCharacter_diy: ["wangtaowangyue", "lm_old_caocao"],
+        lmCharacter_diy: ["wangtaowangyue", "lm_old_caocao", "lm_sb_menghuo", "lm_sb_xiahoudun", "lm_sb_jiangwei", "lm_re_fazheng"],
         lmCharacter_other: ["unlock_dongzhao", "unlock_tianchuan", "zhangjian", "lm_jikang"],
     },
 };
