@@ -614,14 +614,6 @@ const characters = {//武将信息
         img: "image/character/pangxi.jpg",
         dieAudios: ["pangxi"],
     },
-    old_pot_dengai: {
-        sex: "male",
-        group: "wei",
-        hp: 3,
-        skills: ["old_pottuntian", "old_potjixi", "old_potzaoxian"],
-        img: "image/character/pot_dengai.jpg",
-        dieAudios: ["pot_dengai"],
-    },
     old_mb_liuhui: {
         sex: "male",
         group: "qun",
