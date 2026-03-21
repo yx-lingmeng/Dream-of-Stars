@@ -1315,7 +1315,7 @@ const characters = {
   old_v_sunce: {
     sex: "male",
     group: "wu",
-    hp: 4,
+    hp: 5,
     skills: ["old_dczhifeng", "old_dcweijing"],
     img: "image/character/v_sunce.jpg",
     dieAudios: ["v_sunce"],
