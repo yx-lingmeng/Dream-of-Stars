@@ -162,6 +162,7 @@ const characterTitles = {
 	old_hansong: "楚国之望",
 	old_liuyijun: "恶嫉蔑死",
 	old_dc_sb_xuyou: "智士濡足",
+	old_dc_weifeng: "趁浪逐波",
 	//海外
 	old_tw_huojun: "葭萌铁狮",
 	old_tw_guohuai: "屡破羌胡",
