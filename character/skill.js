@@ -20881,12 +20881,17 @@ const lmCharacter = {
 					const card = links[0];
 					cards.remove(card);
 					player.$gain2(card, false);
-					await game.asyncDelayx();
+					await game.delayx();
 					await player.chooseUseTarget(true, card, false);
 					cards = cards.filterInD();
 					if (cards.length) {
 						await player.gain(cards, "gain2");
 					}
+				}
+				if (cards.length) {
+					cards.reverse();
+					game.cardsGotoPile(cards.filterInD(), "insert");
+					game.log(player, "将", get.cnNumber(cards.length), "张牌置于了牌堆顶");
 				}
 			},
 		},
@@ -24572,163 +24577,6 @@ const lmCharacter = {
 			},
 		},
 		//新杀魏讽
-		old_dchuozhong: {
-			audio: "dchuozhong",
-			enable: "phaseUse",
-			usable: 2,
-			filterCard: true,
-			position: "h",
-			filter(event, player) {
-				return player.hasCards("h") && game.hasPlayer(p => p !== player && p.hasCards("he"));
-			},
-			filterTarget(card, player, target) {
-				return player.inRange(target) && target !== player;
-			},
-			selectTarget: [1, Infinity],
-			multiline: true,
-			multitarget: true,
-			lose: false,
-			discard: false,
-			delay: false,
-			async content(event, trigger, player) {
-				const sourcePlayer = player;
-				const {
-					cards: [card],
-					targets,
-				} = event;
-				const type = get.type2(card);
-				await player.showCards(card, `${get.translation(player)}发动了〖惑众〗`);
-				await game.doAsyncInOrder(targets, async target => {
-					if (!game.hasPlayer(target2 => target2.hasCards("he"))) {
-						return;
-					}
-
-					const { bool, links } = await target
-						.chooseButton([
-							get.prompt(event.name),
-							[
-								[
-									["gain", `获得一名其他角色的一张牌（不能是${get.translation(sourcePlayer)}和你自己）`],
-									["give", `交给${get.translation(sourcePlayer)}一张牌`],
-								],
-								"textbutton",
-							],
-						])
-						.set("filterButton", button => {
-							const { link } = button,
-								player = get.player();
-							if (link == "gain" && !game.hasPlayer(p => p !== target && p !== sourcePlayer && p.hasCards("he"))) {
-								return false;
-							}
-							if (link == "give" && !target.hasCards("he")) {
-								return false;
-							}
-							return true;
-						})
-						.set("ai", button => {
-							// 灰风：我不会写AI，所以就写个简单的
-							const { link } = button;
-							if (link == "gain") return 5;
-							if (link == "give") return 3;
-							return 1;
-						})
-						.set("selectButton", 1)
-						.set("forced", true)
-						.forResult();
-
-					if (!bool || !links.length) return;
-					if (links.includes("gain")) {
-						const result = await target
-							.chooseTarget({
-								prompt: `选择一名其他角色（不能是${get.translation(sourcePlayer)}和你自己），获得其一张牌`,
-								filterTarget(card2, player2, target2) {
-									if (target2 === player2 || target2 === get.event().sourcex) {
-										return false;
-									}
-									return target2.hasCards("he");
-								},
-								forced: true,
-								type,
-								sourcex: player,
-								ai1(card2) {
-									const player2 = get.player();
-									if (player2.countCards("he") < 3) {
-										return 0;
-									}
-									if (get.type2(card2) === get.event().type) {
-										return 6.5 - get.value(card2);
-									}
-									return 5 - get.value(card2);
-								},
-								ai2(target2) {
-									const player2 = get.player();
-									let att = get.attitude(player2, target2);
-									if (ui.selected.cards?.length) {
-										if (att < 0 && target2 === get.event().sourcex) {
-											return 0;
-										}
-										if (target2.hasSkillTag("nogain")) {
-											att /= 9;
-										}
-										return 4 - att;
-									}
-									return -att;
-								},
-							})
-							.forResult();
-						if (result?.targets?.length) {
-							const { targets: targets2 } = result;
-							target.line(targets2);
-							await target.gainPlayerCard({
-								target: targets2[0],
-								position: "he",
-								forced: true,
-							});
-						}
-					}
-					if (links.includes("give")) {
-						const cardChoice = await target
-							.chooseCard({
-								prompt: `选择一张牌交给${get.translation(sourcePlayer)}`,
-								filterCard: card => true,
-								position: "he",
-								forced: true,
-							})
-							.forResult();
-						if (cardChoice && cardChoice.cards.length) {
-							await target.give(cardChoice.cards, sourcePlayer);
-						}
-					}
-				});
-
-				const otherPlayers = game.filterPlayer(p => p !== player);
-				let maxHandCount = -1;
-				const playersToDiscard = [];
-				for (const p of otherPlayers) {
-					let handNum = p.countCards("h");
-					if (handNum > maxHandCount) {
-						maxHandCount = handNum;
-						playersToDiscard.length = 1;
-						playersToDiscard[0] = p;
-					} else if (handNum === maxHandCount) {
-						playersToDiscard.push(p);
-					}
-				}
-				await game.doAsyncInOrder(playersToDiscard, async target => {
-					await target.showHandcards();
-					const hs = target.getCards("he", card2 => get.type2(card2) === type);
-					if (hs.length) {
-						target.$throw(hs.length, 1e3);
-						game.log(target, "将", `#y${get.cnNumber(hs.length)}张牌`, "置于牌堆顶");
-						await target.lose({
-							cards: hs,
-							position: ui.cardPile,
-							insert_card: true,
-						});
-					}
-				});
-			},
-		},
 		old_dczhuguo: {
 			audio: "dczhuguo",
 			forced: true,
@@ -29200,8 +29048,6 @@ const lmCharacter = {
 		old_dcsbmoyou_info: "你每使用两张手牌结算后，可以摸四张牌，并选择一种花色弃置手牌中所有此花色的牌，若你手牌未含有所有类型，本回合下次使用基本牌无次数与距离限制，使用锦囊牌不可响应。",
 		old_dc_weifeng: "旧新杀魏讽",
 		old_dc_weifeng_prefix: "旧|新杀",
-		old_dchuozhong: "惑众",
-		old_dchuozhong_info: "出牌阶段限两次，你可以展示一张手牌并选择攻击范围内任意名其他角色，这些角色依次选择一项：1.获得另一名其他角色的一张牌；2.交给你一张牌。全部结算后，手牌数最多的其他角色展示手牌并将所有与你展示牌类型相同的牌置于牌堆顶。",
 		old_dczhuguo: "蛀国",
 		old_dczhuguo_info: "锁定技，牌堆牌数量增加后，你从牌堆底摸两张牌。",
 		old_tw_huojun: "旧TW霍峻",

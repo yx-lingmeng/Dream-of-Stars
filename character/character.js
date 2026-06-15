@@ -1316,7 +1316,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 3,
-		skills: ["old_dchuozhong", "old_dczhuguo"],
+		skills: ["dchuozhong", "old_dczhuguo"],
 		img: "image/character/dc_weifeng.jpg",
 		dieAudios: ["dc_weifeng"],
 	},
