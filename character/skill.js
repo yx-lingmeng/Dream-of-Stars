@@ -27540,12 +27540,28 @@ const lmCharacter = {
 							return arr;
 						}, []).length
 					) {
-						player.line(target);
-						target.addTempSkill("old_twgongxin2");
-						target.markAuto("old_twgongxin2", [result.control == "红色" ? "red" : "black"]);
-						game.log(target, "本回合无法使用" + result.control + "牌");
-						if (!event.isMine() && !event.isOnline()) {
-							game.delayx();
+						var num1 = 0;
+						for (var card of target.getCards("h")) {
+							if (get.color(card) == "red") num1++;
+						}
+						var num2 = target.countCards("h") - num1;
+
+						// 让当前玩家选择一种颜色（或取消）
+						const choice = await player
+							.chooseControl(["红色", "黑色", "cancel2"])
+							.set("prompt", "是否令" + get.translation(target) + "本回合无法使用一种颜色的牌？")
+							.set("ai", function () {
+								return num1 >= num2 ? "红色" : "黑色";
+							})
+							.forResult(); // 异步函数中必须使用 .forResult()
+						if (choice.control != "cancel2") {
+							player.line(target);
+							target.addTempSkill("old_twgongxin2");
+							target.markAuto("old_twgongxin2", [choice.control == "红色" ? "red" : "black"]);
+							game.log(target, "本回合无法使用" + choice.control + "牌");
+							if (!event.isMine() && !event.isOnline()) {
+								game.delayx();
+							}
 						}
 					}
 				}
