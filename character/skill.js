@@ -23073,8 +23073,16 @@ const lmCharacter = {
 						return Infinity;
 					}
 				},
+				targetInRange(card, player) {
+					if (card.storage?.old_dczhifeng && card.name == "sha") {
+						return true;
+					}
+				},
 			},
 			hiddenCard(player, name) {
+				if ((player.getStat().skill.old_dczhifeng || 0) >= game.players.length + game.dead.length) {
+					return false;
+				}
 				const [cards, bool] = get.info("old_dczhifeng").getFilter(player);
 				if (_status.event.name == "chooseToRespond" && !["sha", "shan"].includes(name)) {
 					return false;
@@ -23105,19 +23113,24 @@ const lmCharacter = {
 				if (!bool || (event.name == "chooseToRespond" && cards.some(name => !["sha", "shan"].includes(name)))) {
 					return false;
 				}
-				return cards.some(name => {
-					let card = get.autoViewAs({ name, storage: { old_dczhifeng: name == "jiu" } }, "unsure");
-					return event.filterCard(card, player, event);
-				});
+				return (
+					get.inpileVCardList(([_, __, name, nature]) => {
+						if (!cards.some(namex => namex == name)) {
+							return false;
+						}
+						const card = get.autoViewAs({ name, nature, storage: { old_dczhifeng: true } }, "unsure");
+						return event.filterCard(card, player, event);
+					}).length > 0
+				);
 			},
 			chooseButton: {
 				dialog(event, player) {
 					const [cards] = event.old_dczhifeng;
 					const vcards = get.inpileVCardList(([_, __, name, nature]) => {
-						if (nature || !cards.some(namex => namex == name)) {
+						if (!cards.some(namex => namex == name)) {
 							return false;
 						}
-						const card = get.autoViewAs({ name, storage: { old_dczhifeng: name == "jiu" } }, "unsure");
+						const card = get.autoViewAs({ name, nature, storage: { old_dczhifeng: true } }, "unsure");
 						return event.filterCard(card, player, event);
 					});
 					const dialog = ui.create.dialog("猘锋", [vcards, "vcard"]);
@@ -23130,7 +23143,7 @@ const lmCharacter = {
 				backup(links) {
 					const backup = get.info("old_dczhifeng_backup");
 					backup.audio = "dczhifeng";
-					backup.viewAs = { name: links[0][2], storage: { old_dczhifeng: links[0][2] == "jiu" } };
+					backup.viewAs = { name: links[0][2], nature: links[0][3], storage: { old_dczhifeng: true } };
 					return backup;
 				},
 				prompt(links) {
@@ -23138,18 +23151,18 @@ const lmCharacter = {
 					if (["sha", "shan"].includes(links[0][2])) {
 						str = "一张红色";
 					} else if (links[0][2] == "jiu") {
-						str = "至少两张黑色";
+						str = "至少一张黑色";
 					} else {
 						str = "任意张";
 					}
-					return `###猘锋###将${str}牌当做${get.translation(links[0][2])}使用`;
+					return `###猘锋###将${str}牌当做${get.translation(links[0][3]) || ""}${get.translation(links[0][2])}使用`;
 				},
 			},
 			getFilter(player, toOther) {
 				const hp = player.getHp(),
 					num = player.countCards("h") - (toOther ? 1 : 0);
 				if (num > hp) {
-					return [["jiu"], player.countCards("hes", { color: "black" }) >= 2];
+					return [["jiu"], player.countCards("hes", { color: "black" }) >= 1];
 				} else if (num == hp) {
 					return [["juedou"], player.countCards("hes")];
 				}
@@ -23159,7 +23172,18 @@ const lmCharacter = {
 				respondShan: true,
 				respondSha: true,
 				skillTagFilter(player) {
-					return player.getHp() > player.countCards("h");
+					if ((player.getStat().skill.old_dczhifeng || 0) >= game.players.length + game.dead.length) {
+						return false;
+					}
+					return (
+						player.getHp() > player.countCards("h") &&
+						player.hasCard(card => {
+							if (get.position(card) === "h" && _status.connectMode) {
+								return true;
+							}
+							return get.color(card) === "red";
+						}, "hes")
+					);
 				},
 				order(item, player) {
 					player = player || get.player();
@@ -23181,7 +23205,7 @@ const lmCharacter = {
 						if (["sha", "shan"].includes(choice)) {
 							return [1, 1];
 						} else if (choice == "jiu") {
-							return [2, Infinity];
+							return [1, Infinity];
 						}
 						return [1, Infinity];
 					},
@@ -23193,6 +23217,14 @@ const lmCharacter = {
 							return get.color(card, player) == "black";
 						}
 						return true;
+					},
+					selectTarget() {
+						const card = get.card();
+						if (card.name == "juedou") {
+							return [1, 2];
+						}
+						const info = get.info(card);
+						return get.select(get.copy(info.selectTarget));
 					},
 					popname: true,
 					allowChooseAll: true,
@@ -28515,7 +28547,7 @@ const lmCharacter = {
 		old_potzhanlie: "战烈",
 		old_potzhanlie_info: "①一名角色的回合开始时，你记录X（X为你的攻击范围），本回合中的前X张【杀】进入弃牌堆后，你获得等量“烈”标记（你至多拥有8个“烈”标记）。②出牌阶段结束时，你可移除全部”烈”标记（没有标记也可发动），视为使用一张无次数限制的【杀】并选择以下选项中的至多Y项（Y为你本次移除的标记数/2，向下取整）：1.令此【杀】可以额外指定一个目标；2.令此【杀】基础伤害值+1；3.令此【杀】需额外弃置一张牌方可响应；4.此【杀】结算完毕后，你摸两张牌。",
 		old_potzhenfeng: "振锋",
-		old_potzhenfeng_info: "限定技，出牌阶段，你可以选择一项：①回复2点体力；②修改〖酣战〗和〖战烈〗描述中的“X”为当前体力值、已损失体力值、场上人数中的一项（拥有对应技能方可选择）。",
+		old_potzhenfeng_info: "限定技，出牌阶段，你可以选择一项：①回复2点体力；②修改〖酣战〗和〖战烈〗描述中的“X”为当前体力值、已损失体力值、存活角色数中的一项（拥有对应技能方可选择）。",
 		old_pot_lougui: "旧势娄圭",
 		old_pot_lougui_prefix: "旧|势",
 		old_potjiyu: "急御",
@@ -29039,7 +29071,7 @@ const lmCharacter = {
 		old_v_sunce: "旧威孙策",
 		old_v_sunce_prefix: "旧|威",
 		old_dczhifeng: "猘锋",
-		old_dczhifeng_info: "每回合限X次（X为游戏人数）。当你的手牌数：大于体力值时，你可将至少两张黑色牌当作不计入次数的【酒】使用；小于体力值时，你可将一张红色牌当作【杀】或【闪】使用或打出，然后将手牌摸至体力上限；等于体力值时，你可将任意张牌当作【决斗】使用。",
+		old_dczhifeng_info: "每回合限X次（X为游戏人数）。当你的手牌数：大于体力值时，你可将至少一张黑色牌当作不计入次数的【酒】使用；小于体力值时，你可将一张红色牌当作无距离限制的任意【杀】或【闪】使用或打出，然后将手牌摸至体力上限；等于体力值时，你可将任意张牌当作【决斗】使用。",
 		old_dcweijing: "威靖",
 		old_dcweijing_info: "其他吴势力角色的回合开始时，你可令其执行一项：1.受到你造成的1点伤害；2.交给你一张牌，然后其可发动一次对应条件的〖猘锋〗。",
 		old_dc_shen_sunquan: "旧新杀神孙权",
