@@ -1325,6 +1325,8 @@ const characters = {
 		group: "wu",
 		hp: 4,
 		skills: ["old_dcsbzhenyu", "dcsbjielu"],
+		img: "image/character/dc_sb_zhuran.jpg",
+		dieAudios: ["dc_sb_zhuran"],
 	},
 	old_v_sunce: {
 		sex: "male",
