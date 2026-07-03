@@ -1320,6 +1320,12 @@ const characters = {
 		img: "image/character/dc_weifeng.jpg",
 		dieAudios: ["dc_weifeng"],
 	},
+	old_dc_sb_zhuran: {
+		sex: "male",
+		group: "wu",
+		hp: 4,
+		skills: ["old_dcsbzhenyu", "dcsbjielu"],
+	},
 	old_v_sunce: {
 		sex: "male",
 		group: "wu",
