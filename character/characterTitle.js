@@ -164,6 +164,7 @@ const characterTitles = {
 	old_dc_sb_xuyou: "智士濡足",
 	old_dc_weifeng: "趁浪逐波",
 	old_dc_sb_zhuran: "孤城镇岳",
+	old_v_zhangxingcai: "帼姿凤舞",
 	//海外
 	old_tw_huojun: "葭萌铁狮",
 	old_tw_guohuai: "屡破羌胡",
