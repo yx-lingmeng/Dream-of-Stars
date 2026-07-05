@@ -24765,6 +24765,7 @@ const lmCharacter = {
 		//新杀威张星彩
 		old_dchuangnu: {
 			audio: "dchuangnu",
+			audioname: ["v_zhangxingcai_shadow"],
 			enable: "phaseUse",
 			group: ["old_dchuangnu_damage"],
 			choiceMap: {
@@ -24852,6 +24853,11 @@ const lmCharacter = {
 						audio: "dchuangnu",
 						choice: links[0],
 						async content(event, trigger, player) {
+							const storage = player.getStorage("v_zhangxingcai_changeSkin", false);
+							if (storage) {
+								player.changeSkin("old_dchuangnu", "v_zhangxingcai");
+								player.setStorage("v_zhangxingcai_changeSkin", !storage);
+							}
 							const num = player.getHistory("useSkill", evt => get.sourceSkillFor(evt.skill) == "old_dchuangnu").length;
 							const { choice } = get.info(event.name);
 							const map = get.info("old_dchuangnu").choiceMap;
@@ -24927,6 +24933,11 @@ const lmCharacter = {
 						}
 					},
 					async content(event, trigger, player) {
+						const storage = player.getStorage("v_zhangxingcai_changeSkin", false);
+						if (storage) {
+							player.changeSkin("old_dchuangnu", "v_zhangxingcai");
+							player.setStorage("v_zhangxingcai_changeSkin", !storage);
+						}
 						const num = player.getHistory("useSkill", evt => get.sourceSkillFor(evt.skill) == "old_dchuangnu").length;
 						const { cost_data: choice } = event;
 						const map = get.info("old_dchuangnu").choiceMap;
@@ -24983,7 +24994,7 @@ const lmCharacter = {
 				return target;
 			},
 			check(event, player, name, target) {
-				if (!player.hasSkill("dchuangnu")) {
+				if (!player.hasSkill("old_dchuangnu")) {
 					return false;
 				}
 				return true;
