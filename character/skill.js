@@ -24694,7 +24694,6 @@ const lmCharacter = {
 								player.line(targets[0]);
 								await targets[0].link(true);
 								player.addSkill("old_dcsbzhenyu_disable");
-								
 							}
 						},
 					};
@@ -24761,6 +24760,264 @@ const lmCharacter = {
 						return 1;
 					},
 				},
+			},
+		},
+		//新杀威张星彩
+		old_dchuangnu: {
+			audio: "dchuangnu",
+			enable: "phaseUse",
+			group: ["old_dchuangnu_damage"],
+			choiceMap: {
+				async discard(player, num) {
+					const result = await player
+						.chooseTarget({
+							prompt: `煌怒：弃置一名角色${num}张手牌`,
+							filterTarget(card, player, target) {
+								return target.countDiscardableCards(player, "h") > 0;
+							},
+							ai(target) {
+								return get.effect(target, { name: "guohe_copy2", position: "h" }, get.player(), get.player());
+							},
+							forced: true,
+						})
+						.forResult();
+					const { targets } = result;
+					if (targets?.length) {
+						const [target] = targets;
+						player.line(target, "yellow");
+						await player.discardPlayerCard({ target, position: "h", forced: true, selectButton: num });
+					}
+				},
+				async sha(player, num) {
+					await player.chooseUseTarget({
+						card: get.autoViewAs({ name: "sha", isCard: true }),
+						nodistance: true,
+						addCount: false,
+						forced: true,
+					});
+				},
+				async exclude(player, num) {
+					const result = await player
+						.chooseTarget({
+							prompt: `煌怒：令一名角色本回合下次使用牌无效`,
+							ai(target) {
+								return -get.attitude(get.player(), target) * target.countCards("h");
+							},
+							forced: true,
+						})
+						.forResult();
+					const { targets } = result;
+					if (targets?.length) {
+						const [target] = targets;
+						player.line(target, "yellow");
+						target.addTempSkill("old_dchuangnu_exclude");
+					}
+				},
+			},
+			chooseButton: {
+				dialog(event, player) {
+					const num = player.getHistory("useSkill", evt => get.sourceSkillFor(evt.skill) == "old_dchuangnu").length + 1;
+					const dialog = ui.create.dialog(`###煌怒###请选择一项`, [
+						[
+							["discard", `弃置一名角色${num}张手牌`],
+							["sha", "视为使用一张无距离限制的【杀】"],
+							["exclude", "令一名角色本回合下次使用牌无效"],
+						],
+						"textbutton",
+					]);
+					return dialog;
+				},
+				filter(button) {
+					const player = get.player();
+					if (button.link == "discard") {
+						return game.hasPlayer(target => target.countDiscardableCards(player, "h") > 0);
+					}
+					if (button.link == "sha") {
+						return player.hasUseTarget(get.autoViewAs({ name: "sha", isCard: true }), false, false);
+					}
+					return true;
+				},
+				check(button) {
+					const player = get.player();
+					if (button.link == "discard") {
+						return Math.max(...game.filterPlayer(target => target.countDiscardableCards(player, "h") > 0).map(target => get.effect(target, { name: "guohe_copy2", position: "h" }, player, player)));
+					}
+					if (button.link == "sha") {
+						return player.getUseValue(get.autoViewAs({ name: "sha", isCard: true }), false, false);
+					}
+					return 3;
+				},
+				backup(links, player) {
+					return {
+						audio: "dchuangnu",
+						choice: links[0],
+						async content(event, trigger, player) {
+							const num = player.getHistory("useSkill", evt => get.sourceSkillFor(evt.skill) == "old_dchuangnu").length;
+							const { choice } = get.info(event.name);
+							const map = get.info("old_dchuangnu").choiceMap;
+							await map[choice](player, num);
+							const list = [];
+							for (let i = 1; i < 6; i++) {
+								list.push(...Array.from({ length: player.countDisabledSlot(i) }).fill("equip" + i));
+							}
+							const slots = list.randomGets(num);
+							await player.enableEquip({ slots });
+							if (slots.length < num) {
+								player.tempBanSkill("old_dchuangnu");
+							}
+						},
+					};
+				},
+			},
+			ai: {
+				order: 8,
+				result: {
+					player: 1,
+				},
+			},
+			subSkill: {
+				backup: {},
+				damage: {
+					audio: "dchuangnu",
+					trigger: {
+						player: "damageEnd",
+					},
+					async cost(event, trigger, player) {
+						const num = player.getHistory("useSkill", evt => get.sourceSkillFor(evt.skill) == "old_dchuangnu").length + 1;
+						const result = await player
+							.chooseButton({
+								createDialog: [
+									`###${get.prompt(event.skill)}###${get.skillInfoTranslation("old_dchuangnu", player, false)}`,
+									[
+										[
+											["discard", `弃置一名角色${num}张手牌`],
+											["sha", "视为使用一张无距离限制的【杀】"],
+											["exclude", "令一名角色本回合下次使用牌无效"],
+										],
+										"textbutton",
+									],
+								],
+								filterButton(button) {
+									const player = get.player();
+									if (button.link == "discard") {
+										return game.hasPlayer(target => target.countDiscardableCards(player, "h") > 0);
+									}
+									if (button.link == "sha") {
+										return player.hasUseTarget(get.autoViewAs({ name: "sha", isCard: true }), false, false);
+									}
+									return true;
+								},
+								ai(button) {
+									const player = get.player();
+									if (button.link == "discard") {
+										return Math.max(...game.filterPlayer(target => target.countDiscardableCards(player, "h") > 0).map(target => get.effect(target, { name: "guohe_copy2", position: "h" }, player, player)));
+									}
+									if (button.link == "sha") {
+										return player.getUseValue(get.autoViewAs({ name: "sha", isCard: true }), false, false);
+									}
+									return 3;
+								},
+							})
+							.forResult();
+						if (result.bool && result.links?.length) {
+							event.result = {
+								bool: true,
+								cost_data: result.links[0],
+							};
+						}
+					},
+					async content(event, trigger, player) {
+						const num = player.getHistory("useSkill", evt => get.sourceSkillFor(evt.skill) == "old_dchuangnu").length;
+						const { cost_data: choice } = event;
+						const map = get.info("old_dchuangnu").choiceMap;
+						await map[choice](player, num);
+						const list = [];
+						for (let i = 1; i < 6; i++) {
+							list.push(...Array.from({ length: player.countDisabledSlot(i) }).fill("equip" + i));
+						}
+						const slots = list.randomGets(num);
+						await player.enableEquip({ slots });
+						if (slots.length < num) {
+							player.tempBanSkill("old_dchuangnu");
+						}
+					},
+				},
+				exclude: {
+					charlotte: true,
+					silent: true,
+					mark: true,
+					intro: {
+						content: "本回合下次使用的牌无效",
+					},
+					trigger: {
+						player: "useCard",
+					},
+					async content(event, trigger, player) {
+						player.removeSkill(event.name);
+						trigger.all_excluded = true;
+						game.log(trigger.card, "被无效");
+					},
+				},
+			},
+		},
+		old_dcxiankuang: {
+			audio: "dcxiankuang",
+			audioname: ["v_zhangxingcai_shadow"],
+			trigger: {
+				global: ["loseAfter", "loseAsyncAfter", "cardsDiscardAfter"],
+			},
+			getIndex(event, player) {
+				if (event.name == "cardsDiscard" && event.getParent()?.relatedEvent?.name == "useCard") {
+					return [];
+				}
+				return game
+					.filterPlayer(target => {
+						return event.getd(target, "cards2")?.some(card => get.type(card) == "basic");
+					})
+					.sortBySeat();
+			},
+			filter(event, player, name, target) {
+				return target?.isIn() && player.countEnabledSlot() > 0;
+			},
+			logTarget(event, player, name, target) {
+				return target;
+			},
+			check(event, player, name, target) {
+				if (!player.hasSkill("dchuangnu")) {
+					return false;
+				}
+				return true;
+			},
+			async content(event, trigger, player) {
+				const storage = player.getStorage("v_zhangxingcai_changeSkin", false);
+				if (!storage) {
+					player.changeSkin({ characterName: "old_v_zhangxingcai" }, "v_zhangxingcai_shadow");
+					player.setStorage("v_zhangxingcai_changeSkin", !storage);
+				}
+				const {
+					targets: [target],
+				} = event;
+				await player.chooseToDisable();
+				const cards = trigger.getd(target, "cards2").filter(card => get.type(card) == "basic");
+				const num = player.countDisabledSlot();
+				const result = await player
+					.chooseControl({
+						choiceList: [`获得${get.translation(cards)}`, `令${get.translation(target)}摸${num}张牌`],
+						choice: (() => {
+							const att = get.attitude(player, target);
+							if (att <= 0) {
+								return 0;
+							}
+							return cards.length > num ? 0 : 1;
+						})(),
+					})
+					.forResult();
+				const { index } = result;
+				if (index == 0) {
+					await player.gain({ cards, animate: "gain2" });
+				} else {
+					await target.draw({ num });
+				}
 			},
 		},
 		//新杀夏侯玄
@@ -29233,6 +29490,12 @@ const lmCharacter = {
 		old_dc_sb_zhuran_prefix: "旧|新杀谋",
 		old_dcsbzhenyu: "镇御",
 		old_dcsbzhenyu_info: "当你需要使用基本牌时，你可以横置一名角色，然后视为使用此牌。若如此做，此技能失效直到每轮结束或你从手牌中使用基本牌。",
+		old_v_zhangxingcai: "旧威张星彩",
+		old_v_zhangxingcai_prefix: "旧|威",
+		old_dchuangnu: "煌怒",
+		old_dchuangnu_info: "出牌阶段或受到伤害后，你可选择一项执行：1.弃置一名角色X张手牌；2.你视为使用一张无距离限制的【杀】；3.令一名角色本回合下次使用牌无效。执行后随机恢复X个装备栏，若恢复数不足对应数量则此技能失效至本回合结束。（X为此技能本回合发动的次数）",
+		old_dcxiankuang: "贤贶",
+		old_dcxiankuang_info: "有角色非因使用失去基本牌进入弃牌堆后，你可废除一个装备栏并选择一项发动：1.获得此牌；2.令此角色摸你废除的装备栏数张牌。",
 		old_tw_huojun: "旧TW霍峻",
 		old_tw_huojun_prefix: "旧|TW",
 		old_twjieyu: "竭御",
