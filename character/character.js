@@ -1320,6 +1320,22 @@ const characters = {
 		img: "image/character/dc_weifeng.jpg",
 		dieAudios: ["dc_weifeng"],
 	},
+	old_dc_sb_zhuran: {
+		sex: "male",
+		group: "wu",
+		hp: 4,
+		skills: ["old_dcsbzhenyu", "dcsbjielu"],
+		img: "image/character/dc_sb_zhuran.jpg",
+		dieAudios: ["dc_sb_zhuran"],
+	},
+	old_v_zhangxingcai: {
+		sex: "female",
+		group: "shu",
+		hp: 3,
+		skills: ["old_dchuangnu", "old_dcxiankuang"],
+		img: "image/character/v_zhangxingcai.jpg",
+		dieAudios: ["v_zhangxingcai"],
+	},
 	old_v_sunce: {
 		sex: "male",
 		group: "wu",
