@@ -6,7 +6,6 @@ const characterTitles = {
 	old_mb_shen_jiangwei: "烟雨济世",
 	oldx_mb_shen_jiangwei: "烟雨济世",
 	old_new_simayi: "权控三势",
-	old_mb_jushou: "监军谋国",
 	old_mb_zhuzhi: "功崇信重",
 	old_mb_sp_zhenji: "明珠锦玉",
 	old_fuqian: "危汉绝勇",

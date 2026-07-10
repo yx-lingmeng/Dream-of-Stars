@@ -45,14 +45,6 @@ const characters = {
 		img: "image/character/mb_shen_jiangwei.jpg",
 		groupInGuozhan: "shu",
 	},
-	old_mb_jushou: {
-		sex: "male",
-		group: "qun",
-		hp: 3,
-		skills: ["old_xinjianying", "xinshibei"],
-		img: "image/character/xin_jushou.jpg",
-		dieAudios: ["xin_jushou"],
-	},
 	old_mb_zhuzhi: {
 		sex: "male",
 		group: "wu",

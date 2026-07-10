@@ -7,7 +7,6 @@ const characterSorts = {
 			"old_new_simayi",
 			"old_mb_shen_jiangwei",
 			"oldx_mb_shen_jiangwei",
-			"old_mb_jushou",
 			"old_mb_zhuzhi",
 			"old_mb_sp_zhenji",
 			"old_fuqian",
