@@ -1097,6 +1097,13 @@ const characters = {
 		dieAudios: ["wu_huangfusong"],
 		names: "皇甫|嵩",
 	},
+	old_wu_lukang: {
+		sex: "male",
+		group: "wu",
+		hp: 4,
+		skills: ["old_dcshenduan", "old_dckegou", "dcdixian"],
+		clans: ["吴郡陆氏"],
+	},
 	old_dc_shen_huatuo: {
 		sex: "male",
 		group: "shen",

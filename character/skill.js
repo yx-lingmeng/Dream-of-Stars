@@ -21368,6 +21368,185 @@ const lmCharacter = {
 				combo: "old_dclianjie",
 			},
 		},
+		//武陆抗
+		old_dcshenduan: {
+			audio: "dcshenduan",
+			trigger: { global: "chooseToCompareBegin" },
+			filter(event, player) {
+				if (player === event.player) {
+					return true;
+				}
+				return (event?.targets?.includes(player) || player == event.target) && player.countDiscardableCards(player, "he") > 0;
+			},
+			async cost(event, trigger, player) {
+				event.result = await player
+					.chooseToDiscard(`###${get.prompt(event.skill)}###弃置一张牌，然后用牌堆中点数最大的牌拼点`, "he")
+					.set("ai", card => {
+						const player = get.player();
+						const number = get.number(card);
+						if (number >= 11 || player.hasCard(card => get.number(card) >= 12, "h")) {
+							return 0;
+						}
+						return 7 - get.value(card);
+					})
+					.forResult();
+			},
+			async content(event, trigger, player) {
+				const cards = lib.skill.old_dcshenduan.getExtreCard("max");
+				await game.cardsGotoOrdering(cards);
+				if (!trigger.fixedResult) {
+					trigger.fixedResult = {};
+				}
+				trigger.fixedResult[player.playerid] = cards[0];
+			},
+			//获得牌堆X个点数不同且为极大或极小的牌各一张
+			getExtreCard(str, count = 1) {
+				let cards = [];
+				if (!["max", "min"].includes(str) || count < 1) {
+					return cards;
+				}
+				let num = str == "max" ? 13 : 1;
+				while (num > 0 && num < 14) {
+					const card = get.cardPile2(card => {
+						return get.number(card, false) == num;
+					});
+					if (card) {
+						cards.add(card);
+						if (cards.length == count) {
+							break;
+						}
+					}
+					str == "max" ? num-- : num++;
+				}
+				return cards;
+			},
+			group: ["old_dcshenduan_effect"],
+			subSkill: {
+				effect: {
+					audio: "dcshenduan",
+					trigger: { global: ["chooseToCompareAfter", "compareMultipleAfter"] },
+					filter(event, player, name) {
+						if (event.preserve || event.result?.cancelled) {
+							return false;
+						}
+						if (!lib.skill.old_dcshenduan_effect.logTarget(event, player).length) {
+							return false;
+						}
+						if (event.name == "compareMultiple") {
+							return true;
+						}
+						return !event.compareMultiple;
+					},
+					logTarget(event, player) {
+						let list = [];
+						if (event.targets?.length) {
+							list.push([event.player, event.result.num1[0], event.result.player]);
+							for (const i in event.targets) {
+								list.push([event.targets[i], event.result.num2[i], event.result.targets[i]]);
+							}
+						} else {
+							list = [
+								[event.player, event.num1, event.card1],
+								[event.target, event.num2, event.card2],
+							];
+						}
+						event.set("old_dcshenduan_list", list);
+						return list
+							.filter(arr => arr[1] == 13)
+							.map(arr => arr[0])
+							.filter(target => target.isIn());
+					},
+					forced: true,
+					locked: false,
+					async content(event, trigger, player) {
+						const targets = [player].concat(event.targets.sortBySeat());
+						for (const target of targets) {
+							const card = lib.skill.old_dcshenduan.getExtreCard("min");
+							if (card) {
+								game.log(target, "从牌堆获得一张牌");
+								await target.gain(card, "draw");
+							} else {
+								break;
+							}
+						}
+						const putter = trigger.name == "compareMultiple" ? trigger.winner : trigger.result.winner;
+						if (putter?.isIn()) {
+							const card = trigger.old_dcshenduan_list?.filter(arr => arr[0] === putter)[0][2];
+							if (get.owner(card)) {
+								return;
+							}
+							game.log(putter, "将", card, "置于牌堆底");
+							await game.cardsGotoPile(card);
+						}
+					},
+				},
+			},
+		},
+		old_dckegou: {
+			audio: "dckegou",
+			enable: "phaseUse",
+			trigger: { global: "phaseEnd" },
+			filter(event, player) {
+				if (!game.hasPlayer(target => player.canCompare(target))) {
+					return false;
+				}
+				if (event.name == "chooseToUse") {
+					return !player.hasSkill("old_dcshenduan_used");
+				}
+				return _status.currentPhase != player && (player.hasHistory("useCard") || player.hasHistory("respond"));
+			},
+			precontent() {
+				player.addTempSkill("old_dcshenduan_used", "phaseUseAfter");
+			},
+			filterTarget(card, player, target) {
+				return player.canCompare(target);
+			},
+			async cost(event, trigger, player) {
+				event.result = await player
+					.chooseTarget(get.prompt2(event.skill), (card, player, target) => player.canCompare(target))
+					.set("ai", target => -get.attitude(get.player(), target) / target.countCards("h"))
+					.forResult();
+			},
+			async content(event, trigger, player) {
+				const target = event.targets[0];
+				while (player.canCompare(target)) {
+					const result = await player.chooseToCompare(target).forResult();
+					if (result.bool) {
+						const cards = lib.skill.old_dcshenduan.getExtreCard("min", Math.min(3, Math.abs(result.num1 - result.num2)));
+						if (cards.length) {
+							await player.gain(cards, "gain2");
+						}
+						break;
+					} else {
+						if (target.canUse({ name: "sha", isCard: true }, player, false, false)) {
+							await target.useCard(get.autoViewAs({ name: "sha", isCard: true }), player, false);
+						}
+						if (!player.canCompare(target)) {
+							break;
+						}
+						const result2 = await player
+							.chooseBool(`克构：是否继续与${get.translation(target)}拼点`)
+							.set("ai", () => get.attitude(get.player(), get.event().target) < 0)
+							.set("target", target)
+							.forResult();
+						if (!result2.bool) {
+							break;
+						}
+					}
+				}
+			},
+			ai: {
+				order: 5,
+				result: {
+					target: -1,
+				},
+			},
+			subSkill: {
+				used: {
+					charlotte: true,
+				},
+			},
+		},
 		//神华佗
 		old_jingyu: {
 			audio: "jingyu",
@@ -28678,6 +28857,12 @@ const lmCharacter = {
 		old_dclianjie_info: "你使用手牌指定目标后，若此牌点数不大于你的所有手牌，你可令一名角色将其一张点数最小的手牌置于牌堆底，然后你将手牌摸至体力上限，以此法获得的牌本回合无距离次数限制（每个点数每回合限摸一次，无点数视为0）。",
 		old_dcjiangxian: "将贤",
 		old_dcjiangxian_info: "限定技，出牌阶段，你可以获得以下效果直到本回合结束：当你使用因〖连捷〗获得的牌造成伤害时，此伤害+X（X为你本回合造成伤害的次数且至多为5）。若如此做，本回合结束后你失去〖连捷〗或〖朝镇〗。",
+		old_wu_lukang: "旧武陆抗",
+		old_wu_lukang_prefix: "旧|武",
+		old_dcshenduan: "审断",
+		old_dcshenduan_info: "①你发起拼点或成为拼点的目标时，可弃置一张牌，然后用牌堆中点数最大的牌拼点。②有角色拼点后，你与本次用K拼点的角色各摸一张牌堆中点数最小的牌，赢的角色将其拼点牌置于牌堆底。",
+		old_dckegou: "克构",
+		old_dckegou_info: "出牌阶段限一次或你使用或打出过牌且不为你的回合结束时，你可与一名其他角色拼点。若你赢，你获得牌堆中X个不同较小点数的牌各一张（X为拼点牌点数的差值且最多为3）；若你没赢，其视为对你使用一张【杀】，然后你可以继续与其拼点并重复上述流程。",
 		old_dc_shen_huatuo: "旧神华佗",
 		old_dc_shen_huatuo_prefix: "旧|神",
 		old_jingyu: "静域",
