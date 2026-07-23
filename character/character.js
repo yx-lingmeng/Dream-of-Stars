@@ -1102,6 +1102,8 @@ const characters = {
 		group: "wu",
 		hp: 4,
 		skills: ["old_dcshenduan", "old_dckegou", "dcdixian"],
+		img: "image/character/wu_lukang.jpg",
+		dieAudios: ["wu_lukang"],
 		clans: ["吴郡陆氏"],
 	},
 	old_dc_shen_huatuo: {
