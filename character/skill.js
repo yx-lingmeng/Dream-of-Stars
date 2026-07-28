@@ -28190,7 +28190,7 @@ const lmCharacter = {
 		collab_old: "怀旧·联动",
 		huaijiu_old: "怀旧·怀旧",
 		newjiang_old: "怀旧·新一将成名",
-		other_old: "怀旧·线下",
+		offline_old: "怀旧·线下",
 
 		old_jm_yuanshu: "旧集蜜袁术",
 		old_jm_yuanshu_ab: "哈基术",

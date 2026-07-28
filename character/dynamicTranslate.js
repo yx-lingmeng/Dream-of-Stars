@@ -2,8 +2,7 @@ import { lib, game, ui, get, ai, _status } from "../../../noname.js";
 const dynamicTranslates = {
 	//动态翻译
 	old_sblongdan(player) {
-		if (player.hasSkill("old_sblongdan_mark", null, null, false))
-			return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
+		if (player.hasSkill("old_sblongdan_mark", null, null, false)) return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
 		return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后若你以此法使用牌，你摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
 	},
 	old_sbwansha(player) {
