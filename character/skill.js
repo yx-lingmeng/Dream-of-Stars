@@ -28171,17 +28171,26 @@ const lmCharacter = {
 	},
 	//翻译
 	translate: {
-		old_onlyOL: "怀旧·OL专属",
-		old_sp: "怀旧·璀璨星河",
-		old_clan: "怀旧·门阀士族",
+		onlyOL_old: "怀旧·OL专属",
+		sp_old: "怀旧·璀璨星河",
+		clan_old: "怀旧·门阀士族",
 
-		old_refresh: "怀旧·界限突破",
-		old_xianding: "怀旧·限定专属",
-		old_huicui: "怀旧·群英荟萃",
-		old_newjiang: "怀旧·新一将成名",
+		refresh_old: "怀旧·界限突破",
+		huicui_old: "怀旧·群英荟萃",
+		newjiang_old: "怀旧·新一将成名",
+		xianding_old: "怀旧·限定专属",
 
-		tw_old: "海外怀旧",
-		other_old: "线下怀旧",
+		shiji_old: "怀旧·始计篇",
+		mobile_old: "怀旧·移动版",
+		sb_old: "怀旧·谋攻篇",
+		bingshi_old: "怀旧·兵势篇",
+
+		tw_old: "怀旧·海外",
+
+		collab_old: "怀旧·联动",
+		huaijiu_old: "怀旧·怀旧",
+		newjiang_old: "怀旧·新一将成名",
+		other_old: "怀旧·线下",
 
 		old_jm_yuanshu: "旧集蜜袁术",
 		old_jm_yuanshu_ab: "哈基术",
@@ -28302,8 +28311,8 @@ const lmCharacter = {
 		old_mbjiejian: "节谏",
 		old_mbjiejian_info: "准备阶段，你可将任意张手牌交给任意名其他角色，并令这些角色获得“节谏”标记。“节谏”角色成为一张非你使用的非装备牌的唯一目标时，你可将此牌转移给你，然后摸一张牌。“节谏”角色的回合结束时，移去其“节谏”标记，若其体力值不小于X（X为你交给其牌时其的体力值），你摸两张牌。",
 		old_mbjiejian_tag: "已分配",
-		oldx_sp_jianggan: "旧蒋干",
-		oldx_sp_jianggan_prefix: "旧",
+		old_sp_jianggan: "旧蒋干",
+		old_sp_jianggan_prefix: "旧",
 		old_spdaoshu: "盗书",
 		old_spdaoshu_info: "每轮限一次。一名敌方角色的出牌阶段开始时，若其有手牌，则你可以令其视为使用一张【酒】。其须声明一个基本牌的牌名，然后你判断其手牌区内是否有该牌名的牌。若你判断正确，则你随机获得其五张手牌，否则你不能响应其使用的牌直到回合结束。",
 		old_spdaoshu_info_identity: "每轮限一次。一名其他角色的出牌阶段开始时，若其有手牌，则你可以令其视为使用一张【酒】。其须声明一个基本牌的牌名，然后你判断其手牌区内是否有该牌名的牌。若你判断正确，则你随机获得其五张手牌，否则你不能响应其使用的牌直到回合结束。",

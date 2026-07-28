@@ -192,7 +192,7 @@ const characters = {
 		img: "image/character/mb_wangjing.jpg",
 		dieAudios: ["mb_wangjing"],
 	},
-	oldx_sp_jianggan: {
+	old_sp_jianggan: {
 		sex: "male",
 		group: "wei",
 		hp: 3,
@@ -1367,8 +1367,9 @@ const characters = {
 		group: "qun",
 		hp: 3,
 		skills: ["dcdulu", "old_dcfuji"],
-		img: "image/character/liuyijun.jpg",
-		dieAudios: ["liuyijun"],
+		names: "刘|null",
+		img: "image/character/liufuren.jpg",
+		dieAudios: ["liufuren"],
 	},
 	//海外
 	old_tw_huojun: {
