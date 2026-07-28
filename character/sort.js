@@ -44,7 +44,9 @@ const characterSorts = {
 		lm_scs: ["lm_shichangshi", "lm_zhangrang", "lm_zhaozhong", "lm_sunzhang", "lm_bilan", "lm_xiayun", "lm_hankui", "lm_lisong", "lm_duangui", "lm_guosheng", "lm_gaowang"],
 		//神武
 		lmCharacter_sw: ["sw_guanyu", "sw_lvmeng", "sw_zhugeliang", "sw_zhouyu", "sw_simayi", "sw_zhaoyun", "sw_caocao", "sw_lvbu", "sw_liubei", "sw_luxun", "sw_zhangliao", "sw_ganning", "sw_caopi", "sw_zhenji", "sw_zhangjiao", "sw_diaochan", "sw_tw_guanyu", "sw_tw_lvmeng", "sw_wechat_zhugeliang", "lm_xurong"],
+		//lm-diy
 		lmCharacter_diy: ["wangtaowangyue", "lm_old_caocao"],
+		//lm-其他
 		lmCharacter_other: ["unlock_dongzhao", "unlock_tianchuan", "lm_jikang"],
 	},
 };
