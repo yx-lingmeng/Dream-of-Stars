@@ -1877,6 +1877,14 @@ const characters = {
 		groupInGuozhan: "shu",
 		names: "诸葛|亮",
 	},
+	lm_xurong: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["old_xionghuo", "old_shajue", "xr_huyi"],
+		img: "image/character/xurong.jpg",
+		dieAudios: ["xurong"],
+	},
 
 	//lm-diy
 	wangtaowangyue: {
