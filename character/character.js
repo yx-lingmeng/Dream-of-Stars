@@ -308,6 +308,8 @@ const characters = {
 		skills: ["old_olcangxin", "olrunwei"],
 		img: "image/character/ol_luyusheng.jpg",
 		dieAudios: ["ol_luyusheng"],
+		clans: ["吴郡陆氏"],
+		tempname: ["clan_luyusheng"],
 	},
 	old_wangyan: {
 		sex: "male",
@@ -352,6 +354,7 @@ const characters = {
 		img: "image/character/xin_zhonghui.jpg",
 		dieAudios: ["xin_zhonghui"],
 		clans: ["颍川钟氏"],
+		tempname: ["clan_zhonghui"],
 	},
 	old_dc_xushu: {
 		sex: "male",
@@ -581,6 +584,8 @@ const characters = {
 		skills: ["dcsbbizuo", "old_dcsbshimou", "dcsbxianshi"],
 		img: "image/character/dc_sb_xunyu.jpg",
 		dieAudios: ["dc_sb_xunyu"],
+		clans: ["颍川荀氏"],
+		tempname: ["clan_xunyu"],
 	},
 	old_dc_sb_luxun: {
 		sex: "male",
@@ -744,6 +749,7 @@ const characters = {
 		img: "image/character/wangling.jpg",
 		dieAudios: ["wangling"],
 		clans: ["太原王氏"],
+		tempname: ["clan_wangling"],
 	},
 	old_mb_shen_jiangwei: {
 		sex: "male",
@@ -1517,7 +1523,6 @@ const characters = {
 		names: "司马|懿",
 	},
 
-	//新一将成名
 	//新一将成名
 	old_yj_zhoubuyi: {
 		sex: "male",
