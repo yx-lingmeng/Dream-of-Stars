@@ -665,7 +665,7 @@ const characters = {
 		sex: "female",
 		group: "qun",
 		hp: 3,
-		skills: ["oldx_clanlieshi", "clandianzhan", "clanhuanyin", "clandaojie"],
+		skills: ["old_clanlieshi", "clandianzhan", "clanhuanyin", "clandaojie"],
 		img: "image/character/clan_xuncai.jpg",
 		dieAudios: ["clan_xuncai"],
 		clans: ["颍川荀氏"],
@@ -1257,7 +1257,7 @@ const characters = {
 		img: "image/character/lukai.jpg",
 		dieAudios: ["lukai"],
 	},
-	oldx_zhangqiying: {
+	old_zhangqiying: {
 		sex: "female",
 		group: "qun",
 		hp: 3,
@@ -1362,7 +1362,7 @@ const characters = {
 		img: "image/character/hansong.jpg",
 		dieAudios: ["hansong"],
 	},
-	old_liuyijun: {
+	old_liufuren: {
 		sex: "female",
 		group: "qun",
 		hp: 3,
