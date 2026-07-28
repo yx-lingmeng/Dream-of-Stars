@@ -1,7 +1,317 @@
 import { lib, game, ui, get, ai, _status } from "noname";
 const characters = {
 	//武将信息
-	//手杀
+	//OL武将
+	//OL专属
+
+	//门阀士族
+
+	//璀璨星河
+
+	//新杀武将
+	//界限突破
+
+	//群英荟萃
+
+	//系列专属
+
+	//限定专属
+
+	//手杀武将
+	//始计篇
+
+	//移动版
+
+	//谋攻篇
+
+	//兵势篇
+
+	//海外
+	old_tw_huojun: {
+		sex: "male",
+		group: "shu",
+		hp: 4,
+		skills: ["twsidai", "old_twjieyu"],
+		img: "image/character/tw_huojun.jpg",
+		dieAudios: ["tw_huojun"],
+	},
+	old_tw_guohuai: {
+		sex: "male",
+		group: "wei",
+		hp: 4,
+		skills: ["old_twjingce", "old_yuzhang"],
+		img: "image/character/tw_guohuai.jpg",
+		dieAudios: ["tw_guohuai"],
+	},
+	oldx_quancong: {
+		sex: "male",
+		group: "wu",
+		hp: 4,
+		skills: ["old_zhenshan"],
+		img: "image/character/quancong.jpg",
+		dieAudios: ["quancong"],
+	},
+	old_tw_baoxin: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["old_twmutao", "old_twyimou"],
+		img: "image/character/tw_baoxin.jpg",
+		dieAudios: ["tw_baoxin"],
+	},
+	old_tw_zhangmancheng: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["twfengji", "twyiju", "old_twbudao"],
+		img: "image/character/tw_zhangmancheng.jpg",
+		dieAudios: ["tw_zhangmancheng"],
+	},
+	old_tw_guanqiujian: {
+		sex: "male",
+		group: "wei",
+		hp: 4,
+		skills: ["twzhengrong", "twhongju"],
+		img: "image/character/tw_guanqiujian.jpg",
+		dieAudios: ["tw_guanqiujian"],
+		names: "毌丘|俭",
+	},
+	old_tw_niufudongxie: {
+		sex: "double",
+		group: "qun",
+		hp: 4,
+		skills: ["old_twjuntun", "old_twxiongxi", "twxiafeng"],
+		img: "image/character/tw_niufudongxie.jpg",
+		dieAudios: ["tw_niufudongxie"],
+		names: "牛|辅-董|翓",
+	},
+	old_xia_guanyu: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["old_twzhongyi", "twchue"],
+		img: "image/character/xia_guanyu.jpg",
+		dieAudios: ["xia_guanyu"],
+	},
+	old_xia_zhaoe: {
+		sex: "female",
+		group: "qun",
+		hp: 3,
+		skills: ["old_twyanshi", "old_twrenchou"],
+		img: "image/character/xia_zhaoe.jpg",
+		dieAudios: ["xia_zhaoe"],
+	},
+	old_huan_zhugeliang: {
+		sex: "male",
+		group: "shu",
+		hp: 3,
+		maxHp: 4,
+		skills: ["twbeiding", "twjielv", "old_twhunyou"],
+		img: "image/character/huan_zhugeliang.jpg",
+		dieAudios: ["huan_zhugeliang"],
+		names: "诸葛|亮",
+	},
+	old_huan_weiyan: {
+		sex: "male",
+		group: "shu",
+		hp: 4,
+		skills: ["twqiji", "old_twpiankuang"],
+		img: "image/character/huan_weiyan.jpg",
+		dieAudios: ["huan_weiyan"],
+	},
+	old_huan_zhugeguo: {
+		sex: "female",
+		group: "shu",
+		hp: 3,
+		skills: ["old_rexianyuan", "twlingyin"],
+		img: "image/character/huan_zhugeguo.jpg",
+		dieAudios: ["huan_zhugeguo"],
+	},
+	old_tw_shen_lvmeng: {
+		sex: "male",
+		group: "shen",
+		hp: 3,
+		skills: ["old_twgongxin", "old_twshelie"],
+		img: "image/character/tw_shen_lvmeng.jpg",
+		dieAudios: ["shen_lvmeng"],
+		groupInGuozhan: "wu",
+	},
+	old_huan_caoang: {
+		sex: "male",
+		group: "wei",
+		hp: 3,
+		maxHp: 4,
+		skills: ["old_twchihui", "old_twfuxi"],
+		img: "image/character/huan_caoang.jpg",
+		dieAudios: ["huan_caoang"],
+	},
+	old_tw_gexuan: {
+		sex: "male",
+		group: "qun",
+		hp: 3,
+		skills: ["old_twdanfa", "old_twlingbao", "twsidao"],
+		img: "image/character/tw_gexuan.jpg",
+		dieAudios: ["tw_gexuan"],
+	},
+	old_jsrg_huangfusong: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["twguanhuo", "old_twjuxia"],
+		img: "image/character/jsrg_huangfusong.jpg",
+		dieAudios: ["jsrg_huangfusong"],
+		names: "皇甫|嵩",
+	},
+	old_yinfuren: {
+		sex: "female",
+		group: "wei",
+		hp: 3,
+		skills: ["old_dcyingyu", "old_dcyongbi"],
+		img: "image/character/yinfuren.jpg",
+		dieAudios: ["yinfuren"],
+		names: "尹|null",
+	},
+	old_tw_jiangji: {
+		sex: "male",
+		group: "wei",
+		hp: 3,
+		skills: ["twjichou", "old_twjilun"],
+		img: "image/character/tw_jiangji.jpg",
+		dieAudios: ["tw_jiangji"],
+	},
+	old_tw_zhanghong: {
+		sex: "male",
+		group: "wu",
+		hp: 3,
+		skills: ["old_twquanqian", "old_twrouke"],
+		img: "image/character/tw_zhanghong.jpg",
+		dieAudios: ["tw_zhanghong"],
+	},
+	old_tw_zhangzhao: {
+		sex: "male",
+		group: "wu",
+		hp: 3,
+		skills: ["twlijian", "old_twchungang"],
+		img: "image/character/tw_zhangzhao.jpg",
+		dieAudios: ["tw_zhangzhao"],
+	},
+	old_tw_huangfusong: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["old_twtaoluan", "old_twshiji", "old_twzhengjun"],
+		img: "image/character/tw_huangfusong.jpg",
+		dieAudios: ["sp_huangfusong"],
+	},
+	//联动卡
+
+	//怀旧
+
+	//新一将成名
+
+	//十常侍
+	lm_shichangshi: {
+		sex: "male",
+		group: "qun",
+		hp: 1,
+		skills: ["scstaoluan", "scschiyan", "scszimou", "scspicai", "scsyaozhuo", "scsxiaolu", "scskuiji", "scschihe", "scsniqu", "scsanruo"],
+		img: "image/character/shichangshi.jpg",
+		dieAudios: ["shichangshi"],
+		trashBin: ["sex:male_castrated"],
+		names: "张|让-赵|忠-孙|璋-毕|岚-夏|恽-韩|悝-栗|嵩-段|珪-郭|胜-高|望",
+	},
+	lm_zhangrang: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scstaoluan"],
+		img: "image/character/scs_zhangrang.jpg",
+		dieAudios: ["scs_zhangrang"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_zhaozhong: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scschiyan"],
+		img: "image/character/scs_zhaozhong.jpg",
+		dieAudios: ["scs_zhaozhong"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_sunzhang: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scszimou"],
+		img: "image/character/scs_sunzhang.jpg",
+		dieAudios: ["scs_sunzhang"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_bilan: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scspicai"],
+		img: "image/character/scs_bilan.jpg",
+		dieAudios: ["scs_bilan"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_xiayun: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scsyaozhuo"],
+		img: "image/character/scs_xiayun.jpg",
+		dieAudios: ["scs_xiayun"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_hankui: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scsxiaolu"],
+		img: "image/character/scs_hankui.jpg",
+		dieAudios: ["scs_hankui"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_lisong: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scskuiji"],
+		img: "image/character/scs_lisong.jpg",
+		dieAudios: ["scs_lisong"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_duangui: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scschihe"],
+		img: "image/character/scs_duangui.jpg",
+		dieAudios: ["scs_duangui"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_guosheng: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scsniqu"],
+		img: "image/character/scs_guosheng.jpg",
+		dieAudios: ["scs_guosheng"],
+		trashBin: ["sex:male_castrated"],
+	},
+	lm_gaowang: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["scsanruo"],
+		img: "image/character/scs_gaowang.jpg",
+		dieAudios: ["scs_gaowang"],
+		trashBin: ["sex:male_castrated"],
+	},
+
+
 	old_jm_yuanshu: {
 		sex: "male",
 		group: "qun",
@@ -650,7 +960,7 @@ const characters = {
 		dieAudios: ["hefei_zhangliao"],
 		tempname: ["hefei_zhangliao"],
 	},
-	//OL
+
 	old_shen_caopi: {
 		sex: "male",
 		group: "shen",
@@ -1004,7 +1314,7 @@ const characters = {
 		tempname: ["ol_sb_zhangrang"],
 	},
 
-	//十周年
+
 	old_re_zhangchunhua: {
 		sex: "female",
 		group: "wei",
@@ -1371,184 +1681,7 @@ const characters = {
 		img: "image/character/liufuren.jpg",
 		dieAudios: ["liufuren"],
 	},
-	//海外
-	old_tw_huojun: {
-		sex: "male",
-		group: "shu",
-		hp: 4,
-		skills: ["twsidai", "old_twjieyu"],
-		img: "image/character/tw_huojun.jpg",
-		dieAudios: ["tw_huojun"],
-	},
-	old_tw_guohuai: {
-		sex: "male",
-		group: "wei",
-		hp: 4,
-		skills: ["old_twjingce", "old_yuzhang"],
-		img: "image/character/tw_guohuai.jpg",
-		dieAudios: ["tw_guohuai"],
-	},
-	oldx_quancong: {
-		sex: "male",
-		group: "wu",
-		hp: 4,
-		skills: ["old_zhenshan"],
-		img: "image/character/quancong.jpg",
-		dieAudios: ["quancong"],
-	},
-	old_tw_baoxin: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["old_twmutao", "old_twyimou"],
-		img: "image/character/tw_baoxin.jpg",
-		dieAudios: ["tw_baoxin"],
-	},
-	old_tw_zhangmancheng: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["twfengji", "twyiju", "old_twbudao"],
-		img: "image/character/tw_zhangmancheng.jpg",
-		dieAudios: ["tw_zhangmancheng"],
-	},
-	old_tw_guanqiujian: {
-		sex: "male",
-		group: "wei",
-		hp: 4,
-		skills: ["twzhengrong", "twhongju"],
-		img: "image/character/tw_guanqiujian.jpg",
-		dieAudios: ["tw_guanqiujian"],
-		names: "毌丘|俭",
-	},
-	old_tw_niufudongxie: {
-		sex: "double",
-		group: "qun",
-		hp: 4,
-		skills: ["old_twjuntun", "old_twxiongxi", "twxiafeng"],
-		img: "image/character/tw_niufudongxie.jpg",
-		dieAudios: ["tw_niufudongxie"],
-		names: "牛|辅-董|翓",
-	},
-	old_xia_guanyu: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["old_twzhongyi", "twchue"],
-		img: "image/character/xia_guanyu.jpg",
-		dieAudios: ["xia_guanyu"],
-	},
-	old_xia_zhaoe: {
-		sex: "female",
-		group: "qun",
-		hp: 3,
-		skills: ["old_twyanshi", "old_twrenchou"],
-		img: "image/character/xia_zhaoe.jpg",
-		dieAudios: ["xia_zhaoe"],
-	},
-	old_huan_zhugeliang: {
-		sex: "male",
-		group: "shu",
-		hp: 3,
-		maxHp: 4,
-		skills: ["twbeiding", "twjielv", "old_twhunyou"],
-		img: "image/character/huan_zhugeliang.jpg",
-		dieAudios: ["huan_zhugeliang"],
-		names: "诸葛|亮",
-	},
-	old_huan_weiyan: {
-		sex: "male",
-		group: "shu",
-		hp: 4,
-		skills: ["twqiji", "old_twpiankuang"],
-		img: "image/character/huan_weiyan.jpg",
-		dieAudios: ["huan_weiyan"],
-	},
-	old_huan_zhugeguo: {
-		sex: "female",
-		group: "shu",
-		hp: 3,
-		skills: ["old_rexianyuan", "twlingyin"],
-		img: "image/character/huan_zhugeguo.jpg",
-		dieAudios: ["huan_zhugeguo"],
-	},
-	old_tw_shen_lvmeng: {
-		sex: "male",
-		group: "shen",
-		hp: 3,
-		skills: ["old_twgongxin", "old_twshelie"],
-		img: "image/character/tw_shen_lvmeng.jpg",
-		dieAudios: ["shen_lvmeng"],
-		groupInGuozhan: "wu",
-	},
-	old_huan_caoang: {
-		sex: "male",
-		group: "wei",
-		hp: 3,
-		maxHp: 4,
-		skills: ["old_twchihui", "old_twfuxi"],
-		img: "image/character/huan_caoang.jpg",
-		dieAudios: ["huan_caoang"],
-	},
-	old_tw_gexuan: {
-		sex: "male",
-		group: "qun",
-		hp: 3,
-		skills: ["old_twdanfa", "old_twlingbao", "twsidao"],
-		img: "image/character/tw_gexuan.jpg",
-		dieAudios: ["tw_gexuan"],
-	},
-	old_jsrg_huangfusong: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["twguanhuo", "old_twjuxia"],
-		img: "image/character/jsrg_huangfusong.jpg",
-		dieAudios: ["jsrg_huangfusong"],
-		names: "皇甫|嵩",
-	},
-	old_yinfuren: {
-		sex: "female",
-		group: "wei",
-		hp: 3,
-		skills: ["old_dcyingyu", "old_dcyongbi"],
-		img: "image/character/yinfuren.jpg",
-		dieAudios: ["yinfuren"],
-		names: "尹|null",
-	},
-	old_tw_jiangji: {
-		sex: "male",
-		group: "wei",
-		hp: 3,
-		skills: ["twjichou", "old_twjilun"],
-		img: "image/character/tw_jiangji.jpg",
-		dieAudios: ["tw_jiangji"],
-	},
-	old_tw_zhanghong: {
-		sex: "male",
-		group: "wu",
-		hp: 3,
-		skills: ["old_twquanqian", "old_twrouke"],
-		img: "image/character/tw_zhanghong.jpg",
-		dieAudios: ["tw_zhanghong"],
-	},
-	old_tw_zhangzhao: {
-		sex: "male",
-		group: "wu",
-		hp: 3,
-		skills: ["twlijian", "old_twchungang"],
-		img: "image/character/tw_zhangzhao.jpg",
-		dieAudios: ["tw_zhangzhao"],
-	},
-	old_tw_huangfusong: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["old_twtaoluan", "old_twshiji", "old_twzhengjun"],
-		img: "image/character/tw_huangfusong.jpg",
-		dieAudios: ["sp_huangfusong"],
-	},
-	//其他
+
 	diy_zhujun: {
 		sex: "male",
 		group: "qun",
@@ -1570,7 +1703,7 @@ const characters = {
 		skills: ["diy_paoxiao", "diy_tishen"],
 		img: "image/character/re_zhangfei.jpg",
 	},
-	//改
+
 	wangtaowangyue: {
 		sex: "female",
 		group: "shu",
@@ -1772,7 +1905,7 @@ const characters = {
 		dieAudios: ["xurong"],
 	},
 
-	//其他
+
 	unlock_dongzhao: {
 		sex: "male",
 		group: "wei",
@@ -1797,107 +1930,6 @@ const characters = {
 		dieAudios: ["jikang"],
 	},
 
-	//十常侍
-	lm_shichangshi: {
-		sex: "male",
-		group: "qun",
-		hp: 1,
-		skills: ["scstaoluan", "scschiyan", "scszimou", "scspicai", "scsyaozhuo", "scsxiaolu", "scskuiji", "scschihe", "scsniqu", "scsanruo"],
-		img: "image/character/shichangshi.jpg",
-		dieAudios: ["shichangshi"],
-		trashBin: ["sex:male_castrated"],
-		names: "张|让-赵|忠-孙|璋-毕|岚-夏|恽-韩|悝-栗|嵩-段|珪-郭|胜-高|望",
-	},
-	lm_zhangrang: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scstaoluan"],
-		img: "image/character/scs_zhangrang.jpg",
-		dieAudios: ["scs_zhangrang"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_zhaozhong: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scschiyan"],
-		img: "image/character/scs_zhaozhong.jpg",
-		dieAudios: ["scs_zhaozhong"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_sunzhang: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scszimou"],
-		img: "image/character/scs_sunzhang.jpg",
-		dieAudios: ["scs_sunzhang"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_bilan: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scspicai"],
-		img: "image/character/scs_bilan.jpg",
-		dieAudios: ["scs_bilan"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_xiayun: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scsyaozhuo"],
-		img: "image/character/scs_xiayun.jpg",
-		dieAudios: ["scs_xiayun"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_hankui: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scsxiaolu"],
-		img: "image/character/scs_hankui.jpg",
-		dieAudios: ["scs_hankui"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_lisong: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scskuiji"],
-		img: "image/character/scs_lisong.jpg",
-		dieAudios: ["scs_lisong"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_duangui: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scschihe"],
-		img: "image/character/scs_duangui.jpg",
-		dieAudios: ["scs_duangui"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_guosheng: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scsniqu"],
-		img: "image/character/scs_guosheng.jpg",
-		dieAudios: ["scs_guosheng"],
-		trashBin: ["sex:male_castrated"],
-	},
-	lm_gaowang: {
-		sex: "male",
-		group: "qun",
-		hp: 4,
-		skills: ["scsanruo"],
-		img: "image/character/scs_gaowang.jpg",
-		dieAudios: ["scs_gaowang"],
-		trashBin: ["sex:male_castrated"],
-	},
 	//头像
 	aaAronaPurana: {
 		sex: "",

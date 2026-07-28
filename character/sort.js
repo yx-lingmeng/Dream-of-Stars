@@ -18,15 +18,15 @@ const characterSorts = {
 		//系列专属
 		sp2_old: ["old_hansong", "old_star_dingfeng", "old_star_fazheng"],
 		//限定专属
-		xianding_old: ["old_liufuren", "old_renwan", "old_dc_tengfanglan", "old_liujinliupei", "old_pangfengyi", "old_zhugejing", "old_bailingyun", "old_ruanyu", "old_xurong", "old_yuanji", "old_v_machao", "old_v_zhangxingcai", "old_dc_sb_xunyu", "old_dc_sb_luxun", "old_dc_sb_hulie", "old_dc_sb_xuyou", "old_dc_sb_zhuran", "old_dc_sb_dengai", "old_wu_zhugeliang", "old_wu_guanyu", "old_wu_huangfusong", "old_dc_shen_huatuo", "old_dc_shen_sunquan"],
+		xianding_old: ["old_liufuren", "old_renwan", "old_dc_tengfanglan", "old_liujinliupei", "old_pangfengyi", "old_zhugejing", "old_bailingyun", "old_ruanyu", "old_xurong", "old_yuanji", "old_v_machao", "old_v_zhangxingcai", "old_dc_sb_xunyu", "old_dc_sb_luxun", "old_dc_sb_hulie", "old_dc_sb_xuyou", "old_dc_sb_zhuran", "old_dc_sb_dengai", "old_wu_zhugeliang", "old_wu_guanyu", "old_wu_huangfusong", "old_wu_lukang", "old_dc_shen_huatuo", "old_dc_shen_sunquan"],
 
 		//手杀武将
 		//始计篇
 		shiji_old: ["old_sp_zhujun", "old_xin_zhangzhongjing", "old_sp_lvfan", "old_qiaogong", "old_sp_xinpi", "old_wujing", "old_sp_wangshuang", "old_wangling", "old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei"],
 		//移动版
-		mobile_old: ["old_mb_sunquan", "old_mb_caomao", "old_mb_cuilingyi", "old_mb_mengda", "old_mb_caocao", "old_wuke", "old_zhangbu", "old_friend_xushu", "old_hefei_zhangliao", "old_sp_jianggan", "old_mb_wangjing", "old_mb_sp_guanqiujian", "old_shenpei", "old_liwei", "old_yangfu", "old_mb_chengui", "old_mb_guozhao", "old_fuqian", "old_mb_sp_zhenji", "old_mb_zhuzhi"],
+		mobile_old: ["old_mb_liuhui", "old_mb_sunquan", "old_mb_caomao", "old_mb_cuilingyi", "old_mb_mengda", "old_mb_caocao", "old_wuke", "old_zhangbu", "old_friend_xushu", "old_hefei_zhangliao", "old_sp_jianggan", "old_mb_wangjing", "old_mb_sp_guanqiujian", "old_shenpei", "old_liwei", "old_yangfu", "old_mb_chengui", "old_mb_guozhao", "old_fuqian", "old_mb_sp_zhenji", "old_mb_zhuzhi"],
 		//谋攻篇
-		sb_old: ["old_mb_liuhui", "old_sb_caopi", "old_sb_jiangwei", "old_sb_xuhuang", "old_sb_yuanshao", "old_sb_handang", "old_sb_huaxiong", "old_sb_jiaxu", "old_sb_zhugejin", "old_sb_zhangliao", "old_sb_zhanghe", "old_sb_guojia", "old_sb_gaoshun", "old_sb_xiahouyuan", "old_sb_lvbu", "old_sb_daqiao", "old_sb_sunce", "old_sb_sp_zhugeliang", "old_sb_zhugeliang", "oldx_sb_sp_zhugeliang", "oldx_sb_zhugeliang", "old_sb_menghuo", "old_sb_zhurong", "old_sb_guanyu", "old_sb_zhaoyun", "old_sb_fazheng", "old_sb_daqiao", "old_sb_sunce", "old_sb_sp_zhugeliang", "old_sb_zhugeliang", "oldx_sb_sp_zhugeliang", "oldx_sb_zhugeliang", "old_sb_menghuo", "old_sb_zhurong", "old_sb_guanyu", "old_sb_zhaoyun", "old_sb_fazheng", "old_sb_huangzhong", "old_sb_gongsunzan", "old_sb_sunquan", "old_sb_huanggai", "old_sb_ganning", "old_sb_xiaoqiao"],
+		sb_old: ["old_sb_caopi", "old_sb_jiangwei", "old_sb_xuhuang", "old_sb_yuanshao", "old_sb_handang", "old_sb_huaxiong", "old_sb_jiaxu", "old_sb_zhugejin", "old_sb_zhangliao", "old_sb_zhanghe", "old_sb_guojia", "old_sb_gaoshun", "old_sb_xiahouyuan", "old_sb_lvbu", "old_sb_daqiao", "old_sb_sunce", "old_sb_sp_zhugeliang", "old_sb_zhugeliang", "oldx_sb_sp_zhugeliang", "oldx_sb_zhugeliang", "old_sb_menghuo", "old_sb_zhurong", "old_sb_guanyu", "old_sb_zhaoyun", "old_sb_fazheng", "old_sb_huangzhong", "old_sb_gongsunzan", "old_sb_sunquan", "old_sb_huanggai", "old_sb_ganning", "old_sb_xiaoqiao"],
 		//兵势篇
 		bingshi_old: ["old_pot_dengai", "old_pot_lusu", "old_pangxi", "old_mb_zhangyan", "old_pot_xinxianying", "old_guoyuan", "old_mb_chenzhi", "old_pot_weiyan", "old_pot_taishici", "old_pot_lougui", "old_pot_chendao", "old_pot_yuji"],
 
@@ -38,12 +38,14 @@ const characterSorts = {
 		huaijiu_old: ["old_new_simayi"],
 		//新一将成名
 		newjiang_old: ["old_yj_zhoubuyi", "old_v_sunce", "old_wufu", "old_lukai", "old_yj_majun", "old_xunyuxunyou", "old_v_sunquan"],
-
+		//其他
 		other_old: ["old_gaowang", "diy_zhujun", "diy_liaohua", "diy_zhangfei"],
+		//十常侍
 		lm_scs: ["lm_shichangshi", "lm_zhangrang", "lm_zhaozhong", "lm_sunzhang", "lm_bilan", "lm_xiayun", "lm_hankui", "lm_lisong", "lm_duangui", "lm_guosheng", "lm_gaowang"],
+		//神武
 		lmCharacter_sw: ["sw_guanyu", "sw_lvmeng", "sw_zhugeliang", "sw_zhouyu", "sw_simayi", "sw_zhaoyun", "sw_caocao", "sw_lvbu", "sw_liubei", "sw_luxun", "sw_zhangliao", "sw_ganning", "sw_caopi", "sw_zhenji", "sw_zhangjiao", "sw_diaochan", "sw_tw_guanyu", "sw_tw_lvmeng", "sw_wechat_zhugeliang", "lm_xurong"],
 		lmCharacter_diy: ["wangtaowangyue", "lm_old_caocao"],
-		lmCharacter_other: ["unlock_dongzhao", "unlock_tianchuan", "zhangjian", "lm_jikang"],
+		lmCharacter_other: ["unlock_dongzhao", "unlock_tianchuan", "lm_jikang"],
 	},
 };
 export default characterSorts;
