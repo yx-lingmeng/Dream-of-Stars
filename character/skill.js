@@ -15251,8 +15251,9 @@ const lmCharacter = {
 									})
 								);
 							})
-						)
+						) {
 							return 3 / Math.max(1, target.hp);
+						}
 						if (
 							(!player.hasUnknown() &&
 								game.countPlayer(function (current) {
@@ -15276,8 +15277,9 @@ const lmCharacter = {
 								player: player,
 								card: card,
 							})
-						)
+						) {
 							return [1, 0, 1, -2];
+						}
 					},
 				},
 				threaten: 1.6,
@@ -15306,7 +15308,9 @@ const lmCharacter = {
 				},
 				damage: {
 					audio: "xinfu_xionghuo",
-					trigger: { source: "damageBegin1" },
+					trigger: {
+						source: "damageBegin1",
+					},
 					filter(event, player) {
 						return event.player.countMark("old_xionghuo") > 0 && event.player != player;
 					},
@@ -15319,7 +15323,9 @@ const lmCharacter = {
 				},
 				effect: {
 					audio: "xinfu_xionghuo",
-					trigger: { global: "phaseUseBegin" },
+					trigger: {
+						global: "phaseUseBegin",
+					},
 					filter(event, player) {
 						return event.player.countMark("old_xionghuo") > 0 && event.player != player;
 					},
@@ -15372,7 +15378,9 @@ const lmCharacter = {
 					onremove: true,
 					mark: true,
 					marktext: "禁",
-					intro: { content: "不能对$使用【杀】" },
+					intro: {
+						content: "不能对$使用【杀】",
+					},
 				},
 				low: {
 					mod: {
@@ -15384,7 +15392,9 @@ const lmCharacter = {
 					onremove: true,
 					mark: true,
 					marktext: "减",
-					intro: { content: "手牌上限-#" },
+					intro: {
+						content: "手牌上限-#",
+					},
 				},
 			},
 		},
