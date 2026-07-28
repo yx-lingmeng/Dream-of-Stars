@@ -39,7 +39,7 @@ const characterSorts = {
 		//新一将成名
 		newjiang_old: ["old_yj_zhoubuyi", "old_v_sunce", "old_wufu", "old_lukai", "old_yj_majun", "old_xunyuxunyou", "old_v_sunquan"],
 		//其他
-		other_old: ["old_gaowang", "diy_zhujun", "diy_liaohua", "diy_zhangfei"],
+		other_old: ["diy_zhujun", "diy_liaohua", "diy_zhangfei"],
 		//十常侍
 		lm_scs: ["lm_shichangshi", "lm_zhangrang", "lm_zhaozhong", "lm_sunzhang", "lm_bilan", "lm_xiayun", "lm_hankui", "lm_lisong", "lm_duangui", "lm_guosheng", "lm_gaowang"],
 		//神武
