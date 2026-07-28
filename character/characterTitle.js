@@ -81,7 +81,7 @@ const characterTitles = {
 	//hefei_zhangliao: "",
 	//OL
 	old_shen_caopi: "诰天仰颂",
-	oldx_clan_xuncai: "怀刃自誓",
+	old_clan_xuncai: "怀刃自誓",
 	old_clan_zhonghui: "百巧惎",
 	old_clan_hanrong: "虎口扳渡",
 	old_clan_hanshao: "分投急所",

@@ -661,7 +661,7 @@ const characters = {
 		groupInGuozhan: "wei",
 		tempname: ["shen_caopi"],
 	},
-	oldx_clan_xuncai: {
+	old_clan_xuncai: {
 		sex: "female",
 		group: "qun",
 		hp: 3,

@@ -1,6 +1,6 @@
 import { lib, game, ui, get, ai, _status } from "../../../noname.js";
 const characterReplaces = {
-	//武将切换
+	//大致按照OL，新杀，手杀，外服，线下，DIY，怀旧的顺序排列。（同服按标，界，谋，sp）
 	yj_jushou: ["yj_jushou", "ol_sb_jushou", "re_jushou", "dc_sb_jushou", "xin_jushou", "std_jushou"],
 	zhuzhi: ["old_mb_zhuzhi", "zhuzhi", "re_zhuzhi", "xin_zhuzhi", "tw_zhuzhi", "old_zhuzhi"],
 	guozhao: ["old_mb_guozhao", "ol_guozhao", "guozhao", "xin_guozhao", "jsrg_guozhao", "std_guozhao", "pe_guozhao"],
@@ -43,7 +43,7 @@ const characterReplaces = {
 	zhangliao: ["old_sb_zhangliao", "zhangliao", "re_zhangliao", "sp_zhangliao", "v_zhangliao", "yj_zhangliao", "sb_zhangliao", "jsrg_zhangliao", "eu_zhangliao", "ol_jsrg_zhangliao", "hefei_zhangliao", "old_hefei_zhangliao"],
 	zhanghe: ["old_sb_zhanghe", "zhanghe", "re_zhanghe", "sp_ol_zhanghe", "yj_zhanghe", "sp_zhanghe", "sb_zhanghe", "tw_yj_zhanghe", "huan_zhanghe", "jsrg_zhanghe", "wn_zhanghe", "zc26_zhanghe", "star_zhanghe", "ol_jsrg_zhanghe"],
 	guojia: ["old_sb_guojia", "guojia", "re_guojia", "yj_sb_guojia", "sb_guojia", "jsrg_guojia", "ps1059_guojia", "ps2070_guojia", "ol_sb_guojia"],
-	oldx_clan_xuncai: ["clan_xuncai", "oldx_clan_xuncai"],
+	old_clan_xuncai: ["clan_xuncai", "old_clan_xuncai"],
 	zhonghui: ["hfdiy_zhonghui", "old_clan_zhonghui", "old_xin_zhonghui", "zhonghui", "clan_zhonghui", "xin_zhonghui", "re_zhonghui", "std_zhonghui", "yj_zhonghui", "pe_zhonghui", "old_zhonghui", "zj_zhonghui", "sp_zhonghui"],
 	old_clan_hanrong: ["clan_hanrong", "old_clan_hanrong"],
 	old_clan_hanshao: ["clan_hanshao", "old_clan_hanshao"],
