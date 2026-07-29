@@ -8288,32 +8288,23 @@ const lmCharacter = {
 			frequent: true,
 			async content(event, trigger, player) {
 				const mode = get.mode(),
-					name = trigger.name,
-					yiji = false;
+					name = trigger.name;
 				let num = 2;
-				const next = player.draw(num);
-				if (yiji) next.gaintag = ["old_sbyiji"];
-				await next;
-				if (!game.hasPlayer(target => target != player) || !player.hasCard(card => !yiji || card.hasGaintag("old_sbyiji"), "he")) {
+				await player.draw(num);
+				if (!game.hasPlayer(target => target != player) || !player.hasCards("he")) {
 					return;
 				}
 				if (_status.connectMode) game.broadcastAll(() => (_status.noclearcountdown = true));
 				let given_map = [];
-				while (
-					num > 0 &&
-					player.hasCard(card => {
-						if (card.hasGaintag("olsujian_given")) return false;
-						return !yiji || card.hasGaintag("old_sbyiji");
-					}, "he")
-				) {
+				while (num > 0 && player.hasCards("he")) {
 					const { bool, cards, targets } = await player
 						.chooseCardTarget({
-							filterCard(card, player) {
-								if (card.hasGaintag("olsujian_given")) return false;
-								return !get.event().yiji || card.hasGaintag("old_sbyiji");
+							filterCard(card) {
+								return !card.hasGaintag("olsujian_given");
 							},
 							selectCard: [1, num],
 							filterTarget: lib.filter.notMe,
+							position: "he",
 							prompt: "遗计：请选择要分配的卡牌和目标",
 							prompt2: "（还可分配" + num + "张）",
 							ai1(card) {
@@ -8325,8 +8316,6 @@ const lmCharacter = {
 								if (card) return get.value(card, target) * get.attitude(player, target);
 								return 0;
 							},
-							yiji: yiji,
-							position: "he",
 						})
 						.forResult();
 					if (bool) {
@@ -8344,7 +8333,6 @@ const lmCharacter = {
 						game.stopCountChoose();
 					});
 				}
-				if (yiji) player.removeGaintag("old_sbyiji");
 				if (given_map.length) {
 					await game
 						.loseAsync({
@@ -8356,6 +8344,7 @@ const lmCharacter = {
 						})
 						.setContent("gaincardMultiple");
 				}
+				player.removeGaintag("olsujian_given");
 			},
 			ai: {
 				maixie: true,
