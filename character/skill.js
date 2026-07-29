@@ -5490,7 +5490,9 @@ const lmCharacter = {
 						target.damage("fire");
 						"step 1";
 						var targets = game.filterPlayer(current => {
-							if (current == player || current == target) return false;
+							if (current == player || current == target) {
+								return false;
+							}
 							return current.group == target.group;
 						});
 						if (targets.length) {
@@ -5509,7 +5511,9 @@ const lmCharacter = {
 									get.sgn(att) *
 									game
 										.filterPlayer(current => {
-											if (current == player) return false;
+											if (current == player) {
+												return false;
+											}
 											return current.group == target.group;
 										})
 										.reduce((num, current) => num + get.damageEffect(current, player, player, "fire"), 0)
@@ -5531,7 +5535,7 @@ const lmCharacter = {
 					async content(event, trigger, player) {
 						player.awakenSkill("old_sbhuoji");
 						game.log(player, "成功完成使命");
-						player.changeSkin({ characterName: "old_sb_sp_zhugeliang" }, "sb_zhugeliang");
+						player.changeSkin("old_sbhuoji", "sb_zhugeliang");
 						player.changeSkills(["old_sbguanxing", "old_sbkongcheng"], ["old_sbhuoji", "old_sbkanpo"]);
 					},
 				},
@@ -5555,7 +5559,9 @@ const lmCharacter = {
 					forced: true,
 					popup: false,
 					content() {
-						player.addTempSkill("old_sbhuoji_count", { player: ["old_sbhuoji_achieveBegin", "old_sbhuoji_failBegin"] });
+						player.addTempSkill("old_sbhuoji_count", {
+							player: ["old_sbhuoji_achieveBegin", "old_sbhuoji_failBegin"],
+						});
 						player.storage.old_sbhuoji_count = player.getAllHistory("sourceDamage", evt => evt.hasNature("fire") && evt.player != player).reduce((num, evt) => num + evt.num, 0);
 						player.markSkill("old_sbhuoji_count");
 					},
@@ -5905,7 +5911,9 @@ const lmCharacter = {
 						target.damage("fire");
 						"step 1";
 						var targets = game.filterPlayer(current => {
-							if (current == player || current == target) return false;
+							if (current == player || current == target) {
+								return false;
+							}
 							return current.group == target.group;
 						});
 						if (targets.length) {
@@ -5924,7 +5932,9 @@ const lmCharacter = {
 									get.sgn(att) *
 									game
 										.filterPlayer(current => {
-											if (current == player) return false;
+											if (current == player) {
+												return false;
+											}
 											return current.group == target.group;
 										})
 										.reduce((num, current) => num + get.damageEffect(current, player, player, "fire"), 0)
@@ -5946,7 +5956,7 @@ const lmCharacter = {
 					async content(event, trigger, player) {
 						player.awakenSkill("oldx_sbhuoji");
 						game.log(player, "成功完成使命");
-						player.changeSkin({ characterName: "oldx_sb_sp_zhugeliang" }, "sb_zhugeliang");
+						player.changeSkin("oldx_sbhuoji", "sb_zhugeliang");
 						player.changeSkills(["oldx_sbguanxing", "oldx_sbkongcheng"], ["oldx_sbhuoji", "oldx_sbkanpo"]);
 					},
 				},
@@ -5956,7 +5966,7 @@ const lmCharacter = {
 					forced: true,
 					locked: false,
 					content() {
-						player.awakenSkill("oldx_sbhuoji");
+						player.awakenSkill("old_sbhuoji");
 						game.log(player, "使命失败");
 					},
 				},
@@ -5970,7 +5980,9 @@ const lmCharacter = {
 					forced: true,
 					popup: false,
 					content() {
-						player.addTempSkill("oldx_sbhuoji_count", { player: ["oldx_sbhuoji_achieveBegin", "oldx_sbhuoji_failBegin"] });
+						player.addTempSkill("oldx_sbhuoji_count", {
+							player: ["oldx_sbhuoji_achieveBegin", "oldx_sbhuoji_failBegin"],
+						});
 						player.storage.oldx_sbhuoji_count = player.getAllHistory("sourceDamage", evt => evt.hasNature("fire") && evt.player != player).reduce((num, evt) => num + evt.num, 0);
 						player.markSkill("oldx_sbhuoji_count");
 					},
@@ -5981,9 +5993,6 @@ const lmCharacter = {
 				},
 			},
 		},
-		oldx_sbhuoji1: { audio: true },
-		oldx_sbhuoji2: { audio: true },
-		oldx_sbhuoji3: { audio: true },
 		oldx_sbkanpo: {
 			init(player) {
 				if (!player.storage.oldx_sbkanpo) {
@@ -28374,7 +28383,7 @@ const lmCharacter = {
 		old_sbhunzi_info: `觉醒技。当你脱离濒死状态后，你减1点体力上限，获得2点护甲，摸三张牌。然后你获得${get.poptip("sbyingzi")}和${get.poptip("gzyinghun")}。`,
 		old_sbzhiba: "制霸",
 		old_sbzhiba_info: "主公技，限定技。当你进入濒死状态时，你可以回复X点体力并修改〖激昂③〗为“出牌阶段限X次”（X为场上吴势力角色数）。然后其他吴势力角色依次受到1点无来源伤害，且当有角色因此死亡后，你摸三张牌。",
-		old_sb_sp_zhugeliang: "牢谋卧龙", //初版,
+		old_sb_sp_zhugeliang: "牢谋诸葛亮", //初版,
 		old_sb_sp_zhugeliang_prefix: "牢|谋",
 		old_sbhuoji: "火计",
 		old_sbhuoji_info: `使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得${get.poptip("old_sbguanxing")}和${get.poptip("old_sbkongcheng")}。③失败：使命成功前进入濒死状态。`,
@@ -28384,7 +28393,7 @@ const lmCharacter = {
 		old_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”。然后你可以将任意张“星”置于牌堆顶（X为你此次移去的“星”数+1且至多为7，若你此前未发动过〖观星①〗则X为7）。②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。",
 		old_sbkongcheng: "空城",
 		old_sbkongcheng_info: "锁定技。当你受到伤害时，若你有〖观星〗，且若你：有“星”，你判定，若结果点数不大于你的“星”数，此伤害-1；没有“星”，此伤害+1。",
-		oldx_sb_sp_zhugeliang: "旧谋卧龙", //二版
+		oldx_sb_sp_zhugeliang: "旧谋诸葛亮", //二版
 		oldx_sb_sp_zhugeliang_prefix: "旧|谋",
 		oldx_sbhuoji: "火计",
 		oldx_sbhuoji_info: `使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得${get.poptip("oldx_sbguanxing")}和${get.poptip("oldx_sbkongcheng")}。③失败：使命成功前进入濒死状态。`,
