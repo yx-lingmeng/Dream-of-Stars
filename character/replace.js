@@ -2,7 +2,6 @@ import { lib, game, ui, get, ai, _status } from "../../../noname.js";
 const characterReplaces = {
 	//大致按照OL，新杀，手杀，外服，线下，DIY，怀旧的顺序排列。（同服按标，界，谋，sp）
 	sunquan: ["old_dm_sunquan", "old_mb_sunquan", "old_sb_sunquan", "old_v_sunquan"],
-	zhangrang: ["old_ol_sb_zhangrang", "lm_zhangrang"],
 	yl_luzhi: ["old_ol_sb_yl_luzhi"],
 	dengai: ["old_ol_sb_dengai", "oldx_ol_sb_dengai", "old_dc_sb_dengai", "old_pot_dengai"],
 	dongzhuo: ["old_ol_sb_dongzhuo"],
@@ -110,6 +109,17 @@ const characterReplaces = {
 	dc_zhangmancheng: ["old_tw_zhangmancheng"],
 	zhugeguo: ["old_huan_zhugeguo"],
 	caoang: ["old_huan_caoang"],
+	gexuan: ["old_tw_gexuan"],
+	tw_zhangzhao: ["old_tw_zhangzhao"],
+	jiangji: ["old_tw_jiangji"],
+	caochong: ["old_strong_caochong"],
+	yuanshu: ["old_jm_yuanshu"],
+	zhoubuyi: ["old_yj_zhoubuyi"],
+	wufu: ["old_wufu"],
+	lukai: ["old_lukai"],
+	majun: ["old_yj_majun"],
+	liaohua: ["diy_liaohua"],
+	zhangfei: ["diy_zhangfei"],
 
 	//本体没有替换的
 	clan_xuncai: ["old_clan_xuncai"],
@@ -139,33 +149,45 @@ const characterReplaces = {
 	guoyuan: ["old_guoyuan"],
 	tw_niufudongxie: ["old_tw_niufudongxie"],
 	xia_zhaoe: ["old_xia_zhaoe"],
+	yinfuren: ["old_yinfuren"],
+	tw_zhanghong: ["old_tw_zhanghong"],
+	xunyuxunyou: ["old_xunyuxunyou"],
+
+	//十常侍
+	lm_shichangshi: ["lm_shichangshi"],
+	zhangrang: ["old_ol_sb_zhangrang", "lm_zhangrang"],
+	ol_zhaozhong: ["lm_zhaozhong"],
+	lm_sunzhang: ["lm_sunzhang"],
+	lm_bilan: ["lm_bilan"],
+	lm_xiayun: ["lm_xiayun"],
+	lm_hankui: ["lm_hankui"],
+	lm_lisong: ["lm_lisong"],
+	lm_duangui: ["lm_duangui"],
+	lm_guosheng: ["lm_guosheng"],
+	lm_gaowang: ["lm_gaowang"],
 
 	//神将-按魏蜀吴群排列
 	shen_caopi: ["old_shen_caopi", "sw_caopi"],
+	shen_simayi: ["old_new_simayi", "sw_simayi"],
+	shen_caocao: ["sw_caocao", "lm_old_caocao"],
+	shen_zhangliao: ["sw_zhangliao"],
+	shen_zhenji: ["sw_zhenji"],
 
 	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei"],
+	shen_guanyu: ["sw_guanyu", "sw_tw_guanyu"],
+	shen_zhugeliang: ["sw_zhugeliang", "sw_wechat_zhugelian"],
+	shen_zhaoyun: ["sw_zhaoyun"],
+	shen_liubei: ["sw_liubei"],
 
 	shen_sunquan: ["old_dc_shen_sunquan"],
 	shen_lvmeng: ["old_tw_shen_lvmeng", "sw_lvmeng", "sw_tw_lvmeng"],
+	shen_zhouyu: ["sw_zhouyu"],
+	shen_luxun: ["sw_luxun"],
+	shen_ganning: ["sw_ganning"],
 
 	shen_huatuo: ["old_dc_shen_huatuo"],
-
-	shen_huatuo: ["dc_shen_huatuo", "shen_huatuo", "old_dc_shen_huatuo"],
-	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei", "shen_jiangwei"],
-	shen_guanyu: ["sw_guanyu", "sw_tw_guanyu"],
-	shen_zhugeliang: ["sw_zhugeliang", "sw_wechat_zhugelian"],
-	shen_zhouyu: ["shen_zhouyu", "sw_zhouyu"],
-	shen_simayi: ["shen_simayi", "xin_simayi", "new_simayi", "old_new_simayi", "sw_simayi"],
-	shen_zhaoyun: ["sw_zhaoyun"],
-	shen_caocao: ["sw_caocao", "lm_old_caocao"],
-	shen_lvbu: ["shen_lvbu", "sw_lvbu"],
-	shen_liubei: ["sw_liubei"],
-	shen_luxun: ["shen_luxun", "sw_luxun"],
-	shen_zhangliao: ["sw_zhangliao"],
-	shen_ganning: ["shen_ganning", "sw_ganning"],
-
-	shen_zhenji: ["shen_zhenji", "sw_zhenji"],
+	shen_lvbu: ["sw_lvbu"],
 	shen_zhangjiao: ["sw_zhangjiao"],
-	shen_diaochan: ["shen_diaochan", "sw_diaochan"],
+	shen_diaochan: ["sw_diaochan"],
 };
 export default characterReplaces;

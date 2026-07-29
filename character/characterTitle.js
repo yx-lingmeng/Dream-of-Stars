@@ -216,7 +216,6 @@ const characterTitles = {
 	//其他
 	unlock_dongzhao: "筹定魏勋",
 	unlock_tianchuan: "潜行之狐",
-	lm_jikang: "峻峰孤松",
 	//十常侍
 	lm_shichangshi: "祸乱纲常",
 	lm_zhangrang: "玉翎琢雉",

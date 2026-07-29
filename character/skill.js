@@ -29304,7 +29304,6 @@ const lmCharacter = {
 		unlock_dongzhao: "OL董昭",
 		unlock_dongzhao_prefix: "OL",
 		unlock_tianchuan: "田钏",
-		lm_jikang: "嵇康",
 
 		xr_huyi: "虎翼",
 		xr_huyi_info: `游戏开始时，你获得${get.poptip("huyi")}。`,

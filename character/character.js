@@ -1906,14 +1906,6 @@ const characters = {
 		skills: ["pshuying", "psqianjing", "psbianchi"],
 		img: "image/character/yj_tianchuan.jpg",
 	},
-	lm_jikang: {
-		sex: "male",
-		group: "wei",
-		hp: 3,
-		skills: ["qingxian", "fh_juexiang"],
-		img: "image/character/jikang.jpg",
-		dieAudios: ["jikang"],
-	},
 
 	//头像
 	aaAronaPurana: {

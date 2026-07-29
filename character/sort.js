@@ -47,7 +47,7 @@ const characterSorts = {
 		//lm-diy
 		lmCharacter_diy: ["wangtaowangyue", "lm_old_caocao"],
 		//lm-其他
-		lmCharacter_other: ["unlock_dongzhao", "unlock_tianchuan", "lm_jikang"],
+		lmCharacter_other: ["unlock_dongzhao", "unlock_tianchuan"],
 	},
 };
 export default characterSorts;
