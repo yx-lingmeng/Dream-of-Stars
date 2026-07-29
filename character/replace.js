@@ -52,6 +52,28 @@ const characterReplaces = {
 	guanyu: ["old_wu_guanyu", "old_sb_guanyu", "old_xia_guanyu"],
 	huangfusong: ["old_wu_huangfusong", "old_tw_huangfusong", "old_jsrg_huangfusong"],
 	lukang: ["old_wu_lukang"],
+	zhujun: ["old_sp_zhujun", "diy_zhujun"],
+	lvfan: ["old_sp_lvfan"],
+	qiaogong: ["old_qiaogong"],
+	xinpi: ["old_sp_xinpi"],
+	wujing: ["old_wujing"],
+	wangshuang: ["old_sp_wangshuang"],
+	wangling: ["old_wangling"],
+	liuhui: ["old_mb_liuhui"],
+	caomao: ["old_mb_caomao"],
+	cuilingyi: ["old_mb_cuilingyi"],
+	ol_mengda: ["old_mb_mengda"],
+	caocao: ["old_mb_caocao"],
+	wuke: ["old_wuke"],
+	zhangliao: ["old_hefei_zhangliao", "old_sb_zhangliao"],
+	jianggan: ["old_sp_jianggan"],
+	guanqiujian: ["old_mb_sp_guanqiujian", "old_tw_guanqiujian"],
+	shenpei: ["old_shenpei"],
+	liwei: ["old_liwei"],
+	yangfu: ["old_yangfu"],
+	guozhao: ["old_mb_guozhao"],
+	zhenji: ["old_mb_sp_zhenji"],
+	zhuzhi: ["old_mb_zhuzhi"],
 
 	//本体没有替换的
 	clan_xuncai: ["old_clan_xuncai"],
@@ -72,9 +94,21 @@ const characterReplaces = {
 	zhugejing: ["old_zhugejing"],
 	bailingyun: ["old_bailingyun"],
 	ruanyu: ["old_ruanyu"],
-	ruanyu: ["old_xurong", "lm_xurong"],
+	xurong: ["old_xurong", "lm_xurong"],
+	xin_zhangzhongjing: ["old_xin_zhangzhongjing"],
+	zhangbu: ["old_zhangbu"],
+	mb_wangjing: ["old_mb_wangjing"],
+	fuqian: ["old_fuqian"],
+
+	//神将-按魏蜀吴群排列
+	shen_caopi: ["old_shen_caopi", "sw_caopi"],
+
+	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei"],
 
 	shen_sunquan: ["old_dc_shen_sunquan"],
+
+	shen_huatuo: ["old_dc_shen_huatuo"],
+
 	shen_huatuo: ["dc_shen_huatuo", "shen_huatuo", "old_dc_shen_huatuo"],
 	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei", "shen_jiangwei"],
 	shen_guanyu: ["sw_guanyu", "sw_tw_guanyu"],
@@ -89,7 +123,7 @@ const characterReplaces = {
 	shen_luxun: ["shen_luxun", "sw_luxun"],
 	shen_zhangliao: ["sw_zhangliao"],
 	shen_ganning: ["shen_ganning", "sw_ganning"],
-	shen_caopi: ["hfdiy_shen_caopi", "old_shen_caopi", "sw_caopi"],
+
 	shen_zhenji: ["shen_zhenji", "sw_zhenji"],
 	shen_zhangjiao: ["sw_zhangjiao"],
 	shen_diaochan: ["shen_diaochan", "sw_diaochan"],
