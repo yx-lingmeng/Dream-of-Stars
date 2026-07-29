@@ -106,6 +106,10 @@ const characterReplaces = {
 	huojun: ["old_tw_huojun"],
 	guohuai: ["old_tw_guohuai"],
 	quancong: ["old_quancong"],
+	baoxin: ["old_tw_baoxin"],
+	dc_zhangmancheng: ["old_tw_zhangmancheng"],
+	zhugeguo: ["old_huan_zhugeguo"],
+	caoang: ["old_huan_caoang"],
 
 	//本体没有替换的
 	clan_xuncai: ["old_clan_xuncai"],
@@ -133,6 +137,8 @@ const characterReplaces = {
 	fuqian: ["old_fuqian"],
 	pangxi: ["old_pangxi"],
 	guoyuan: ["old_guoyuan"],
+	tw_niufudongxie: ["old_tw_niufudongxie"],
+	xia_zhaoe: ["old_xia_zhaoe"],
 
 	//神将-按魏蜀吴群排列
 	shen_caopi: ["old_shen_caopi", "sw_caopi"],
@@ -140,13 +146,13 @@ const characterReplaces = {
 	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei"],
 
 	shen_sunquan: ["old_dc_shen_sunquan"],
+	shen_lvmeng: ["old_tw_shen_lvmeng", "sw_lvmeng", "sw_tw_lvmeng"],
 
 	shen_huatuo: ["old_dc_shen_huatuo"],
 
 	shen_huatuo: ["dc_shen_huatuo", "shen_huatuo", "old_dc_shen_huatuo"],
 	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei", "shen_jiangwei"],
 	shen_guanyu: ["sw_guanyu", "sw_tw_guanyu"],
-	shen_lvmeng: ["old_tw_shen_lvmeng", "sw_lvmeng", "sw_tw_lvmeng", "shen_lvmeng", "tw_shen_lvmeng"],
 	shen_zhugeliang: ["sw_zhugeliang", "sw_wechat_zhugelian"],
 	shen_zhouyu: ["shen_zhouyu", "sw_zhouyu"],
 	shen_simayi: ["shen_simayi", "xin_simayi", "new_simayi", "old_new_simayi", "sw_simayi"],
