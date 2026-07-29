@@ -19,7 +19,7 @@ const characterReplaces = {
 	nanhualaoxian: ["old_ol_nanhualaoxian"],
 	qianzhao: ["old_ol_qianzhao"],
 	ruiji: ["old_ruiji"],
-	zhugejin: ["old_zhugejin"],
+	zhugejin: ["old_zhugejin", "old_sb_zhugejin"],
 	sunce: ["old_sp_sunce", "old_sb_sunce", "old_v_sunce"],
 	ol_pengyang: ["old_ol_pengyang"],
 	feiyi: ["old_ol_feiyi"],
@@ -120,6 +120,7 @@ const characterReplaces = {
 	majun: ["old_yj_majun"],
 	liaohua: ["diy_liaohua"],
 	zhangfei: ["diy_zhangfei"],
+	ol_dongzhao: ["unlock_dongzhao"],
 
 	//本体没有替换的
 	clan_xuncai: ["old_clan_xuncai"],
@@ -152,6 +153,8 @@ const characterReplaces = {
 	yinfuren: ["old_yinfuren"],
 	tw_zhanghong: ["old_tw_zhanghong"],
 	xunyuxunyou: ["old_xunyuxunyou"],
+	wangtaowangyue: ["wangtaowangyue"],
+	tianchuan: ["unlock_tianchuan"],
 
 	//十常侍
 	lm_shichangshi: ["lm_shichangshi"],
@@ -175,7 +178,7 @@ const characterReplaces = {
 
 	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei"],
 	shen_guanyu: ["sw_guanyu", "sw_tw_guanyu"],
-	shen_zhugeliang: ["sw_zhugeliang", "sw_wechat_zhugelian"],
+	shen_zhugeliang: ["sw_zhugeliang", "sw_wechat_zhugeliang"],
 	shen_zhaoyun: ["sw_zhaoyun"],
 	shen_liubei: ["sw_liubei"],
 
