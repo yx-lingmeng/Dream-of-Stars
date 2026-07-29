@@ -74,6 +74,16 @@ const characterReplaces = {
 	guozhao: ["old_mb_guozhao"],
 	zhenji: ["old_mb_sp_zhenji"],
 	zhuzhi: ["old_mb_zhuzhi"],
+	caopi: ["old_sb_caopi"],
+	jiangwei: ["old_sb_jiangwei"],
+	xuhuang: ["old_sb_xuhuang"],
+	re_yuanshao: ["old_sb_yuanshao"],
+	handang: ["old_sb_handang"],
+	huaxiong: ["old_sb_huaxiong"],
+	jiaxu: ["old_sb_jiaxu"],
+	zhanghe: ["old_sb_zhanghe"],
+	guojia: ["old_sb_guojia"],
+	gaoshun: ["old_sb_gaoshun"],
 
 	//本体没有替换的
 	clan_xuncai: ["old_clan_xuncai"],

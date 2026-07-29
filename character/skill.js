@@ -8244,7 +8244,9 @@ const lmCharacter = {
 			audio: "sbyiji",
 			trigger: { player: ["damageEnd", "dying"] },
 			filter(event, player, name) {
-				if (event.name == "damage") return event.num > 0;
+				if (event.name == "damage") {
+					return event.num > 0;
+				}
 				const history = game.getAllGlobalHistory();
 				for (let i = history.length - 1; i >= 0; i--) {
 					const evt = history[i]["everything"];
@@ -8259,14 +8261,16 @@ const lmCharacter = {
 			async content(event, trigger, player) {
 				const mode = get.mode(),
 					name = trigger.name,
-					//yiji = mode === "identity" || (mode === "doudizhu" && name === "dying");
-					yiji = false;
-				//let num = name === "damage" || !["identity", "doudizhu"].includes(mode) ? 2 : 1;
+					yiji = false; 
 				let num = 2;
 				const next = player.draw(num);
 				if (yiji) next.gaintag = ["old_sbyiji"];
 				await next;
-				if (!game.hasPlayer(target => target != player) || !player.hasCard(card => !yiji || card.hasGaintag("old_sbyiji"), "h")) return;
+
+				// ------ 修改1：检查是否有可分配的牌（允许手牌和装备） ------
+				if (!game.hasPlayer(target => target != player) || !player.hasCard(card => !yiji || card.hasGaintag("old_sbyiji"), "he")) {
+					return;
+				}
 				if (_status.connectMode) game.broadcastAll(() => (_status.noclearcountdown = true));
 				let given_map = [];
 				while (
@@ -8274,7 +8278,7 @@ const lmCharacter = {
 					player.hasCard(card => {
 						if (card.hasGaintag("olsujian_given")) return false;
 						return !yiji || card.hasGaintag("old_sbyiji");
-					}, "h")
+					}, "he")
 				) {
 					const { bool, cards, targets } = await player
 						.chooseCardTarget({
@@ -8296,7 +8300,7 @@ const lmCharacter = {
 								return 0;
 							},
 							yiji: yiji,
-							position: "eh".slice(-1 + (name === "dying")), //三若为，怎么若都为构思
+							position: "he",
 						})
 						.forResult();
 					if (bool) {
@@ -28476,7 +28480,7 @@ const lmCharacter = {
 		old_sb_guojia: "旧谋郭嘉",
 		old_sb_guojia_prefix: "旧|谋",
 		old_sbyiji: "遗计",
-		old_sbyiji_info: "当你受到伤害后，你可以摸两张牌，然后你可以将至多等量张手牌交给任意名其他角色。当你每轮首次进入濒死状态时，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。",
+		old_sbyiji_info: "当你受到1点伤害后，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。当你每轮首次进入濒死状态时，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。",
 		old_sb_gaoshun: "旧谋高顺",
 		old_sb_gaoshun_prefix: "旧|谋",
 		old_sbxianzhen: "陷阵",
