@@ -5863,10 +5863,16 @@ const lmCharacter = {
 			audio: "sbkongcheng",
 			trigger: { player: ["damageBegin3", "damageBegin4"] },
 			filter(event, player, name) {
-				if (!player.hasSkill("old_sbguanxing")) return false;
+				if (!player.hasSkill("old_sbguanxing")) {
+					return false;
+				}
 				const num = player.countCards("s", card => card.hasGaintag("old_sbguanxing"));
-				if (name == "damageBegin3" && !num) return true;
-				if (name == "damageBegin4" && num) return true;
+				if (name == "damageBegin3" && !num) {
+					return true;
+				}
+				if (name == "damageBegin4" && num) {
+					return true;
+				}
 				return false;
 			},
 			forced: true,
@@ -5874,20 +5880,25 @@ const lmCharacter = {
 				"step 0";
 				var num = player.countCards("s", card => card.hasGaintag("old_sbguanxing"));
 				if (!num && event.triggername == "damageBegin3") {
-					trigger.increase("num");
+					trigger.num++;
 				} else if (num && event.triggername == "damageBegin4") {
 					player
 						.judge(function (result) {
-							if (get.number(result) <= get.player().countCards("s", card => card.hasGaintag("old_sbguanxing"))) return 2;
+							if (get.number(result) <= get.player().countCards("s", card => card.hasGaintag("old_sbguanxing"))) {
+								return 2;
+							}
 							return -1;
 						})
 						.set("judge2", result => result.bool)
 						.set("callback", function () {
 							if (event.judgeResult.number <= player.countCards("s", card => card.hasGaintag("old_sbguanxing"))) {
-								event.getParent("old_sbkongcheng").getTrigger().decrease("num");
+								event.getParent("old_sbkongcheng").getTrigger().num--;
 							}
 						});
 				}
+			},
+			ai: {
+				combo: "old_sbguanxing",
 			},
 		},
 		//二版谋诸葛亮
@@ -6305,10 +6316,16 @@ const lmCharacter = {
 			audio: "sbkongcheng",
 			trigger: { player: ["damageBegin3", "damageBegin4"] },
 			filter(event, player, name) {
-				if (!player.hasSkill("oldx_sbguanxing")) return false;
+				if (!player.hasSkill("oldx_sbguanxing")) {
+					return false;
+				}
 				const num = player.countCards("s", card => card.hasGaintag("oldx_sbguanxing"));
-				if (name == "damageBegin3" && !num) return true;
-				if (name == "damageBegin4" && num) return true;
+				if (name == "damageBegin3" && !num) {
+					return true;
+				}
+				if (name == "damageBegin4" && num) {
+					return true;
+				}
 				return false;
 			},
 			forced: true,
@@ -6316,20 +6333,25 @@ const lmCharacter = {
 				"step 0";
 				var num = player.countCards("s", card => card.hasGaintag("oldx_sbguanxing"));
 				if (!num && event.triggername == "damageBegin3") {
-					trigger.increase("num");
+					trigger.num++;
 				} else if (num && event.triggername == "damageBegin4") {
 					player
 						.judge(function (result) {
-							if (get.number(result) <= get.player().countCards("s", card => card.hasGaintag("oldx_sbguanxing"))) return 2;
+							if (get.number(result) <= get.player().countCards("s", card => card.hasGaintag("old_sbguanxing"))) {
+								return 2;
+							}
 							return -1;
 						})
 						.set("judge2", result => result.bool)
 						.set("callback", function () {
 							if (event.judgeResult.number <= player.countCards("s", card => card.hasGaintag("oldx_sbguanxing"))) {
-								event.getParent("oldx_sbkongcheng").getTrigger().decrease("num");
+								event.getParent("oldx_sbkongcheng").getTrigger().num--;
 							}
 						});
 				}
+			},
+			ai: {
+				combo: "oldx_sbguanxing",
 			},
 		},
 		//谋孟获
@@ -8261,7 +8283,7 @@ const lmCharacter = {
 			async content(event, trigger, player) {
 				const mode = get.mode(),
 					name = trigger.name,
-					yiji = false; 
+					yiji = false;
 				let num = 2;
 				const next = player.draw(num);
 				if (yiji) next.gaintag = ["old_sbyiji"];
