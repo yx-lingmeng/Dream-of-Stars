@@ -1091,15 +1091,6 @@ const characters = {
 		dieAudios: ["sb_sp_zhugeliang"],
 		names: "诸葛|亮",
 	},
-	old_sb_zhugeliang: {
-		sex: "male",
-		group: "shu",
-		hp: 3,
-		skills: ["old_sbguanxing", "old_sbkongcheng"],
-		img: "image/character/sb_zhugeliang.jpg",
-		dieAudios: ["sb_zhugeliang"],
-		names: "诸葛|亮",
-	},
 	oldx_sb_sp_zhugeliang: {
 		sex: "male",
 		group: "shu",
@@ -1107,15 +1098,6 @@ const characters = {
 		skills: ["oldx_sbhuoji", "oldx_sbkanpo"],
 		img: "image/character/sb_sp_zhugeliang.jpg",
 		dieAudios: ["sb_sp_zhugeliang"],
-		names: "诸葛|亮",
-	},
-	oldx_sb_zhugeliang: {
-		sex: "male",
-		group: "shu",
-		hp: 3,
-		skills: ["oldx_sbguanxing", "oldx_sbkongcheng"],
-		img: "image/character/sb_zhugeliang.jpg",
-		dieAudios: ["sb_zhugeliang"],
 		names: "诸葛|亮",
 	},
 	old_sb_menghuo: {
