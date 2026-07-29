@@ -84,6 +84,7 @@ const characterReplaces = {
 	zhanghe: ["old_sb_zhanghe"],
 	guojia: ["old_sb_guojia"],
 	gaoshun: ["old_sb_gaoshun"],
+	xiahouyuan: ["old_sb_xiahouyuan"],
 
 	//本体没有替换的
 	clan_xuncai: ["old_clan_xuncai"],

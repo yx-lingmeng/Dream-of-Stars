@@ -8279,6 +8279,12 @@ const lmCharacter = {
 				}
 				return true;
 			},
+			getIndex(event, player, triggername) {
+				if (event.name == "damage") {
+					return event.num;
+				}
+				return 1;
+			},
 			frequent: true,
 			async content(event, trigger, player) {
 				const mode = get.mode(),
@@ -8288,8 +8294,6 @@ const lmCharacter = {
 				const next = player.draw(num);
 				if (yiji) next.gaintag = ["old_sbyiji"];
 				await next;
-
-				// ------ 修改1：检查是否有可分配的牌（允许手牌和装备） ------
 				if (!game.hasPlayer(target => target != player) || !player.hasCard(card => !yiji || card.hasGaintag("old_sbyiji"), "he")) {
 					return;
 				}
@@ -28502,7 +28506,7 @@ const lmCharacter = {
 		old_sb_guojia: "旧谋郭嘉",
 		old_sb_guojia_prefix: "旧|谋",
 		old_sbyiji: "遗计",
-		old_sbyiji_info: "当你受到1点伤害后，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。当你每轮首次进入濒死状态时，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。",
+		old_sbyiji_info: "当你受到1点伤害后或你每轮首次进入濒死状态时，你可以摸两张牌，然后你可以将至多等量张牌交给任意名其他角色。",
 		old_sb_gaoshun: "旧谋高顺",
 		old_sb_gaoshun_prefix: "旧|谋",
 		old_sbxianzhen: "陷阵",
