@@ -31,7 +31,7 @@ const characterSorts = {
 		bingshi_old: ["old_pot_dengai", "old_pot_lusu", "old_pangxi", "old_mb_zhangyan", "old_pot_xinxianying", "old_guoyuan", "old_mb_chenzhi", "old_pot_weiyan", "old_pot_taishici", "old_pot_lougui", "old_pot_chendao", "old_pot_yuji"],
 
 		//海外
-		tw_old: ["old_tw_huojun", "old_tw_guohuai", "old_quancong", "old_tw_baoxin", "old_tw_zhangmancheng", "old_tw_guanqiujian", "old_tw_niufudongxie", "old_xia_guanyu", "old_xia_zhaoe", "old_huan_zhugeliang", "old_huan_weiyan", "old_huan_zhugeguo", "old_tw_shen_lvmeng", "old_huan_caoang", "old_tw_gexuan", "old_jsrg_huangfusong", "old_yinfuren", "old_tw_jiangji", "old_tw_zhangzhao", "old_tw_zhanghong", "old_tw_huangfusong"],
+		tw_old: ["old_tw_huojun", "old_tw_guohuai", "oldx_quancong", "old_tw_baoxin", "old_tw_zhangmancheng", "old_tw_guanqiujian", "old_tw_niufudongxie", "old_xia_guanyu", "old_xia_zhaoe", "old_huan_zhugeliang", "old_huan_weiyan", "old_huan_zhugeguo", "old_tw_shen_lvmeng", "old_huan_caoang", "old_tw_gexuan", "old_jsrg_huangfusong", "old_yinfuren", "old_tw_jiangji", "old_tw_zhangzhao", "old_tw_zhanghong", "old_tw_huangfusong"],
 		//联动卡
 		collab_old: ["old_strong_caochong", "old_jm_yuanshu"],
 		//怀旧

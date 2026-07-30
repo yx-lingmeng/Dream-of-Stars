@@ -166,7 +166,7 @@ const characterTitles = {
 	//海外
 	old_tw_huojun: "葭萌铁狮",
 	old_tw_guohuai: "屡破羌胡",
-	old_quancong: "拥立鲁王",
+	oldx_quancong: "拥立鲁王",
 	old_tw_baoxin: "坚朴的忠相",
 	old_tw_zhangmancheng: "南阳渠帅",
 	old_tw_guanqiujian: "威震四夷",

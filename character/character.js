@@ -1312,7 +1312,7 @@ const characters = {
 		img: "image/character/tw_guohuai.jpg",
 		dieAudios: ["tw_guohuai"],
 	},
-	old_quancong: {
+	oldx_quancong: {
 		sex: "male",
 		group: "wu",
 		hp: 4,

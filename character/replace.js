@@ -104,7 +104,7 @@ const characterReplaces = {
 	yuji: ["old_pot_yuji"],
 	huojun: ["old_tw_huojun"],
 	guohuai: ["old_tw_guohuai"],
-	quancong: ["old_quancong"],
+	quancong: ["oldx_quancong"],
 	baoxin: ["old_tw_baoxin"],
 	dc_zhangmancheng: ["old_tw_zhangmancheng"],
 	zhugeguo: ["old_huan_zhugeguo"],
