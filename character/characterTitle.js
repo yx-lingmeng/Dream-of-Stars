@@ -150,6 +150,7 @@ const characterTitles = {
 	old_renwan: "孤贞不徙",
 	old_lukai: "节概梗梗",
 	old_zhangqiying: "禳祷西东",
+	old_ol_peixiu: "玄静守真",
 	old_v_machao: "雄烈盖世",
 	old_wufu: "忠虹贯日",
 	old_dc_sb_hulie: "暗舆平叛",

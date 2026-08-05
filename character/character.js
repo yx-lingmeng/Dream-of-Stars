@@ -210,6 +210,14 @@ const characters = {
 		img: "image/character/zhangqiying.jpg",
 		dieAudios: ["zhangqiying"],
 	},
+	old_ol_peixiu: {
+		sex: "male",
+		group: "qun",
+		hp: 3,
+		skills: ["oljinlan", "olmaozhu"],
+		img: "image/character/ol_peixiu.jpg",
+		dieAudios: ["ol_peixiu"],
+	},
 	old_ol_yangfeng: {
 		sex: "male",
 		group: "qun",

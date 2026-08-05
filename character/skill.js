@@ -29027,6 +29027,7 @@ const lmCharacter = {
 		old_zhenyi_club_info: "",
 		old_zhenyi_heart: "真仪",
 		old_zhenyi_heart_info: "",
+		old_ol_peixiu: "旧裴秀",
 		old_v_machao: "旧威马超",
 		old_v_machao_prefix: "旧|威",
 		old_dczhongtao: "众讨",

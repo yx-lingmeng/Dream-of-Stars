@@ -1,6 +1,7 @@
 import { lib, game, ui, get, ai, _status } from "../../../noname.js";
 const characterReplaces = {
 	//大致按照OL，新杀，手杀，外服，线下，DIY，怀旧的顺序排列。（同服按标，界，谋，sp）
+	peixiu: ["old_ol_peixiu"],
 	sunquan: ["old_dm_sunquan", "old_mb_sunquan", "old_sb_sunquan", "old_v_sunquan"],
 	yl_luzhi: ["old_ol_sb_yl_luzhi"],
 	dengai: ["old_ol_sb_dengai", "oldx_ol_sb_dengai", "old_dc_sb_dengai", "old_pot_dengai"],
