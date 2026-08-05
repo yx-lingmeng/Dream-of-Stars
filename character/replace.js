@@ -12,6 +12,7 @@ const characterReplaces = {
 	chengpu: ["old_ol_chengpu"],
 	chengui: ["old_chengui", "old_mb_chengui"],
 	chendao: ["old_pot_chendao"],
+	dc_chenzhi: ["old_mb_chenzhi"],
 	cuilingyi: ["old_mb_cuilingyi"],
 	daqiao: ["old_sb_daqiao"],
 	dengai: ["old_ol_sb_dengai", "oldx_ol_sb_dengai", "old_dc_sb_dengai", "old_pot_dengai"],
@@ -51,6 +52,7 @@ const characterReplaces = {
 	lukang: ["old_wu_lukang"],
 	lukai: ["old_lukai"],
 	re_lusu: ["old_pot_lusu"],
+	luxun: ["old_dc_sb_luxun"],
 	luyusheng: ["old_ol_luyusheng"],
 	yl_luzhi: ["old_ol_sb_yl_luzhi"],
 	lvbu: ["old_sb_lvbu"],
@@ -119,6 +121,7 @@ const characterReplaces = {
 	zhugeliang: ["old_wu_zhugeliang", "old_huan_zhugeliang"],
 	zhujun: ["old_sp_zhujun", "diy_zhujun"],
 	zhuran: ["old_dc_sb_zhuran"],
+	zhurong: ["old_dc_sp_zhurong", "old_sb_zhurong"],
 	zhuzhi: ["old_mb_zhuzhi"],
 
 	//本体没有替换的
