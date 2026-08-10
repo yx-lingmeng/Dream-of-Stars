@@ -19487,8 +19487,16 @@ const lmCharacter = {
 				return player.hp == 1 && event.changedHp != 0;
 			},
 			async content(event, trigger, player) {
+				// 1. 复原武将牌（解除横置与翻面）
 				await player.link(false);
 				await player.turnOver(false);
+
+				// 2. 新增：令其他角色本轮对你使用的下一张牌无效
+				//    设置存储标记，并添加临时技能（回合结束时自动移除）
+				player.storage.oldx_dcrenshuang_invalid = true;
+				player.addTempSkill("oldx_dcrenshuang_invalid", "roundEnd");
+
+				// 3. 视为使用普通锦囊牌（每种牌名每轮限一次）
 				const cards = get.inpileVCardList(info => {
 					return info[0] == "trick" && player.hasUseTarget(info[2]) && !player.getStorage("oldx_dcrenshuang_used").includes(info[2]);
 				});
@@ -19514,6 +19522,27 @@ const lmCharacter = {
 				used: {
 					charlotte: true,
 					onremove: true,
+				},
+				invalid: {
+					charlotte: true,
+					onremove: true,
+					forced: true,
+					trigger: { global: "useCard" },
+					filter(event, player) {
+						// 必须有存储标记，且是其他角色对玩家使用牌
+						if (!player.storage.oldx_dcrenshuang_invalid) return false;
+						if (!event.targets || !event.targets.includes(player)) return false;
+						if (event.player == player) return false;
+						return true;
+					},
+					async content(event, trigger, player) {
+						trigger.excluded.add(player);
+						game.log(player, "令", trigger.player, "对", player, "使用的", trigger.card, "无效");
+						player.storage.oldx_dcrenshuang_invalid = false;
+					},
+					onremove(player) {
+						delete player.storage.oldx_dcrenshuang_invalid;
+					},
 				},
 			},
 		},
