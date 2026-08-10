@@ -1,10 +1,10 @@
 import { lib, game, ui, get, ai, _status } from "noname";
 import { character } from "../character/index.js";
 import { skill } from "../character/skill.js";
-import { } from "../js/pause.js";
-import { } from "../js/connect.js";
-import { } from "../js/broadcast.js";
-import { } from "../js/private.js";
+import {} from "../js/pause.js";
+import {} from "../js/connect.js";
+import {} from "../js/broadcast.js";
+import {} from "../js/private.js";
 export async function precontent(config, pack) {
 	{
 		//本体版本检测
@@ -32,7 +32,7 @@ export async function precontent(config, pack) {
 
 	//屏蔽弹窗
 	if (lib.config.extension_星之梦_cancelwindow) {
-		window.onerror = function (msg, src, line, column, err) { };
+		window.onerror = function (msg, src, line, column, err) {};
 	}
 	if (lib.config.extension_星之梦_randomexpand) {
 		setTimeout(function () {
@@ -175,10 +175,7 @@ export async function precontent(config, pack) {
 									restoreState(dialog.buttons[i2]);
 									if (dialog.currentgroup && dialog.buttons[i2].group != dialog.currentgroup) {
 										dialog.buttons[i2].classList.add("nodisplay");
-									} else if (
-										dialog.currentcapt2 &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)
-									) {
+									} else if (dialog.currentcapt2 && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)) {
 										dialog.buttons[i2].classList.add("nodisplay");
 									} else {
 										dialog.buttons[i2].classList.remove("nodisplay");
@@ -201,10 +198,7 @@ export async function precontent(config, pack) {
 									restoreState(dialog.buttons[i2]);
 									if (dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)) {
 										dialog.buttons[i2].classList.add("nodisplay");
-									} else if (
-										dialog.currentcapt2 &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)
-									) {
+									} else if (dialog.currentcapt2 && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)) {
 										dialog.buttons[i2].classList.add("nodisplay");
 									} else if (dialog.currentgroup && dialog.buttons[i2].group != dialog.currentgroup) {
 										dialog.buttons[i2].classList.add("nodisplay");
@@ -234,10 +228,7 @@ export async function precontent(config, pack) {
 									restoreState(dialog.buttons[i2]);
 									if (dialog.currentgroup && dialog.buttons[i2].group != dialog.currentgroup) {
 										dialog.buttons[i2].classList.add("nodisplay");
-									} else if (
-										dialog.currentcapt &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)
-									) {
+									} else if (dialog.currentcapt && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)) {
 										dialog.buttons[i2].classList.add("nodisplay");
 									} else {
 										dialog.buttons[i2].classList.remove("nodisplay");
@@ -288,14 +279,9 @@ export async function precontent(config, pack) {
 								}
 								for (var i2 = 0; i2 < dialog.buttons.length; i2++) {
 									restoreState(dialog.buttons[i2]);
-									if (
-										dialog.currentcapt &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)
-									) {
+									if (dialog.currentcapt && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)) {
 										dialog.buttons[i2].classList.add("nodisplay");
-									} else if (
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)
-									) {
+									} else if (dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)) {
 										dialog.buttons[i2].classList.add("nodisplay");
 									} else if (dialog.currentgroup && dialog.buttons[i2].group != dialog.currentgroup) {
 										dialog.buttons[i2].classList.add("nodisplay");
@@ -389,15 +375,9 @@ export async function precontent(config, pack) {
 								node2.classList.remove("thundertext");
 								for (var i2 = 0; i2 < dialog.buttons.length; i2++) {
 									restoreState(dialog.buttons[i2]);
-									if (
-										dialog.currentcapt &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)
-									) {
+									if (dialog.currentcapt && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)) {
 										dialog.buttons[i2].classList.add("nodisplay");
-									} else if (
-										dialog.currentcapt2 &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)
-									) {
+									} else if (dialog.currentcapt2 && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)) {
 										dialog.buttons[i2].classList.add("nodisplay");
 									} else {
 										dialog.buttons[i2].classList.remove("nodisplay");
@@ -412,15 +392,9 @@ export async function precontent(config, pack) {
 								node2.classList.add("thundertext");
 								for (var i2 = 0; i2 < dialog.buttons.length; i2++) {
 									restoreState(dialog.buttons[i2]);
-									if (
-										dialog.currentcapt &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)
-									) {
+									if (dialog.currentcapt && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt)) {
 										dialog.buttons[i2].classList.add("nodisplay");
-									} else if (
-										dialog.currentcapt2 &&
-										dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)
-									) {
+									} else if (dialog.currentcapt2 && dialog.buttons[i2].capt != dialog.getCurrentCapt(dialog.buttons[i2].link, dialog.buttons[i2].capt, true)) {
 										dialog.buttons[i2].classList.add("nodisplay");
 									} else if (dialog.currentgroup == "double") {
 										if (dialog.buttons[i2]._changeGroup) {
@@ -486,12 +460,7 @@ export async function precontent(config, pack) {
 							for (var i = 0; i < node.childElementCount; i++) {
 								if (node.childNodes[i].tagName.toLowerCase() == "span") {
 									node.childNodes[i].style.display = "none";
-									node.childNodes[i].touchlink = ui.create.div(
-										filternode.firstChild,
-										clickCaptNode,
-										".menubutton.large.capt",
-										node.childNodes[i].innerHTML
-									);
+									node.childNodes[i].touchlink = ui.create.div(filternode.firstChild, clickCaptNode, ".menubutton.large.capt", node.childNodes[i].innerHTML);
 									node.childNodes[i].touchlink.link = node.childNodes[i];
 								}
 							}
@@ -812,10 +781,7 @@ export async function precontent(config, pack) {
 						}
 					}
 					if (!expandall) {
-						if (
-							!thisiscard &&
-							(lib.characterDialogGroup[lib.config.character_dialog_tool] || lib.config.character_dialog_tool == "自创")
-						) {
+						if (!thisiscard && (lib.characterDialogGroup[lib.config.character_dialog_tool] || lib.config.character_dialog_tool == "自创")) {
 							clickCapt.call(node[lib.config.character_dialog_tool]);
 						}
 					}
@@ -1134,7 +1100,7 @@ export async function precontent(config, pack) {
 	if (lib.config.extension_星之梦_guanfangshili) {
 		Object.defineProperty(lib, "group", {
 			get: () => ["wei", "shu", "wu", "qun", "jin"],
-			set: () => { },
+			set: () => {},
 		});
 		lib.skill._slyh = {
 			trigger: { global: "gameStart", player: "enterGame" },
@@ -1174,8 +1140,9 @@ export async function precontent(config, pack) {
 			firstDo: true,
 			direct: true,
 			filter(event, player) {
-				if ((get.mode() != "doudizhu" && get.mode() != "versus" && get.mode() != "single") || get.config("versus_mode") === "four")
+				if ((get.mode() != "doudizhu" && get.mode() != "versus" && get.mode() != "single") || get.config("versus_mode") === "four") {
 					return false;
+				}
 				if (lib.character[player.name1][1] == "shen" || lib.character[player.name1][1] == "devil") return true;
 				// for (var i of lib.character[player.name1][4]) {
 				//     return i.includes("doublegroup");
@@ -1192,7 +1159,7 @@ export async function precontent(config, pack) {
 					list.remove("devil");
 					player.chooseControl(list).set("prompt", "请选择武将的势力");
 				}
-				("step 1");
+				"step 1";
 				if (result.control) {
 					player.changeGroup(result.control);
 				}
@@ -1202,17 +1169,7 @@ export async function precontent(config, pack) {
 	//阶段提示
 	lib.skill._tphaseTip = {
 		trigger: {
-			global: [
-				"phaseBegin",
-				"phaseZhunbeiBefore",
-				"phaseJudgeBefore",
-				"phaseDrawBefore",
-				"phaseUseBefore",
-				"phaseDiscardBefore",
-				"phaseJieshuBefore",
-				"phaseEnd",
-				"phaseAfter",
-			],
+			global: ["phaseBegin", "phaseZhunbeiBefore", "phaseJudgeBefore", "phaseDrawBefore", "phaseUseBefore", "phaseDiscardBefore", "phaseJieshuBefore", "phaseEnd", "phaseAfter"],
 		},
 		filter: function (event, player) {
 			const config = lib.config.extension_星之梦_tphaseTipStyle;
@@ -1401,6 +1358,11 @@ export async function precontent(config, pack) {
 		locked: true,
 	};
 	//前缀Prefix添加
+	lib.namePrefix.set("风", {
+		color: "#0d33ff",
+		nature: "Celadon",
+		showName: "风",
+	});
 	lib.namePrefix.set("凌", {
 		color: "#8470FF",
 		nature: "LightSlateBlue",
@@ -1509,6 +1471,11 @@ export async function precontent(config, pack) {
 		_status.postReconnect.lm_pack_namePrefix = [
 			function () {
 				//Prefix添加
+				lib.namePrefix.set("风", {
+					color: "#0d33ff",
+					nature: "Celadon",
+					showName: "风",
+				});
 				lib.namePrefix.set("凌", {
 					color: "#8470FF",
 					nature: "LightSlateBlue",
@@ -1582,7 +1549,7 @@ export async function precontent(config, pack) {
 			document.querySelector("#server_status").innerHTML = "等待中";
 		}
 		game.pause();
-		("step 1");
+		"step 1";
 		_status.waitingForPlayer = false;
 		lib.configOL.gameStarted = true;
 		if (window.isNonameServer) {
