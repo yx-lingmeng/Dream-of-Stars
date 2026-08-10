@@ -19410,9 +19410,7 @@ const lmCharacter = {
 									break;
 								}
 								case "discard": {
-									for (const target of event.targets) {
-										await player.gainMultiple(target, "he", true);
-									}
+									await player.gainMultiple(event.targets, "he");
 									await player.turnOver();
 									break;
 								}
