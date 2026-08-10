@@ -72,6 +72,7 @@ const characterTitles = {
 	//限定专属
 	old_liufuren: "恶嫉蔑死",
 	old_renwan: "孤贞不徙",
+	oldx_renwan: "孤贞不徙",
 	old_dc_tengfanglan: "铃兰零落",
 	old_liujinliupei: "并蒂连枝",
 	old_pangfengyi: "瞳悉万机",

@@ -19268,6 +19268,258 @@ const lmCharacter = {
 				}
 			},
 		},
+
+		//任婉-二版
+		oldx_dcjuanji: {
+			audio: "dcjuanji",
+			enable: "phaseUse",
+			filter(event, player) {
+				return player.getStorage("oldx_dcjuanji_used").length < 3 && event.juanji_record > 0;
+			},
+			onChooseToUse(event) {
+				if (!game.online && !event.juanji_record) {
+					const num = event.player.getStat("skill")["oldx_dcjuanji_backup"] ?? 0;
+					event.set("juanji_record", num + 1);
+				}
+			},
+			chooseButton: {
+				dialog(event, player) {
+					const dialog = ui.create.dialog("狷急"),
+						num = event.juanji_record;
+					const list = [
+						["damage", `令你与一名其他角色各回复${num}点体力，然后对你与其各造成${num}点伤害`],
+						["discard", `获得至多${num}名其他角色各一张牌，然后你翻面`],
+						["draw", `摸${num}张牌，然后你弃置一张牌`],
+					];
+					dialog.add([list, "textbutton"]);
+					dialog.direct = true;
+					return dialog;
+				},
+				filter(button, player) {
+					if (player.getStorage("oldx_dcjuanji_used").includes(button.link)) {
+						return false;
+					}
+					return (
+						button.link == "draw" ||
+						game.hasPlayer(current => {
+							if (current == player) {
+								return false;
+							}
+							return button.link == "damage" || current.countCards("he");
+						})
+					);
+				},
+				check(button) {
+					const player = get.player(),
+						num = get.event().getParent().juanji_record;
+					switch (button.link) {
+						case "damage": {
+							let eff = current => {
+								const recover = Math.min(current.getDamagedHp(), num);
+								return recover * get.recoverEffect(current, player, player) + num * get.damageEffect(current, player, player);
+							};
+							const target = game.filterPlayer().maxBy(
+								current => eff(current),
+								current => current != player
+							);
+							if (player.hasSkill("oldx_dcrenshuang")) {
+								let num2 = player.getHp(true) + Math.min(player.getDamagedHp(), num) - num;
+								if (num2 == 1) {
+									return 114514;
+								} else if (num2 < 1 && player.countCards("hs", card => get.tag(card, "save")) > -num2) {
+									return 0.3;
+								}
+							}
+							if (!target) {
+								return 0;
+							}
+							return eff(player) + eff(target);
+						}
+						case "discard": {
+							let eff = current => get.effect(current, { name: "guohe_copy2" }, player, player);
+							let discard = game.filterPlayer(current => current != player && eff(current) > 0).sort((a, b) => eff(a) - eff(b));
+							let discard2 = discard.slice(0, Math.min(game.countPlayer(), num, discard.length)).reduce((sum, current) => sum + eff(current), 0);
+							return discard2;
+						}
+						default: {
+							return num * 0.4;
+						}
+					}
+				},
+				backup(links, player) {
+					return {
+						audio: "dcjuanji",
+						numx: get.event().juanji_record,
+						choice: links[0],
+						damageCheck: (function () {
+							if (player.hasSkill("oldx_dcrenshuang")) {
+								const num = get.event().juanji_record;
+								let num2 = player.getHp(true) + Math.min(player.getDamagedHp(), num) - num;
+								if (num2 == 1 || (num2 < 1 && player.countCards("hs", card => get.tag(card, "save")) > -num2)) {
+									return true;
+								}
+							}
+							return false;
+						})(),
+						filterTarget(card, player, target) {
+							if (target == player) {
+								return false;
+							}
+							const { choice } = get.info("oldx_dcjuanji_backup");
+							switch (choice) {
+								case "damage": {
+									return true;
+								}
+								case "discard": {
+									return target.countCards("he");
+								}
+								default: {
+									return false;
+								}
+							}
+						},
+						selectTarget() {
+							const { choice, numx } = get.info("oldx_dcjuanji_backup");
+							switch (choice) {
+								case "damage": {
+									return 1;
+								}
+								case "discard": {
+									return [1, numx];
+								}
+								default: {
+									return -1;
+								}
+							}
+						},
+						multiline: true,
+						multitarget: true,
+						async content(event, trigger, player) {
+							const { choice, numx } = get.info(event.name);
+							player.addTempSkill("oldx_dcjuanji_used", "phaseChange");
+							player.markAuto("oldx_dcjuanji_used", choice);
+							switch (choice) {
+								case "damage": {
+									for (const method of ["recover", "damage"]) {
+										for (const current of [player, ...event.targets]) {
+											if (current.isIn()) {
+												await current[method](numx);
+											}
+										}
+									}
+									break;
+								}
+								case "discard": {
+									for (const target of event.targets) {
+										await player.gainMultiple(target, "he", true);
+									}
+									await player.turnOver();
+									break;
+								}
+								default: {
+									await player.draw(numx);
+									await player.chooseToDiscard("he", 1, true);
+									break;
+								}
+							}
+						},
+						ai1() {
+							return 1;
+						},
+						ai2(target) {
+							const { choice, numx, damageCheck } = get.info("oldx_dcjuanji_backup"),
+								player = get.player();
+							switch (choice) {
+								case "damage": {
+									let eff = current => {
+										const recover = Math.min(current.getDamagedHp(), numx);
+										return recover * get.recoverEffect(current, player, player) + numx * get.damageEffect(current, player, player);
+									};
+									if (damageCheck) {
+										return eff(target);
+									}
+									return eff(player) + eff(target);
+								}
+								case "discard": {
+									return get.effect(target, { name: "guohe_copy2" }, player, player);
+								}
+								default: {
+									return 1;
+								}
+							}
+						},
+					};
+				},
+				prompt(links, player) {
+					const { choice, numx: num } = get.info("oldx_dcjuanji_backup");
+					switch (choice) {
+						case "damage": {
+							return `令你与一名其他角色各回复${num}点体力，然后对你与其各造成${num}点伤害`;
+						}
+						case "discard": {
+							return `获得至多${num}名其他角色各一张牌，然后你翻面`;
+						}
+						default: {
+							return `摸${num}张牌，然后你弃置一张牌`;
+						}
+					}
+				},
+			},
+			ai: {
+				order: 7,
+				result: {
+					player: 1,
+				},
+			},
+			subSkill: {
+				used: {
+					charlotte: true,
+					onremove: true,
+				},
+				backup: {},
+			},
+		},
+		oldx_dcrenshuang: {
+			trigger: {
+				player: ["changeHpAfter"],
+			},
+			audio: "dcrenshuang",
+			forced: true,
+			filter(event, player) {
+				return player.hp == 1 && event.changedHp != 0;
+			},
+			async content(event, trigger, player) {
+				await player.link(false);
+				await player.turnOver(false);
+				const cards = get.inpileVCardList(info => {
+					return info[0] == "trick" && player.hasUseTarget(info[2]) && !player.getStorage("oldx_dcrenshuang_used").includes(info[2]);
+				});
+				if (!cards?.length) {
+					return;
+				}
+				const result = await player
+					.chooseButton(["纫霜：选择要视为使用的牌", [cards, "vcard"]], true)
+					.set("ai", button => {
+						return get.player().getUseValue(button.link[2]);
+					})
+					.forResult();
+				if (result?.bool) {
+					player.addTempSkill("oldx_dcrenshuang_used", "roundStart");
+					player.markAuto("oldx_dcrenshuang_used", result.links[0][2]);
+					const card = new lib.element.VCard({ name: result.links[0][2], isCard: true });
+					if (player.hasUseTarget(card)) {
+						await player.chooseUseTarget(card, true);
+					}
+				}
+			},
+			subSkill: {
+				used: {
+					charlotte: true,
+					onremove: true,
+				},
+			},
+		},
+
 		//新杀谋邓艾
 		old_dcsbzhouxi: {
 			audio: "dcsbzhouxi",
@@ -28576,12 +28828,19 @@ const lmCharacter = {
 		old_dcfuji: "缚己",
 		old_dcfuji_info: "你的回合结束时，可令一名其他角色观看你的手牌。若如此做，其使用牌指定你为目标时，你可交给其这些牌中的任意张牌并令此牌无效；你的下个回合开始时，若这些牌仍在你手牌中，其获得这些牌并回复1点体力。",
 
-		old_renwan: "旧任婉",
-		old_renwan_prefix: "旧",
+		old_renwan: "牢任婉",
+		old_renwan_prefix: "牢",
 		old_dcjuanji: "狷急",
 		old_dcjuanji_info: "摸牌阶段开始时，你可以摸体力上限张牌；出牌阶段开始时，你可以失去1点体力，然后视为对一名角色使用一张【杀】；弃牌阶段开始时，你可以调整手牌至手牌上限，然后弃置一名角色区域里至多两张牌。",
 		old_dcrenshuang: "纫霜",
 		old_dcrenshuang_info: "锁定技，①你每轮首次进入濒死时，回复体力至1点并增加1点体力上限（至多以此法增加3点）。②你脱离濒死时，复原武将牌并视为使用一张普通锦囊牌。",
+
+		oldx_renwan: "旧任婉",
+		oldx_renwan_prefix: "旧",
+		oldx_dcjuanji: "狷急",
+		oldx_dcjuanji_info: "出牌阶段每项限一次，你可以：1.令你与一名其他角色各恢复X点体力，然后对你与其各造成X点伤害；2.获得至多X名其他角色各一张牌，然后你翻面；3.摸X张牌，然后你弃置一张牌（X为本回合此技能发动次数）。",
+		oldx_dcrenshuang: "纫霜",
+		oldx_dcrenshuang_info: "锁定技，你的体力值变为1时，复原武将牌并令其他角色本轮对你使用的下一张牌无效，然后视为使用一张普通锦囊牌（每种牌名每轮限一次）。",
 
 		old_dc_tengfanglan: "旧滕芳兰",
 		old_dc_tengfanglan_prefix: "旧",

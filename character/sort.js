@@ -18,7 +18,7 @@ const characterSorts = {
 		//系列专属
 		sp2_old: ["old_hansong", "old_star_dingfeng", "old_star_fazheng"],
 		//限定专属
-		xianding_old: ["old_liufuren", "old_renwan", "old_dc_tengfanglan", "old_liujinliupei", "old_pangfengyi", "old_zhugejing", "old_bailingyun", "old_ruanyu", "old_xurong", "old_yuanji", "old_v_machao", "old_v_zhangxingcai", "old_dc_sb_xunyu", "old_dc_sb_luxun", "old_dc_sb_hulie", "old_dc_sb_xuyou", "old_dc_sb_zhuran", "old_dc_sb_dengai", "old_wu_zhugeliang", "old_wu_guanyu", "old_wu_huangfusong", "old_wu_lukang", "old_dc_shen_huatuo", "old_dc_shen_sunquan"],
+		xianding_old: ["old_liufuren", "old_renwan", "oldx_renwan", "old_dc_tengfanglan", "old_liujinliupei", "old_pangfengyi", "old_zhugejing", "old_bailingyun", "old_ruanyu", "old_xurong", "old_yuanji", "old_v_machao", "old_v_zhangxingcai", "old_dc_sb_xunyu", "old_dc_sb_luxun", "old_dc_sb_hulie", "old_dc_sb_xuyou", "old_dc_sb_zhuran", "old_dc_sb_dengai", "old_wu_zhugeliang", "old_wu_guanyu", "old_wu_huangfusong", "old_wu_lukang", "old_dc_shen_huatuo", "old_dc_shen_sunquan"],
 
 		//手杀武将
 		//始计篇

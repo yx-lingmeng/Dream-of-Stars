@@ -502,6 +502,14 @@ const characters = {
 		img: "image/character/renwan.jpg",
 		dieAudios: ["renwan"],
 	},
+	oldx_renwan: {
+		sex: "female",
+		group: "wei",
+		hp: 3,
+		skills: ["oldx_dcjuanji", "oldx_dcrenshuang"],
+		img: "image/character/renwan.jpg",
+		dieAudios: ["renwan"],
+	},
 	old_dc_tengfanglan: {
 		sex: "female",
 		group: "wu",
