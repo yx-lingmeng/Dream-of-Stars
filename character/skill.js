@@ -20216,100 +20216,89 @@ const lmCharacter = {
 		//乐綝
 		old_dcporui: {
 			audio: "dcporui",
-			trigger: {
-				global: "phaseJieshuBegin",
-			},
+			trigger: { global: "phaseJieshuBegin" },
 			filter(event, player) {
-				if (player == event.player) return false;
-				if (player.countMark("old_dcporui_round") >= 1) return false;
+				if (player == event.player) {
+					return false;
+				}
+				if (player.countMark("old_dcporui_round") >= (player.hasMark("old_dcgonghu_basic") ? 2 : 1) || player.countCards("h") == 0) {
+					return false;
+				}
 				return (
 					game.hasPlayer(current => {
-						if (current == player || current == event.player) return false;
-						return current.hasHistory("lose", function (evt) {
-							return evt.cards.length > 0;
-						});
-					}) &&
-					(_status.connectMode || player.hasCard({ type: "basic" }, "h"))
+						if (current == player) {
+							return false;
+						}
+						return current.hasHistory("lose", evt => evt.cards2.length);
+					}) && player.countCards("he") > 0
 				);
 			},
-			direct: true,
-			content() {
-				"step 0";
-				player.chooseCardTarget({
-					prompt: get.prompt("old_dcporui"),
-					prompt2: "弃置一张基本牌并选择一名本回合失去过牌的非当前回合的其他角色，你视为对其依次使用" + get.cnNumber(Math.max(0, player.hp) + 1) + "张【杀】",
-					filterCard(card) {
-						return get.type(card) == "basic";
-					},
-					selectCard: 1,
-					position: "h",
-					list: game.filterPlayer(current => {
-						if (current == player || current == trigger.player) return false;
-						return current.hasHistory("lose", function (evt) {
-							return evt.cards.length > 0;
-						});
-					}),
-					filterTarget(card, player, target) {
-						return target.hasHistory("lose", function (evt) {
-							return evt.cards.length > 0;
-						});
-					},
-					ai1(card) {
-						return 7 - get.value(card);
-					},
-					ai2(target) {
-						return get.effect(target, { name: "sha" }, _status.event.player, _status.event.player);
-					},
-				});
-				"step 1";
-				if (result.bool) {
-					var target = result.targets[0],
-						cards = result.cards;
-					event.target = target;
-					player.logSkill("old_dcporui", target);
-					player.discard(cards);
-					event.num2 = Math.max(0, player.hp);
-					event.num = Math.max(0, player.hp) + 1;
-					player.addTempSkill("old_dcporui_round", "roundStart");
-					player.addMark("old_dcporui_round", 1, false);
-				} else event.finish();
-				"step 2";
-				var card = { name: "sha", isCard: true, storage: { old_dcporui: true } };
-				if (player.canUse(card, target, false) && target.isIn()) {
-					player.useCard(card, target);
-					event.num--;
-				} else event.goto(4);
-				"step 3";
-				if (event.num > 0) event.goto(2);
-				"step 4";
-				if (!player.hasMark("old_dcgonghu_damage")) {
-					var cards = player.getCards("h");
-					if (cards.length == 0) event._result = { bool: false };
-					else if (cards.length <= event.num2) event._result = { bool: true, cards: cards };
-					else player.chooseCard("破锐：交给" + get.translation(target) + get.cnNumber(event.num2) + "张手牌", true, event.num2);
-				} else event.finish();
-				"step 5";
-				if (result.bool) {
-					player.give(result.cards, target);
-				}
-				event.finish();
-				"step 6";
-				if (player.hasMark("old_dcgonghu_basic")) {
-					if (
-						!target.hasHistory("damage", evt => {
-							return evt.card && evt.card.storage && evt.card.storage.old_dcporui && evt.getParent("old_dcporui") == event;
-						})
-					) {
-						player.recover();
+			async cost(event, trigger, player) {
+				const map = new Map();
+				game.countPlayer(current => {
+					if (current == player) {
+						return false;
 					}
+					if (current.hasHistory("lose", evt => evt.cards2.length)) {
+						map.set(current, player.hp + 1);
+					}
+				});
+				const next = player
+					.chooseCardTarget({
+						prompt: get.prompt(event.skill),
+						prompt2: get.skillInfoTranslation(event.skill, player, false),
+						filterCard: lib.filter.cardDiscardable,
+						position: "he",
+						filterTarget(card, player, target) {
+							return get.event().map.has(target);
+						},
+						ai1(card) {
+							return 7 - get.value(card);
+						},
+						ai2(target) {
+							let player = get.event().player,
+								num = player.hp,
+								eff = get.effect(target, { name: "sha" }, player, player);
+							if (eff !== 0) {
+								eff -= (10 / target.getHp()) * Math.pow(2, num);
+							}
+							return eff * num;
+						},
+					})
+					.set("map", map);
+				next.set(
+					"targetprompt2",
+					next.targetprompt2.concat([
+						target => {
+							if (!target.isIn() || !get.event().filterTarget(null, get.player(), target)) {
+								return false;
+							}
+							return `破锐${get.event().map.get(target)}`;
+						},
+					])
+				);
+				event.result = await next.forResult();
+			},
+			async content(event, trigger, player) {
+				const {
+					targets: [target],
+					cards,
+				} = event;
+				player.addTempSkill(event.name + "_round", "roundStart");
+				player.addMark(event.name + "_round", 1, false);
+				await player.discard(cards);
+				const num = player.hp;
+				let count = num + 1;
+				const card = get.autoViewAs({ name: "sha", isCard: true, storage: { [event.name]: true } });
+				while (count-- && player.canUse(card, target, false) && target.isIn()) {
+					await player.useCard(card, target);
+				}
+				if (!player.hasMark("old_dcgonghu_damage") && target.isIn() && player.countCards("h") && num) {
+					const numx = Math.min(num, player.countCards("h"));
+					await player.chooseToGive(target, "h", numx, true, `破锐：交给${get.translation(target)}${get.cnNumber(numx)}张手牌`);
 				}
 			},
-			subSkill: {
-				round: {
-					charlotte: true,
-					onremove: true,
-				},
-			},
+			subSkill: { round: { charlotte: true, onremove: true } },
 			ai: {
 				expose: 0.4,
 				threaten: 3.8,
@@ -20324,52 +20313,68 @@ const lmCharacter = {
 			},
 			forced: true,
 			filter(event, player) {
-				if (!_status.currentPhase || _status.currentPhase == player) return false;
 				if (event.name == "damage") {
-					if (player.hasMark("old_dcgonghu_damage")) return false;
-					return true;
+					if (player.hasMark("old_dcgonghu_damage")) {
+						return false;
+					}
+					var num = 0;
+					player.getHistory("damage", evt => (num += evt.num));
+					player.getHistory("sourceDamage", evt => (num += evt.num));
+					return num > 1;
 				}
-				if (player.hasMark("old_dcgonghu_basic")) return false;
-				if (_status.currentPhase && _status.currentPhase == player) return false;
+				if (!_status.currentPhase || _status.currentPhase == player) {
+					return false;
+				}
+				if (player.hasMark("old_dcgonghu_basic")) {
+					return false;
+				}
+				if (_status.currentPhase && _status.currentPhase == player) {
+					return false;
+				}
 				var evt = event.getl(player);
-				if (!evt || !evt.cards2 || !evt.cards2.some(i => get.type2(i, player) == "basic")) return false;
-				return true;
+				if (!evt || !evt.cards2 || !evt.cards2.some(i => get.type2(i, player) == "basic")) {
+					return false;
+				}
+				var num = 0;
+				player.getHistory("lose", function (evtx) {
+					if (num < 2) {
+						if (evtx && evtx.cards2) {
+							num += evtx.cards2.filter(i => get.type2(i, player) == "basic").length;
+						}
+					}
+				});
+				return num >= 2;
 			},
 			group: ["old_dcgonghu_basic", "old_dcgonghu_trick"],
-			content() {
+			async content(event, trigger, player) {
 				player.addMark("old_dcgonghu_" + (trigger.name == "damage" ? "damage" : "basic"), 1, false);
+				game.log(player, "修改了技能", "#g【破锐】");
 			},
-			mark: true,
-			intro: {
-				onunmark: true,
-				content(storage, player) {
-					var str = "";
-					if (!player.hasMark("old_dcgonghu_damage") && !player.hasMark("old_dcgonghu_basic")) return "";
-					if (player.hasMark("old_dcgonghu_basic")) str += "已于回合外失去过基本牌，若“破锐”使用【杀】未造成伤害则回复一点体力。<br>";
-					if (player.hasMark("old_dcgonghu_damage")) str += "已于回合外造成/受到过伤害，“破锐”使用【杀】后无需给牌。<br>";
-					if (player.hasMark("old_dcgonghu_basic") && player.hasMark("old_dcgonghu_damage")) str += "已达成全部条件，使用红色基本牌不可被响应，红色锦囊牌可多指定一个目标。";
-
-					return str;
-				},
+			ai: {
+				combo: "old_dcporui",
 			},
 			subSkill: {
 				trick: {
 					audio: "dcgonghu",
-					trigger: {
-						player: "useCard2",
-					},
+					trigger: { player: "useCard2" },
 					direct: true,
 					locked: true,
 					filter(event, player) {
-						if (!player.hasMark("old_dcgonghu_basic") || !player.hasMark("old_dcgonghu_damage")) return false;
+						if (!player.hasMark("old_dcgonghu_basic") || !player.hasMark("old_dcgonghu_damage")) {
+							return false;
+						}
 						var card = event.card;
-						if (get.color(card, false) != "red" || get.type(card, null, true) != "trick") return false;
+						if (get.color(card, false) != "red" || get.type(card, null, false) != "trick") {
+							return false;
+						}
 						var info = get.info(card);
-						if (info.allowMultiple == false) return false;
+						if (info.allowMultiple == false) {
+							return false;
+						}
 						if (event.targets && !info.multitarget) {
 							if (
 								game.hasPlayer(function (current) {
-									return !event.targets.contains(current) && lib.filter.targetEnabled2(card, player, current);
+									return !event.targets.includes(current) && lib.filter.targetEnabled2(card, player, current);
 								})
 							) {
 								return true;
@@ -20377,30 +20382,31 @@ const lmCharacter = {
 						}
 						return false;
 					},
-					content() {
-						"step 0";
-						var prompt2 = "为" + get.translation(trigger.card) + "增加一个目标";
-						player
+					async content(event, trigger, player) {
+						let result;
+						const prompt2 = "为" + get.translation(trigger.card) + "增加一个目标";
+						result = await player
 							.chooseTarget(get.prompt("old_dcgonghu_trick"), function (card, player, target) {
-								var player = _status.event.player;
-								return !_status.event.targets.contains(target) && lib.filter.targetEnabled2(_status.event.card, player, target);
+								player = _status.event.player;
+								return !_status.event.targets.includes(target) && lib.filter.targetEnabled2(_status.event.card, player, target);
 							})
 							.set("prompt2", prompt2)
 							.set("ai", function (target) {
-								var trigger = _status.event.getTrigger();
-								var player = _status.event.player;
+								const trigger = _status.event.getTrigger();
+								const player = _status.event.player;
 								return get.effect(target, trigger.card, player, player);
 							})
 							.set("card", trigger.card)
-							.set("targets", trigger.targets);
-						"step 1";
+							.set("targets", trigger.targets)
+							.forResult();
 						if (result.bool) {
-							if (!event.isMine() && !event.isOnline()) game.delayx();
+							if (!event.isMine() && !event.isOnline()) {
+								game.delayx();
+							}
 							event.targets = result.targets;
 						} else {
-							event.finish();
+							return;
 						}
-						"step 2";
 						if (event.targets) {
 							player.logSkill("old_dcgonghu_trick", event.targets);
 							trigger.targets.addArray(event.targets);
@@ -20409,16 +20415,16 @@ const lmCharacter = {
 				},
 				basic: {
 					audio: "dcgonghu",
-					trigger: {
-						player: "useCard",
-					},
+					trigger: { player: "useCard" },
 					forced: true,
 					filter(event, player) {
-						if (!player.hasMark("old_dcgonghu_basic") || !player.hasMark("old_dcgonghu_damage")) return false;
+						if (!player.hasMark("old_dcgonghu_basic") || !player.hasMark("old_dcgonghu_damage")) {
+							return false;
+						}
 						var card = event.card;
 						return get.color(card, false) == "red" && get.type(card, null, false) == "basic";
 					},
-					content() {
+					async content(event, trigger, player) {
 						trigger.directHit.addArray(game.filterPlayer());
 						game.log(trigger.card, "不可被响应");
 					},
@@ -28829,9 +28835,9 @@ const lmCharacter = {
 		old_yuechen: "旧乐綝",
 		old_yuechen_prefix: "旧",
 		old_dcporui: "破锐",
-		old_dcporui_info: "每轮限一次，其他角色的结束阶段，你可以弃置一张基本牌并选择另一名此回合内失去过牌的其他角色，你视为对该角色依次使用X+1张【杀】，然后你交给其X张手牌。（X为你的体力值，手牌不足X张则全给）",
+		old_dcporui_info: "每轮限一次，其他角色的结束阶段，你可以弃置一张牌并选择一名此回合内失去过牌的其他角色，你视为对该角色依次使用X+1张【杀】，然后你交给其X张手牌。（X为你的体力值，手牌不足X张则全给）",
 		old_dcgonghu: "共护",
-		old_dcgonghu_info: "锁定技，当你于回合外失去基本牌后，〖破锐〗最后增加描述“若其没有因此受到伤害，你回复1点体力”；当你于回合外造成或受到伤害后，你删除〖破锐〗中“交给”效果的描述。若以上两个效果均已触发，则你本局游戏接下来你使用红色基本牌无法响应，使用红色普通锦囊牌可以额外指定一个目标。",
+		old_dcgonghu_info: `锁定技。①当你于回合外失去基本牌后，若你本回合内失去基本牌的数量大于1，你将${get.poptip("old_dcporui")}改为每轮限两次。②当你造成或受到伤害后，若你本回合内造成或受到的总伤害大于1，你删除${get.poptip("old_dcporui")}中的“，然后你交给其X张手牌”。③当你使用红色基本牌/红色普通锦囊牌时，若你已发动过〖共护①〗和〖共护②〗，则此牌不可被响应/可额外增加一个目标。`,
 
 		//系列专属
 		old_hansong: "旧韩嵩",
