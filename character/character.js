@@ -597,7 +597,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 3,
-		skills: ["dcsbbizuo", "old_dcsbshimou", "dcsbxianshi"],
+		skills: ["dcsbbizuo", "dcsbshimou", "dcsbxianshi"],
 		img: "image/character/dc_sb_xunyu.jpg",
 		dieAudios: ["dc_sb_xunyu"],
 		clans: ["颍川荀氏"],
