@@ -1,6 +1,24 @@
 import { lib, game, ui, get, ai, _status } from "../../../noname.js";
 const dynamicTranslates = {
 	//动态翻译
+	old_dcporui(player) {
+		return "每轮限" + (player.hasMark("old_dcgonghu_basic") ? "两" : "一") + "次。其他角色的结束阶段，你可以弃置一张牌并选择一名于此回合内失去过牌的其他角色，你视为对其依次使用X+1张【杀】" + (player.hasMark("old_dcgonghu_damage") ? "" : "，然后你交给其X张手牌") + "（（X为你的体力值，手牌不足X张则全给））。";
+	},
+
+	old_dcsbjunmou(player) {
+		const bool = player.storage.old_dcsbjunmou;
+		let yang = "此牌视为无次数限制的火【杀】",
+			yin = "重铸此牌并横置一名角色";
+		if (bool) {
+			yin = `<span class="bluetext">${yin}</span>`;
+		} else {
+			yang = `<span class="firetext">${yang}</span>`;
+		}
+		const start = `转换技。①游戏开始时，你可以转换此技能状态；②一张牌结算结束后，若此牌的目标包括你，你可以摸一张牌并选择一张手牌，`,
+			end = "。";
+		return `${start}阳：${yang}；阴：${yin}${end}`;
+	},
+
 	old_sblongdan(player) {
 		if (player.hasSkill("old_sblongdan_mark", null, null, false)) return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
 		return "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后若你以此法使用牌，你摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。";
@@ -24,26 +42,7 @@ const dynamicTranslates = {
 		}
 		return str;
 	},
-	old_dcsbshimou(player) {
-		let str1 = `阳：手牌数全场最低的角色`,
-			str2 = `阴：手牌数全场最高的角色`;
-		if (!player.storage.old_dcsbshimou) str1 = `<span class=thundertext>${str1}</span>`;
-		else str2 = `<span class=thundertext>${str2}</span>`;
-		return `转换技，游戏开始可自选阴阳状态，出牌阶段限一次，你可令一名{${str1}；${str2}}将手牌调整至体力上限（至多摸五张）并视为使用一张仅指定单目标的普通锦囊牌（此牌牌名与目标由你指定）。若以此法摸牌，此牌可额外增加一个目标；若以此法弃牌，此牌额外结算一次。`;
-	},
-	old_dcsbjunmou(player) {
-		const bool = player.storage.old_dcsbjunmou;
-		let yang = "此牌视为无次数限制的火【杀】",
-			yin = "重铸此牌并横置一名角色";
-		if (bool) {
-			yin = `<span class="bluetext">${yin}</span>`;
-		} else {
-			yang = `<span class="firetext">${yang}</span>`;
-		}
-		const start = `转换技。①游戏开始时，你可以转换此技能状态；②一张牌结算结束后，若此牌的目标包括你，你可以摸一张牌并选择一张手牌，`,
-			end = "。";
-		return `${start}阳：${yang}；阴：${yin}${end}`;
-	},
+
 	old_mbweizhuang(player, skill) {
 		if (!player) {
 			return lib.translate[`${skill}_info`];

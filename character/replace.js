@@ -137,7 +137,7 @@ const characterReplaces = {
 	old_tw_niufudongxie: ["old_tw_niufudongxie", "tw_niufudongxie"],
 	old_pangfengyi: ["old_pangfengyi", "pangfengyi"],
 	old_pangxi: ["old_pangxi", "pangxi"],
-	old_renwan: ["old_renwan", "renwan"],
+	old_renwan: ["old_renwan", "oldx_renwan", "renwan"],
 	old_ruanyu: ["old_ruanyu", "ruanyu"],
 	tianchuan: ["unlock_tianchuan"],
 	old_mb_wangjing: ["old_mb_wangjing", "mb_wangjing"],
