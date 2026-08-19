@@ -28855,8 +28855,8 @@ const lmCharacter = {
 		old_pot_weiyan: "旧势魏延",
 		old_pot_weiyan_prefix: "旧|势",
 		old_potzhongao: "忠傲",
-		old_potzhongao_info: `使命技，①游戏开始时，你获得${get.poptip("potkuanggu")}。②成功：你杀死一名角色，升级${get.poptip("potkuanggu")}，回复X点体力并摸X张牌，体力值已满则改为摸等量张牌（X为你剩余的“壮誓”次数）。③失败：你进入濒死，或你未于出牌阶段开始时执行${get.poptip("old_potzhuangshi")}，失去${get.poptip("old_potzhuangshi")}并获得${get.poptip("kunfen")}，然后你回复1点体力并摸两张牌。",
-		old_potzhuangshi: "壮誓`,
+		old_potzhongao_info: `使命技，①游戏开始时，你获得${get.poptip("potkuanggu")}。②成功：你杀死一名角色，升级${get.poptip("potkuanggu")}，回复X点体力并摸X张牌，体力值已满则改为摸等量张牌（X为你剩余的“壮誓”次数）。③失败：你进入濒死，或你未于出牌阶段开始时执行${get.poptip("old_potzhuangshi")}，失去${get.poptip("old_potzhuangshi")}并获得${get.poptip("kunfen")}，然后你回复1点体力并摸两张牌。`,
+		old_potzhuangshi: "壮誓",
 		old_potzhuangshi_info: "出牌阶段开始时，你可以执行任意项：1.失去任意点体力，令你此阶段使用的前等量张牌不计入次数限制；2.弃置任意张手牌，令你此阶段使用的前等量张牌无距离限制且不可被响应。若均不执行，你增加1点体力上限并回复1点体力。",
 		old_potzhuangshi_tag: "已选择弃置",
 
