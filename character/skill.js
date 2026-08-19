@@ -18974,93 +18974,96 @@ const lmCharacter = {
 		},
 		old_olqiangang: {
 			audio: "olqiangang",
-			derivation: ["olrumo"],
 			enable: "phaseUse",
 			filter(event, player) {
-				return !player.hasSkill("olrumo");
+				return !player.hasSkill("olrumo", null, false, false) && player.hasSkill("old_oltianen", null, false, false);
 			},
 			skillAnimation: true,
 			animationColor: "wood",
+			manualConfirm: true,
 			async content(event, trigger, player) {
 				player.addSkill("olrumo");
 				await player.removeSkills("old_oltianen");
 				player.addSkill(`${event.name}_effect`);
 			},
-			subSkill: {
-				effect: {
-					charlotte: true,
-					trigger: { player: "useCard" },
-					filter(event, player) {
-						return event.card.name == "sha" && event.targets.length == 1 && event.targets[0].getStorage("olquanyu_record").length > 0;
-					},
-					async cost(event, trigger, player) {
-						const choices = trigger.targets[0].getStorage("olquanyu_record");
-						const map = get.info("olquanyu").map;
-						const list = Object.keys(map);
-						/*const result = await player
-							.chooseButton(
-								[
-									`乾纲：请选择要额外执行的“权御”效果`,
-									[list.slice(0, 2).map(i => [i, map[i]]), "tdnodes"],
-									[list.slice(2, 4).map(i => [i, map[i]]), "tdnodes"],
-									[list.slice(4).map(i => [i, map[i]]), "tdnodes"],
-									[
-										dialog => {
-											dialog.buttons.forEach(i => {
-												i.style.setProperty("width", "200px", "important");
-												i.style.setProperty("text-align", "left", "important");
-											});
-										},
-										"handle",
-									],
-								],
-								[1, 6]
-							)
-							.set("choices", choices)
-							.set("filterButton", button => {
-								if (!get.event().choices.includes(button.link)) {
-									return false;
-								}
-								if (button.link == "olquanyu_qingmin") {
-									const trigger = get.event().getTrigger();
-									const card = trigger.card;
-									const player = get.player();
-									return game.hasPlayer(target => !trigger.targets.includes(target) && lib.filter.targetEnabled2(card, player, target) && lib.filter.targetInRange(card, player, target));
-								}
-								return true;
-							})
-							.set("ai", button => {
-								const trigger = get.event().getTrigger();
-								const card = trigger.card;
-								const player = get.player();
-								if (button.link == "olquanyu_qingmin") {
-									if (!game.hasPlayer(target => !trigger.targets.includes(target) && get.effect(target, card, player, player) > 0)) {
-										return 0;
-									}
-								}
-								return 1;
-							})
-							.forResult();*/
-						event.result = { bool: true, cost_data: choices };
-					},
-					async content(event, trigger, player) {
-						const { cost_data: list } = event;
-						const map = get.info("olquanyu_effect").actionMap;
-						for (const i of list) {
-							await map[i](trigger, player);
-						}
+			ai: {
+				combo: "olquanyu",
+				order(item, player) {
+					return get.order({ name: "sha" }, player) + 0.1;
+				},
+				result: {
+					player(player) {
+						const playerChoice = (player.getStorage("olquanyu", new Map([])).get(player) ?? [[], undefined])[1];
+						return player.countCards("hs", card => {
+							if (card.name !== "sha" || !player.hasUseTarget(card)) return false;
+							return game.hasPlayer(target => {
+								if (!player.canUse(card, target) || get.effect(target, card, player, player) < 0) return false;
+								const targetChoices = (player.getStorage("olquanyu", new Map([])).get(target) ?? [[], undefined])[0];
+								return [playerChoice, ...targetChoices].unique().length > 3;
+							});
+						});
 					},
 				},
 			},
-			ai: {
-				combo: "olquanyu",
-				order: 6,
-				result: {
-					player(player) {
-						if (game.hasPlayer(target => get.attitude(player, target) < 0 && target.getStorage("olquanyu_record").length > 3)) {
-							return 1;
+			derivation: "olrumo",
+			subSkill: {
+				effect: {
+					charlotte: true,
+					init(player) {
+						for (const target of game.filterPlayer()) {
+							if (target === player) continue;
+							const choices = (player.getStorage("olquanyu", new Map([])).get(target) ?? [[], undefined])[0];
+							if (!choices.length) continue;
+							const func = (player, target, choices) => {
+								for (const i of choices) target.addTip(i, lib.skill[i].description, false, { width: "fit-content" }, true);
+							};
+							if (player === game.me) func(player, target, choices);
+							else if (player.isOnline2()) player.send(func, player, target, choices);
+							if (target === game.me) func(player, target, choices);
+							else if (target.isOnline2()) target.send(func, player, target, choices);
 						}
-						return 0;
+					},
+					onChooseToUse(event) {
+						event.targetprompt2.add(target => {
+							const player = get.player(),
+								card = get.card();
+							if (!card || card.name !== "sha" || !target.classList.contains("selectable")) return false;
+							const choices = (player.getStorage("olquanyu", new Map([])).get(target) ?? [[], undefined])[0];
+							if (choices.length) return `<span class='bluetext'>${choices.map(i => lib.skill[i].intro.name[0]).join("")}</span>`;
+						});
+					},
+					audio: "olqiangang",
+					trigger: { player: "useCardToPlayer" },
+					filter(event, player) {
+						if (event.card.name !== "sha" || !event.isFirstTarget || event.targets.length > 1) return false;
+						const storage = player.getStorage("olquanyu", new Map([])).get(event.target);
+						return storage?.[0]?.some(choice => {
+							const filter = lib.skill[choice]?.filter;
+							return filter ? filter(event, player) : true;
+						});
+					},
+					forced: true,
+					logTarget: "target",
+					async content(event, trigger, player) {
+						const storage = player.getStorage("olquanyu", new Map([])).get(trigger.target);
+						for (const choice of storage?.[0] || []) {
+							const filter = lib.skill[choice]?.filter;
+							if (filter ? filter(trigger, player) : true) await lib.skill[choice].contentx(trigger, player);
+						}
+					},
+					mod: {
+						cardUsableTarget(card, player, target) {
+							const storage = player.getStorage("olquanyu", new Map([])).get(target) ?? [[], undefined];
+							if (storage[1] === "olquanyu_liuxing" && card.name === "sha" && ![...ui.selected.targets].remove(target).length) return true;
+						},
+					},
+					ai: {
+						unequip_ai: true,
+						skillTagFilter(player, tag, arg) {
+							if (!arg?.card || !arg.target || arg.card.name !== "sha" || !![...ui.selected.targets].remove(arg.target).length) return false;
+							const storage = player.getStorage("olquanyu", new Map([])).get(arg.target) ?? [[], undefined];
+							return storage[1] === "olquanyu_bixie";
+						},
 					},
 				},
 			},
