@@ -2,7 +2,6 @@ import { lib, game, ui, get, ai, _status } from "noname";
 const lmCharacter = {
 	//技能
 	skill: {
-		//OL武将
 		//OL专属
 		//魔孙权
 		old_oltianen: {
@@ -6423,7 +6422,6 @@ const lmCharacter = {
 			},
 		},
 
-		//新杀武将
 		//界限突破
 		//钟会
 		old_xinquanji: {
@@ -11689,7 +11687,6 @@ const lmCharacter = {
 			},
 		},
 
-		//手杀武将
 		//始计篇
 		//手杀桥公
 		old_yizhu: {
@@ -23057,6 +23054,7 @@ const lmCharacter = {
 			},
 		},
 
+		//海外
 		//TW霍峻
 		old_twjieyu: {
 			audio: "twjieyu",
