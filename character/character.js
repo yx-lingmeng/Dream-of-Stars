@@ -7,7 +7,7 @@ const characters = {
 		sex: "male",
 		group: "wu",
 		hp: 4,
-		skills: ["old_olquanyu", "old_oltianen", "old_olqiangang"],
+		skills: ["olquanyu", "old_oltianen", "old_olqiangang"],
 		img: "image/character/dm_sunquan.jpg",
 		dieAudios: ["dm_sunquan"],
 	},

@@ -18911,187 +18911,6 @@ const lmCharacter = {
 			},
 		},
 		//魔孙权
-		old_olquanyu: {
-			audio: "olquanyu",
-			map: {
-				old_olquanyu_baihong: "白虹：伤害+1",
-				old_olquanyu_qingmin: "青冥：多指定一个目标",
-				old_olquanyu_bixie: "辟邪：无视防具",
-				old_olquanyu_zidian: "紫电：不可响应",
-				old_olquanyu_baili: "百里：多结算一次",
-				old_olquanyu_liuxing: "流星：无次数限制",
-			},
-			intro: {
-				markcount: () => 0,
-				content(storage, player, skill) {
-					const map = get.info("old_olquanyu").map;
-					const record = player.getStorage("old_olquanyu_record");
-					let str = "<li>本轮选择效果<br>";
-					if (storage?.length) {
-						str += map[storage];
-					} else {
-						str += "无";
-					}
-					str += `<br><br><li>已选择过的效果：${record.map(i => map[i].slice(0, 2)).join("、")}`;
-					return str;
-				},
-			},
-			trigger: {
-				global: "roundStart",
-			},
-			logTarget(event, player) {
-				return game.players;
-			},
-			forced: true,
-			chooseButton(target, list, map) {
-				const storage = target.getStorage("old_olquanyu_record");
-				const choices = list.filter(i => !storage.includes(i));
-				const next = target
-					.chooseButton(
-						[
-							`权御：请选择一个效果`,
-							[list.slice(0, 2).map(i => [i, map[i]]), "tdnodes"],
-							[list.slice(2, 4).map(i => [i, map[i]]), "tdnodes"],
-							[list.slice(4).map(i => [i, map[i]]), "tdnodes"],
-							[
-								dialog => {
-									dialog.buttons.forEach(i => {
-										i.style.setProperty("width", "200px", "important");
-										i.style.setProperty("text-align", "left", "important");
-									});
-								},
-								"handle",
-							],
-						],
-						true
-					)
-					.set("choices", choices)
-					.set("filterButton", button => get.event().choices.includes(button.link))
-					.set("ai", button => Math.random())
-					.set("_global_waiting", true);
-				return next;
-			},
-			async content(event, trigger, player) {
-				const { targets } = event;
-				const name = "old_olquanyu_record";
-				const map = get.info(event.name).map;
-				const list = Object.keys(map);
-				const result = await game.chooseAnyOL(targets.filter(target => target.getStorage(name).length < 6).sortBySeat(), get.info(event.name).chooseButton, [list, map]).forResult();
-				let num = 0,
-					me;
-				if (result.has(player)) {
-					const resultx = result.get(player);
-					if (resultx?.links?.length) {
-						me = resultx.links[0];
-					}
-				}
-				for (const [target, resultx] of result.entries()) {
-					if (resultx?.links?.length) {
-						const {
-							links: [link],
-						} = resultx;
-						target.markAuto(name, link);
-						target.setStorage(event.name, link);
-						target.markSkill(event.name);
-						target.popup(map[link].slice(0, 2));
-						if (link == me) {
-							num++;
-						}
-						target
-							.when("roundStart")
-							.filter(evt => evt != trigger)
-							.step(async (event, trigger, player) => {
-								delete player.storage["old_olquanyu"];
-								player.markSkill("old_olquanyu");
-							});
-					}
-				}
-				if (num > 0) {
-					await player.draw(Math.min(num, 3));
-				}
-			},
-			group: "old_olquanyu_effect",
-			subSkill: {
-				effect: {
-					trigger: { player: "useCardToPlayer" },
-					filter(event, player) {
-						if (event.card.name != "sha" || event.targets?.length != 1) {
-							return false;
-						}
-						return player.storage.old_olquanyu?.length;
-					},
-					actionMap: {
-						old_olquanyu_baihong: async (trigger, player) => {
-							trigger.baseDamage ??= 1;
-							trigger.baseDamage++;
-							game.log(trigger.card, "基础伤害+1");
-						},
-						old_olquanyu_qingmin: async (trigger, player) => {
-							const check = (card, player, target) => {
-								const trigger = get.event().getTrigger();
-								return !trigger.targets.includes(target) && lib.filter.targetEnabled2(card, player, target) && lib.filter.targetInRange(card, player, target);
-							};
-							if (game.hasPlayer(target => check(trigger.card, player, target))) {
-								const result = await player
-									.chooseTarget(`权御：为${get.translation(trigger.card)}额外选择一个目标`, check)
-									.set("_get_card", trigger.card)
-									.set("ai", target => get.effect(target, get.card(), get.player(), get.player()))
-									.forResult();
-								if (result?.targets?.length) {
-									const { targets } = result;
-									player.line(targets);
-									trigger.targets.addArray(targets);
-									game.log(targets, "也成为", trigger.card, "的目标");
-								}
-							}
-						},
-						old_olquanyu_bixie: async (trigger, player) => {
-							trigger.card.storage.old_olquanyu_effect = true;
-							game.log(trigger.card, "无视防具");
-						},
-						old_olquanyu_zidian: async (trigger, player) => {
-							trigger.directHit.addArray(game.players);
-							game.log(trigger.card, "不可被响应");
-						},
-						old_olquanyu_baili: async (trigger, player) => {
-							trigger.effectCount++;
-							game.log(trigger.card, "额外结算一次");
-						},
-						old_olquanyu_liuxing: async (trigger, player) => {
-							if (trigger.addCount !== false) {
-								trigger.addCount = false;
-								const stat = player.getStat().card,
-									name = trigger.card.name;
-								if (typeof stat[name] == "number") {
-									stat[name]--;
-								}
-								game.log(trigger.card, "不计入次数");
-							}
-						},
-					},
-					forced: true,
-					async content(event, trigger, player) {
-						const map = get.info(event.name).actionMap;
-						await map[player.storage.old_olquanyu](trigger.getParent(), player);
-					},
-					mod: {
-						cardUsable(card, player, num) {
-							if (card.name == "sha" && player.storage.old_olquanyu == "old_olquanyu_liuxing") {
-								return Infinity;
-							}
-						},
-					},
-					ai: {
-						unequip: true,
-						skillTagFilter(player, tag, arg) {
-							if (tag == "unequip" && !arg?.card?.storage?.old_olquanyu_effect) {
-								return false;
-							}
-						},
-					},
-				},
-			},
-		},
 		old_oltianen: {
 			audio: "oltianen",
 			forced: true,
@@ -19106,12 +18925,12 @@ const lmCharacter = {
 				const {
 					targets: [target],
 				} = event;
-				const bool = player.storage.old_olquanyu == target.storage.old_olquanyu;
+				const bool = player.storage.olquanyu == target.storage.olquanyu;
 
 				if (!bool) {
 					await target.randomDiscard().set("discarder", player);
 					const result = {
-						skill: "old_olquanyu",
+						skill: "olquanyu",
 						targets: [target],
 					};
 					await player.useResult(result, event);
@@ -19148,7 +18967,7 @@ const lmCharacter = {
 				},
 			},
 			ai: {
-				combo: "old_olquanyu",
+				combo: "olquanyu",
 			},
 		},
 		old_olqiangang: {
@@ -19170,11 +18989,11 @@ const lmCharacter = {
 					charlotte: true,
 					trigger: { player: "useCard" },
 					filter(event, player) {
-						return event.card.name == "sha" && event.targets.length == 1 && event.targets[0].getStorage("old_olquanyu_record").length > 0;
+						return event.card.name == "sha" && event.targets.length == 1 && event.targets[0].getStorage("olquanyu_record").length > 0;
 					},
 					async cost(event, trigger, player) {
-						const choices = trigger.targets[0].getStorage("old_olquanyu_record");
-						const map = get.info("old_olquanyu").map;
+						const choices = trigger.targets[0].getStorage("olquanyu_record");
+						const map = get.info("olquanyu").map;
 						const list = Object.keys(map);
 						/*const result = await player
 							.chooseButton(
@@ -19200,7 +19019,7 @@ const lmCharacter = {
 								if (!get.event().choices.includes(button.link)) {
 									return false;
 								}
-								if (button.link == "old_olquanyu_qingmin") {
+								if (button.link == "olquanyu_qingmin") {
 									const trigger = get.event().getTrigger();
 									const card = trigger.card;
 									const player = get.player();
@@ -19212,7 +19031,7 @@ const lmCharacter = {
 								const trigger = get.event().getTrigger();
 								const card = trigger.card;
 								const player = get.player();
-								if (button.link == "old_olquanyu_qingmin") {
+								if (button.link == "olquanyu_qingmin") {
 									if (!game.hasPlayer(target => !trigger.targets.includes(target) && get.effect(target, card, player, player) > 0)) {
 										return 0;
 									}
@@ -19224,7 +19043,7 @@ const lmCharacter = {
 					},
 					async content(event, trigger, player) {
 						const { cost_data: list } = event;
-						const map = get.info("old_olquanyu_effect").actionMap;
+						const map = get.info("olquanyu_effect").actionMap;
 						for (const i of list) {
 							await map[i](trigger, player);
 						}
@@ -19232,11 +19051,11 @@ const lmCharacter = {
 				},
 			},
 			ai: {
-				combo: "old_olquanyu",
+				combo: "olquanyu",
 				order: 6,
 				result: {
 					player(player) {
-						if (game.hasPlayer(target => get.attitude(player, target) < 0 && target.getStorage("old_olquanyu_record").length > 3)) {
+						if (game.hasPlayer(target => get.attitude(player, target) < 0 && target.getStorage("olquanyu_record").length > 3)) {
 							return 1;
 						}
 						return 0;
@@ -28500,17 +28319,10 @@ const lmCharacter = {
 		//OL专属
 		old_dm_sunquan: "旧魔孙权",
 		old_dm_sunquan_prefix: "旧|魔",
-		old_olquanyu: "权御",
-		old_olquanyu_info: `锁定技，每轮开始时，你令所有角色同时选择一项其本局未选择过的“${get.poptip({
-			id: "quanyu_effect",
-			name: "权御",
-			type: "character",
-			info: "<li>白虹：伤害+1<br><li>青冥：额外指定一个目标<br><li>辟邪：无视防具<br><li>紫电：不可响应<br><li>百里：额外结算一次<br><li>流星：无次数限制",
-		})}”效果，然后你摸X张牌（X为与你选择效果相同的角色数且至多为3）。你使用的指定唯一目标的【杀】附带你本轮所选的“权御”效果。`,
 		old_oltianen: "天恩",
-		old_oltianen_info: `锁定技，你使用牌指定唯一目标后：若本轮你与其选择的“权御”效果不同，你随机弃置其一张牌，对其发动一次${get.poptip("old_olquanyu")}；若与你相同，你从牌堆获得一张不计入手牌上限的【杀】，若其不为你，此技能本回合失效。`,
+		old_oltianen_info: `锁定技，你使用牌指定唯一目标后：若本轮你与其选择的“权御”效果不同，你随机弃置其一张牌，对其发动一次${get.poptip("olquanyu")}；若与你相同，你从牌堆获得一张不计入手牌上限的【杀】，若其不为你，此技能本回合失效。`,
 		old_olqiangang: "乾纲",
-		old_olqiangang_info: `出牌阶段，你可${get.poptip("rule_rumo")}，失去〖天恩〗，然后本局你使用指定唯一目标的【杀】均执行目标所选择过的所有“权御”效果。`,
+		old_olqiangang_info: `出牌阶段，你可${get.poptip("rule_rumo")}，失去${get.poptip("old_oltianen")}，然后本局你使用指定唯一目标的【杀】均执行目标所选择过的所有“权御”效果。`,
 
 		old_ol_sb_zhangrang: "旧OL谋张让",
 		old_ol_sb_zhangrang_prefix: "旧|OL谋",
