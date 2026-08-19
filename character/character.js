@@ -213,7 +213,7 @@ const characters = {
 	old_ol_peixiu: {
 		sex: "male",
 		group: "qun",
-		hp: 3,
+		hp: 4,
 		skills: ["oljinlan", "olmaozhu"],
 		img: "image/character/ol_peixiu.jpg",
 		dieAudios: ["ol_peixiu"],
