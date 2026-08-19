@@ -185,20 +185,24 @@ const characterTitles = {
 	old_tw_zhangmancheng: "南阳渠帅",
 	old_tw_guanqiujian: "威震四夷",
 	old_tw_niufudongxie: "虺伴蝎行",
+
 	old_xia_guanyu: "义薄云天",
 	old_xia_zhaoe: "烈女誓仇",
+
 	old_huan_zhugeliang: "天意可叹",
 	old_huan_weiyan: "自矜功伐",
 	old_huan_zhugeguo: "悠游清汉",
-	old_tw_shen_lvmeng: "兼资文武",
+
 	old_huan_caoang: "穿时寻冀",
+
 	old_tw_gexuan: "冲应真人",
 	old_jsrg_huangfusong: "安危定倾",
+	old_tw_huangfusong: "铁血柔肠",
 	old_yinfuren: "委身允翕",
 	old_tw_jiangji: "盛魏昌杰",
 	old_tw_zhangzhao: "功勋克举",
 	old_tw_zhanghong: "为世令器",
-	old_tw_huangfusong: "铁血柔肠",
+	old_tw_shen_lvmeng: "兼资文武",
 
 	//联动卡
 	old_strong_caochong: "端阳撼象",
