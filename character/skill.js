@@ -18925,15 +18925,17 @@ const lmCharacter = {
 				const {
 					targets: [target],
 				} = event;
-				const bool = player.storage.olquanyu == target.storage.olquanyu;
+				const playerChoice = player.getStorage("olquanyu", new Map([])).get(player)?.[1];
+				const targetChoice = player.getStorage("olquanyu", new Map([])).get(target)?.[1];
 
-				if (!bool) {
+				if (playerChoice !== targetChoice) {
 					await target.randomDiscard().set("discarder", player);
-					const result = {
-						skill: "olquanyu",
-						targets: [target],
-					};
-					await player.useResult(result, event);
+					const next = game.createEvent("olquanyu");
+					next.player = player;
+					next.targets = [target];
+					next._trigger = trigger;
+					next.setContent(lib.skill.olquanyu.content);
+					await next;
 				} else {
 					if (target != player) {
 						player.tempBanSkill(event.name);
