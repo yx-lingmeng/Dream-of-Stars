@@ -393,8 +393,9 @@ const lmCharacter = {
 								game.hasPlayer(function (current) {
 									return current.isDamaged();
 								})
-							)
+							) {
 								return num + 1;
+							}
 						},
 					},
 					trigger: { player: ["phaseDrawBegin2", "phaseEnd"] },
@@ -407,8 +408,9 @@ const lmCharacter = {
 								: !game.hasPlayer(function (current) {
 										return current.hasEnabledSlot();
 									})
-						)
+						) {
 							return false;
+						}
 						return (
 							game.countPlayer(function (current) {
 								return current.isDamaged();
@@ -416,33 +418,36 @@ const lmCharacter = {
 						);
 					},
 					direct: true,
-					content() {
-						"step 0";
+					async content(event, trigger, player) {
 						if (trigger.name == "phaseDraw") {
 							player.logSkill("olzhiti");
 							trigger.num++;
-							event.finish();
-						} else {
-							player
-								.chooseTarget(get.prompt("olzhiti"), "废除一名角色的一个随机装备栏", function (card, player, target) {
-									return target.hasEnabledSlot();
-								})
-								.set("ai", function (target) {
-									return -get.attitude(_status.event.player, target) * (target.countCards("e") + 1);
-								});
+							return;
 						}
-						"step 1";
+
+						const result = await player
+							.chooseTarget(get.prompt("olzhiti"), "废除一名角色的一个随机装备栏", (card, player, target) => {
+								return target.hasEnabledSlot();
+							})
+							.set("ai", target => {
+								return -get.attitude(_status.event.player, target) * (target.countCards("e") + 1);
+							})
+							.forResult();
+
 						if (result.bool) {
-							var target = result.targets[0];
+							const target = result.targets[0];
 							player.logSkill("olzhiti", target);
-							var list = [];
-							for (var i = 1; i < 6; i++) {
-								if (target.hasEnabledSlot(i)) list.add(i == 3 || i == 4 ? 6 : i);
+							const list = [];
+							for (let i = 1; i < 6; i++) {
+								if (target.hasEnabledSlot(i)) {
+									list.add(i == 3 || i == 4 ? 6 : i);
+								}
 							}
-							var num = list.randomGet();
-							if (num != 6) target.disableEquip(num);
-							else {
-								target.disableEquip(3, 4);
+							const num = list.randomGet();
+							if (num != 6) {
+								await target.disableEquip(num);
+							} else {
+								await target.disableEquip(3, 4);
 							}
 						}
 					},
@@ -28512,7 +28517,7 @@ const lmCharacter = {
 		old_olsblucun: "赂存",
 		old_olsblucun_info: "每回合限一次，你可以视为使用一张本轮未以此法使用过的基本牌或普通锦囊牌。此牌结算完毕后，当前回合角色将一张手牌置于你的武将牌上，称为“赂”；本回合结束时，你将一张“赂”置入弃牌堆并摸一张牌（若你本回合因此技能使用的牌名包含你选择移去的“赂”的牌名，则你额外摸一张牌）。",
 		old_olsbtuisheng: "蜕生",
-		old_olsbtuisheng_info: "限定技，准备阶段或当你进入濒死状态时，你可以重置你本轮〖赂存〗使用过的牌名，然后你选择一项并回复1点体力：①将所有手牌置于你的武将牌上，称为“赂”；②令当前回合角色获得你的所有“赂”且你回复1点体力。",
+		old_olsbtuisheng_info: `限定技，准备阶段或当你进入濒死状态时，你可以重置你本轮${get.poptip("old_olsblucun")}使用过的牌名，然后你选择一项并回复1点体力：①将所有手牌置于你的武将牌上，称为“赂”；②令当前回合角色获得你的所有“赂”且你回复1点体力。`,
 
 		old_ol_sb_yl_luzhi: "旧OL谋卢植",
 		old_ol_sb_yl_luzhi_prefix: "旧|OL谋",
@@ -28561,7 +28566,7 @@ const lmCharacter = {
 		old_ol_wangyi: "旧OL界王异",
 		old_ol_wangyi_prefix: "旧|OL界",
 		old_olzhenlie: "贞烈",
-		old_olzhenlie_info: "当你成为其他角色使用的【杀】或非延时锦囊牌的目标后，你可以失去一点体力令此牌对你无效，然后选择一项：1，获得使用者的一张牌；2，发动一次【秘计】。",
+		old_olzhenlie_info: `当你成为其他角色使用的【杀】或非延时锦囊牌的目标后，你可以失去一点体力令此牌对你无效，然后选择一项：1，获得使用者的一张牌；2，发动一次${get.poptip("olmiji")}。`,
 
 		old_ol_chengpu: "旧OL界程普",
 		old_ol_chengpu_prefix: "旧|OL界",
@@ -28804,9 +28809,9 @@ const lmCharacter = {
 		old_dc_sp_zhurong: "旧SP祝融",
 		old_dc_sp_zhurong_prefix: "旧|SP",
 		old_dcremanhou: "蛮后",
-		old_dcremanhou_info: "出牌阶段限一次，你可以摸至多四张牌并根据摸牌数依次执行以下等量项：①失去〖探乱〗；②弃置一张手牌；③失去1点体力，获得一名其他角色的一张手牌；④弃置场上的一张牌，获得〖探乱〗。",
+		old_dcremanhou_info: `出牌阶段限一次，你可以摸至多四张牌并根据摸牌数依次执行以下等量项：①失去${get.poptip("old_dcretanluan")}；②弃置一张手牌；③失去1点体力，获得一名其他角色的一张手牌；④弃置场上的一张牌，获得${get.poptip("old_dcretanluan")}。`,
 		old_dcretanluan: "探乱",
-		old_dcretanluan_info: "出牌阶段限一次，你可以使用本回合弃牌堆中因弃置进入弃牌堆的一张牌，若你因此造成伤害，则你重置〖蛮后〗。",
+		old_dcretanluan_info: `出牌阶段限一次，你可以使用本回合弃牌堆中因弃置进入弃牌堆的一张牌，若你因此造成伤害，则你重置${get.poptip("old_dcremanhou")}。`,
 
 		old_yue_miheng: "旧乐祢衡",
 		old_yue_miheng_prefix: "旧|乐",
