@@ -26424,6 +26424,7 @@ const lmCharacter = {
 			},
 		},
 		old_dcweijing: {
+			audio: "dcweijing",
 			trigger: { global: "phaseBegin" },
 			derivation: "old_dczhifeng",
 			filter(event, player) {
