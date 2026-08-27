@@ -894,14 +894,6 @@ const characters = {
 		dieAudios: ["mb_sp_guanqiujian"],
 		names: "毌丘|俭",
 	},
-	old_shenpei: {
-		sex: "male",
-		group: "qun",
-		hp: 3,
-		skills: ["shouye", "liezhi"],
-		img: "image/character/shenpei.jpg",
-		dieAudios: ["shenpei"],
-	},
 	old_liwei: {
 		sex: "male",
 		group: "shu",

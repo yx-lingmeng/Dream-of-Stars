@@ -70,7 +70,6 @@ const characterReplaces = {
 	qiaogong: ["old_qiaogong"],
 	quancong: ["oldx_quancong"],
 	ruiji: ["old_ruiji"],
-	shenpei: ["old_shenpei"],
 	sunce: ["old_sp_sunce", "old_sb_sunce", "old_v_sunce"],
 	sunquan: ["old_dm_sunquan", "old_mb_sunquan", "old_sb_sunquan", "old_v_sunquan"],
 	taishici: ["old_pot_taishici"],

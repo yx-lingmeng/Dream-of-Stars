@@ -123,7 +123,6 @@ const characterTitles = {
 	old_sp_jianggan: "虚义伪诚",
 	old_mb_wangjing: "青云孤竹",
 	old_mb_sp_guanqiujian: "才识拔干",
-	old_shenpei: "正南义北",
 	old_liwei: "伏被俞元",
 	old_yangfu: "鹤德璋声",
 	old_mb_chengui: "弄辞巧掇",

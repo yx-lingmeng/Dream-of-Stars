@@ -28579,9 +28579,6 @@ const lmCharacter = {
 		old_mbcuizhen: "摧阵",
 		old_mbcuizhen_info: "①游戏开始时，你可以废除至多三名其他角色的武器栏。②当你于出牌阶段使用伤害类牌指定其他角色为目标后，若目标角色的手牌数不小于体力值，你可以废除其武器栏。③摸牌阶段，你令额定摸牌数+X（X为所有角色被废除的武器栏数之和+1，至多为4）。",
 
-		old_shenpei: "旧审配",
-		old_shenpei_prefix: "旧",
-
 		old_liwei: "旧李遗",
 		old_liwei_prefix: "旧",
 		old_jiaohua: "教化",
