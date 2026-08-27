@@ -6356,12 +6356,12 @@ const lmCharacter = {
 						if (game.hasPlayer(p => p != target)) {
 							let given_map = [];
 							let remaining = cardsToGive.length;
-							target.addGaintag(cardsToGive, "old_aichen_given");
-							while (remaining > 0 && target.hasCard(card => card.hasGaintag && card.hasGaintag("old_aichen_given"), "h")) {
+							target.addGaintag(cardsToGive, "old_luochong_given");
+							while (remaining > 0 && target.hasCard(card => card.hasGaintag && card.hasGaintag("old_luochong_given"), "h")) {
 								const giveResult = await target
 									.chooseCardTarget({
 										filterCard(card) {
-											return card.hasGaintag && card.hasGaintag("old_aichen_given");
+											return card.hasGaintag && card.hasGaintag("old_luochong_given");
 										},
 										selectCard: [1, remaining],
 										filterTarget: lib.filter.notMe,
@@ -6388,14 +6388,14 @@ const lmCharacter = {
 										given_map.push([targetPlayer, cards]);
 									}
 									cards.forEach(c => {
-										if (c && c.removeGaintag) c.removeGaintag("old_aichen_given");
+										if (c && c.removeGaintag) c.removeGaintag("old_luochong_given");
 									});
 								} else {
 									break;
 								}
 							}
 							cardsToGive.forEach(c => {
-								if (c && c.removeGaintag) c.removeGaintag("old_aichen_given");
+								if (c && c.removeGaintag) c.removeGaintag("old_luochong_given");
 							});
 							if (given_map.length) {
 								await game
@@ -28165,6 +28165,7 @@ const lmCharacter = {
 		old_tengfanglan: "旧OL滕芳兰",
 		old_tengfanglan_prefix: "旧|OL",
 		old_luochong: "落宠",
+		old_luochong_given: "落宠",
 		old_luochong_info: "准备阶段或当你受到伤害后，你可以选择一项：1、令一名角色回复1点体力；2、令一名角色失去1点体力；3、令一名角色弃置两张牌；4、令一名角色摸两张牌并可以将这些牌分配任意名角色（每轮每项各限一次）。",
 		old_aichen: "哀尘",
 		old_aichen_info: "锁定技，当你进入濒死状态时，若〖落宠〗中剩余选项数大于1，你将体力回复至一点，执行并移去其中一项。",
