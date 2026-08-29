@@ -34,7 +34,7 @@ const characters = {
 		group: "wei",
 		hp: 4,
 		maxHp: 5,
-		skills: ["old_olsbjigu", "old_olsbjiewan"],
+		skills: ["olsbjigu", "old_olsbjiewan"],
 		img: "image/character/ol_sb_dengai.jpg",
 		dieAudios: ["ol_sb_dengai"],
 	},

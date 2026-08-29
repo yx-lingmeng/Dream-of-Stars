@@ -554,95 +554,12 @@ const lmCharacter = {
 		},
 
 		//OL谋邓艾
-		old_olsbjigu: {
-			audio: "olsbjigu",
-			trigger: { global: ["cardsDiscardAfter", "phaseBegin"] },
-			filter(event, player) {
-				const num1 = player.maxHp,
-					num2 = player.countExpansions("old_olsbjigu");
-				if (event.name == "cardsDiscard") {
-					if (num2 >= num1) {
-						return false;
-					}
-					if (!event.cards.filterInD("d").some(card => get.suit(card) != "heart")) {
-						return false;
-					}
-					const evtx = event.getParent();
-					if (evtx.name !== "orderingDiscard") {
-						return false;
-					}
-					const evt2 = evtx.relatedEvent || evtx.getParent();
-					return evt2.name == "useCard" && evt2.player != event.getParent("phaseUse")?.player;
-				}
-				return event.player.maxHp == num1 && num2 && player.countCards("h");
-			},
-			locked: true,
-			async cost(event, trigger, player) {
-				if (trigger.name == "cardsDiscard") {
-					event.result = {
-						bool: true,
-					};
-				} else {
-					const next = player.chooseToMove("积谷：是否交换“谷”和手牌？");
-					next.set("list", [
-						[get.translation(player) + "（你）的“谷”", player.getExpansions("old_olsbjigu")],
-						["手牌区", player.getCards("h")],
-					]);
-					next.set("filterMove", (from, to) => {
-						return typeof to != "number";
-					});
-					next.set("processAI", list => {
-						let player = get.player(),
-							cards = list[0][1].concat(list[1][1]).sort((a, b) => get.useful(a) - get.useful(b)),
-							cards2 = cards.splice(0, player.getExpansions("old_olsbjigu").length);
-						return [cards2, cards];
-					});
-					const { bool, moved } = await next.forResult();
-					event.result = {
-						bool: bool,
-						cost_data: moved,
-					};
-				}
-			},
-			async content(event, trigger, player) {
-				if (trigger.name == "cardsDiscard") {
-					const cards = trigger.cards.filter(card => get.position(card, true) == "d" && get.suit(card) != "heart");
-					const next = player.addToExpansion(cards, "gain2");
-					next.gaintag.add(event.name);
-					await next;
-				} else {
-					const { cost_data: moved } = event;
-					const pushs = moved[0],
-						gains = moved[1];
-					pushs.removeArray(player.getExpansions(event.name));
-					gains.removeArray(player.getCards("h"));
-					if (!pushs.length || pushs.length != gains.length) {
-						return;
-					}
-					const next = player.addToExpansion(pushs);
-					next.gaintag.add(event.name);
-					await next;
-					await player.gain(gains, "draw");
-				}
-			},
-			marktext: "谷",
-			intro: {
-				content: "expansion",
-				markcount: "expansion",
-			},
-			onremove(player, skill) {
-				const cards = player.getExpansions(skill);
-				if (cards.length) {
-					player.loseToDiscardpile(cards);
-				}
-			},
-		},
 		old_olsbjiewan: {
 			audio: "olsbjiewan",
 			trigger: { global: ["phaseZhunbeiBegin", "phaseJieshuBegin"] },
 			filter(event, player) {
 				const num1 = player.maxHp,
-					num2 = player.countExpansions("old_olsbjigu");
+					num2 = player.countExpansions("olsbjigu");
 				if (event.name == "phaseZhunbei") {
 					if (!num1 && num2 < 1) {
 						return false;
@@ -670,7 +587,7 @@ const lmCharacter = {
 					next.set("filterButton", button => {
 						const { link } = button,
 							player = get.player();
-						return (link == "lose" && player.maxHp > 0) || (link == "discard" && player.countExpansions("old_olsbjigu") > 1);
+						return (link == "lose" && player.maxHp > 0) || (link == "discard" && player.countExpansions("olsbjigu") > 1);
 					});
 					next.set("ai", button => {
 						const { link } = button,
@@ -679,7 +596,7 @@ const lmCharacter = {
 							return 0;
 						}
 						let num1 = player.maxHp,
-							num2 = player.countExpansions("old_olsbjigu"),
+							num2 = player.countExpansions("olsbjigu"),
 							num3 = player.countCards("h");
 						if (num3 == num2 - 1 && link == "discard") {
 							return 3;
@@ -714,10 +631,10 @@ const lmCharacter = {
 						await player.loseMaxHp();
 					} else {
 						const { links: cards } =
-							player.countExpansions("old_olsbjigu") <= 2
-								? player.getExpansions("old_olsbjigu")
+							player.countExpansions("olsbjigu") <= 2
+								? player.getExpansions("olsbjigu")
 								: await player
-										.chooseButton([`解腕：移去两张“谷”`, player.getExpansions("old_olsbjigu")], 2, true)
+										.chooseButton([`解腕：移去两张“谷”`, player.getExpansions("olsbjigu")], 2, true)
 										.set("ai", button => 6 - get.value(button.link))
 										.forResult();
 						if (cards?.length) {
@@ -755,7 +672,7 @@ const lmCharacter = {
 					position: "hs",
 					ai1(card) {
 						const player = get.player();
-						if (player.hasSkill("old_olsbjigu") && get.suit(card) != "heart") {
+						if (player.hasSkill("olsbjigu") && get.suit(card) != "heart") {
 							return 10;
 						}
 						return 6 - get.value(card);
@@ -27947,8 +27864,6 @@ const lmCharacter = {
 
 		old_ol_sb_dengai: "旧OL谋邓艾",
 		old_ol_sb_dengai_prefix: "旧|OL谋",
-		old_olsbjigu: "积谷",
-		old_olsbjigu_info: "锁定技。一名角色于其出牌阶段外使用的牌进入弃牌堆后，若“谷”的数量小于你的体力上限，你将其中的非♥牌置于你的武将牌上，称为“谷”。体力上限与你相同的角色的回合开始时，你用任意张手牌替换等量“谷”。",
 		old_olsbjiewan: "解腕",
 		old_olsbjiewan_info: "①每个准备阶段，你可以减少1点体力上限或移去两张“谷”，然后将一张手牌当无距离限制的【顺手牵羊】使用。②每个结束阶段，若你的手牌数与“谷”的数量相同且你的体力上限不为全场唯一最高，你增加1点体力上限。",
 
