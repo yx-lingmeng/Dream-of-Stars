@@ -9424,30 +9424,30 @@ const lmCharacter = {
 			async content(event, trigger, player) {
 				const storage = player.getStorage("v_zhangxingcai_changeSkin", false);
 				if (!storage) {
-					player.changeSkin({ characterName: "old_v_zhangxingcai" }, "v_zhangxingcai_shadow");
+					player.changeSkin(event.name, "v_zhangxingcai_shadow");
 					player.setStorage("v_zhangxingcai_changeSkin", !storage);
 				}
 				const {
 					targets: [target],
 				} = event;
 				await player.chooseToDisable();
-				const cards = trigger.getd(target, "cards2").filter(card => get.type(card) == "basic");
+				const card = trigger.getd(target, "cards2").filter(card => get.type(card) == "basic")[0];
 				const num = player.countDisabledSlot();
 				const result = await player
 					.chooseControl({
-						choiceList: [`获得${get.translation(cards)}`, `令${get.translation(target)}摸${num}张牌`],
+						choiceList: [`获得${get.translation(card)}`, `令${get.translation(target)}摸${num}张牌`],
 						choice: (() => {
 							const att = get.attitude(player, target);
 							if (att <= 0) {
 								return 0;
 							}
-							return cards.length > num ? 0 : 1;
+							return 1;
 						})(),
 					})
 					.forResult();
 				const { index } = result;
 				if (index == 0) {
-					await player.gain({ cards, animate: "gain2" });
+					await player.gain({ cards: [card], animate: "gain2" });
 				} else {
 					await target.draw({ num });
 				}
