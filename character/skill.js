@@ -1909,14 +1909,18 @@ const lmCharacter = {
 				player: "changeHpAfter",
 			},
 			filter(event, player) {
-				const evts = game.getGlobalHistory("changeHp", evt => evt.player == player && evt.num != 0);
+				if (event.changedHp == 0) {
+					return false;
+				}
+				const evts = game.getGlobalHistory("changeHp", evt => evt.player == player && evt.changedHp != 0);
 				if (evts.indexOf(event) !== 0) {
 					return false;
 				}
 				if (!game.hasPlayer(current => current != player)) {
 					return false;
 				}
-				return player.countCards("he") >= Math.max(1, player.getDamagedHp());
+				const num = Math.max(1, player.getDamagedHp());
+				return player.countCards("he") >= num;
 			},
 			async cost(event, trigger, player) {
 				const num = Math.max(1, player.getDamagedHp()),
@@ -1966,7 +1970,7 @@ const lmCharacter = {
 					if (num > 0) {
 						const count = Math.min(num, player.countDiscardableCards(player, "h"));
 						if (count > 0) {
-							await player.chooseToDiscard("h", count, true);
+							await player.chooseToDiscard("h", count, true, "allowChooseAll");
 						}
 					} else if (num < 0) {
 						await player.draw(-num);
