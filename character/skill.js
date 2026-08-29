@@ -564,7 +564,7 @@ const lmCharacter = {
 					if (!num1 && num2 < 1) {
 						return false;
 					}
-					return player.countCards("hs", card => player.hasUseTarget(get.autoViewAs({ name: "shunshou" }, [card]), false, false));
+					return player.countCards("hs", card => player.hasUseTarget(get.autoViewAs({ name: "shunshou", storage: { old_olsbjiewan: true } }, [card]), false, false));
 				}
 				return player.countCards("h") == num2 && !player.isMaxMaxHp(true);
 			},
@@ -603,6 +603,7 @@ const lmCharacter = {
 						}
 						if (
 							(num3 == num2 + 1 || player.maxHp > 3) &&
+							(player.isDamaged() || event.getRand() < 0.5) &&
 							!game.hasPlayer(current => {
 								if (player == current) {
 									return false;
@@ -630,18 +631,16 @@ const lmCharacter = {
 					if (links.includes("lose")) {
 						await player.loseMaxHp();
 					} else {
-						const { links: cards } =
-							player.countExpansions("olsbjigu") <= 2
-								? player.getExpansions("olsbjigu")
-								: await player
-										.chooseButton([`解腕：移去两张“谷”`, player.getExpansions("olsbjigu")], 2, true)
-										.set("ai", button => 6 - get.value(button.link))
-										.forResult();
-						if (cards?.length) {
-							await player.loseToDiscardpile(cards);
+						const result = await player
+							.chooseButton([`解腕：移去两张“谷”`, player.getExpansions("olsbjigu")], 2, true)
+							.set("ai", button => 6 - get.value(button.link))
+							.set("direct", true)
+							.forResult();
+						if (result?.links?.length) {
+							await player.loseToDiscardpile(result.links);
 						}
 					}
-					if (!player.countCards("hs", card => player.hasUseTarget(get.autoViewAs({ name: "shunshou" }, [card]), false, false))) {
+					if (!player.countCards("hs", card => player.hasUseTarget(get.autoViewAs({ name: "shunshou", storage: { old_olsbjiewan: true } }, [card]), void 0, false))) {
 						return;
 					}
 					const next = player.chooseToUse();
@@ -655,12 +654,17 @@ const lmCharacter = {
 					});
 					next.set("targetRequired", true);
 					next.set("complexSelect", true);
-					next.set("filterTarget", function (card, player, target) {
-						return lib.filter.targetEnabled.apply(this, arguments);
-					});
 					next.backup(`${event.name}_backup`);
 					await next;
 				}
+			},
+			locked: false,
+			mod: {
+				targetInRange(card, player, target) {
+					if (card?.storage?.old_olsbjiewan) {
+						return true;
+					}
+				},
 			},
 			subSkill: {
 				backup: {
@@ -668,7 +672,12 @@ const lmCharacter = {
 					filterCard(card) {
 						return get.itemtype(card) == "card";
 					},
-					viewAs: { name: "shunshou" },
+					viewAs: {
+						name: "shunshou",
+						storage: {
+							old_olsbjiewan: true,
+						},
+					},
 					position: "hs",
 					ai1(card) {
 						const player = get.player();
@@ -686,24 +695,23 @@ const lmCharacter = {
 			audio: "olsbjiewan",
 			enable: "phaseUse",
 			usable: 1,
-			content() {
-				"step 0";
-				player.loseMaxHp();
+			async content(event, trigger, player) {
+				await player.loseMaxHp();
 				var card = get.cardPile(function (card) {
 					var type = get.type(card, false);
 					if (type != "trick") return false;
 					return get.tag(card, "damage") > 0;
 				});
-				if (card) player.gain(card, "gain2");
-				"step 1";
-				player
+				if (card) await player.gain(card, "gain2");
+				var result = await player
 					.chooseCard("h", true, "解腕：请选择一张伤害类手牌，令此牌本回合造成伤害+1", function (card, player) {
 						var type = get.type(card, false);
 						if (type != "basic" && type != "trick") return false;
 						return get.tag(card, "damage") > 0;
 					})
-					.set("ai", card => 6 - get.value(card));
-				"step 2";
+					.set("ai", card => 6 - get.value(card))
+					.forResult();
+
 				if (result.bool) {
 					player.addGaintag(result.cards, "oldx_olsbjiewan");
 					player.addTempSkill("oldx_olsbjiewan_damage");
@@ -760,7 +768,7 @@ const lmCharacter = {
 				},
 			},
 		},
-		olsbpixian: {
+		old_olsbpixian: {
 			audio: "sbpixian",
 			trigger: {
 				player: "phaseUseEnd",
@@ -769,22 +777,20 @@ const lmCharacter = {
 				return !player.isMaxHp();
 			},
 			forced: true,
-			content() {
-				"step 0";
-				var list = [];
-				list.push("回复1点体力");
-				list.push("增加1点体力上限");
-				player.chooseControl(list, true).set("ai", function () {
-					if (player.hp < player.maxHp) return "回复1点体力";
-					return "增加一点体力上限";
-				});
-				"step 1";
+			async content(event, trigger, player) {
+				var list = ["回复1点体力", "增加1点体力上限"];
+				var result = await player
+					.chooseControl(list, true)
+					.set("ai", function () {
+						if (player.hp < player.maxHp) return "回复1点体力";
+						return "增加1点体力上限";
+					})
+					.forResult();
+
 				if (result.control == "回复1点体力") {
-					player.recover();
-				}
-				"step 2";
-				if (result.control == "增加1点体力上限") {
-					player.gainMaxHp();
+					await player.recover();
+				} else if (result.control == "增加1点体力上限") {
+					await player.gainMaxHp();
 				}
 			},
 		},
@@ -27871,8 +27877,8 @@ const lmCharacter = {
 		oldx_ol_sb_dengai_prefix: "废|OL谋",
 		oldx_olsbjiewan: "解腕",
 		oldx_olsbjiewan_info: "出牌阶段限一次，你可以减1点体力上限以检索一张伤害类锦囊，然后你可令手牌中的一张伤害牌于本回合内造成的伤害+1。",
-		olsbpixian: "僻险",
-		olsbpixian_info: "锁定技，出牌阶段结束时，若你的体力值不为全场最高，你加1点体力上限或回复1点体力。",
+		old_olsbpixian: "僻险",
+		old_olsbpixian_info: "锁定技，出牌阶段结束时，若你的体力值不为全场最高，你加1点体力上限或回复1点体力。",
 
 		old_ol_sb_dongzhuo: "旧OL谋董卓",
 		old_ol_sb_dongzhuo_prefix: "旧|OL谋",

@@ -42,7 +42,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 4,
-		skills: ["oldx_olsbjiewan", "olsbpixian"],
+		skills: ["oldx_olsbjiewan", "old_olsbpixian"],
 		img: "image/character/ol_sb_dengai.jpg",
 		dieAudios: ["ol_sb_dengai"],
 	},
