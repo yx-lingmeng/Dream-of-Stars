@@ -50,10 +50,7 @@ export async function content(config, pack) {
 	// 扩展导入完成后，再次重启时，检测扩展文件夹名是否正确，新增为防出现bug请修正的提示
 	for (var i in lib.extensionPack) {
 		if (!lib.config.extensions.includes(i)) {
-			alert(
-				"检测到扩展文件夹名不正确！\r将会引起很多跟路径相关的bug，而且这样导入的扩展无法在游戏内删除。\n\r为防出现bug，请依照如下路径修正扩展文件夹名:\n游戏目录/extension/" +
-					i
-			);
+			alert("检测到扩展文件夹名不正确！\r将会引起很多跟路径相关的bug，而且这样导入的扩展无法在游戏内删除。\n\r为防出现bug，请依照如下路径修正扩展文件夹名:\n游戏目录/extension/" + i);
 		}
 	}
 	if (lib.config.extensions && game.getFileList && game.readFile && game.writeFile && lib.config.extension_星之梦_fileimport) {
