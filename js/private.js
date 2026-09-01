@@ -287,7 +287,7 @@ if (lib.config.extension_星之梦_tmEnhance) {
 			"step 0";
 			player.chooseToDiscard(2, true, "he");
 			player.draw(2);
-			("step 1");
+			"step 1";
 			player.chooseTarget("是否令一名角色弃置两张牌，然后摸两张牌？").set("ai", function (target) {
 				var cards = target.getCards("he");
 				if (cards.length <= 2) {
@@ -297,7 +297,7 @@ if (lib.config.extension_星之梦_tmEnhance) {
 				}
 				return get.attitude(player, target) * (target == player ? 1.2 : 1);
 			});
-			("step 2");
+			"step 2";
 			if (result.bool) {
 				var target = result.targets[0];
 				player.line(target);
@@ -729,7 +729,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 			});
 			next.set("goon", get.attitude(player, trigger.target) <= 0);
 			next.set("forceAuto", true);
-			("step 1");
+			"step 1";
 			if (result.bool) {
 				var target = trigger.target;
 				player.logSkill("scschiyan", target);
@@ -762,7 +762,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 					var cards = player.getExpansions("scschiyan_get");
 					player.gain(cards, "draw");
 					game.log(player, "收回了" + get.cnNumber(cards.length) + "张“鸱咽”牌");
-					("step 1");
+					"step 1";
 					player.removeSkill("scschiyan_get");
 				},
 				intro: {
@@ -806,7 +806,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 		content() {
 			"step 0";
 			player.chooseToCompare(target);
-			("step 1");
+			"step 1";
 			if (result.bool) {
 				target.skip("phaseDraw");
 				target.addTempSkill("scsyaozhuo_skip", { player: "phaseDrawSkipped" });
@@ -849,7 +849,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 				});
 			}, 100);
 			player.draw(3);
-			("step 1");
+			"step 1";
 			var num = player.countCards("he");
 			if (!num) event.finish();
 			else if (num < 3) event._result = { index: 1 };
@@ -866,7 +866,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 							return 0;
 						return 1;
 					});
-			("step 2");
+			"step 2";
 			if (result.index == 0) {
 				player.chooseCardTarget({
 					position: "he",
@@ -891,7 +891,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 				player.chooseToDiscard(3, true, "he");
 				event.finish();
 			}
-			("step 3");
+			"step 3";
 			if (result.bool) {
 				var target = result.targets[0];
 				player.give(result.cards, target);
@@ -1101,7 +1101,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 			} else {
 				switchToAuto();
 			}
-			("step 1");
+			"step 1";
 			game.broadcastAll(
 				function (id, time) {
 					if (_status.connectMode) lib.configOL.choose_timeout = time;
@@ -1126,7 +1126,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				player.popup("杯具");
 				event.finish();
 			}
-			("step 2");
+			"step 2";
 			game.updateRoundNumber();
 			player.chooseTarget(true, "将整理出的经典置于一名角色的武将牌上").set("ai", function (target) {
 				if (target.hasSkill("xinfu_pdgyingshi")) return 0;
@@ -1147,13 +1147,13 @@ if (lib.config.extension_星之梦_zxEnhance) {
 					}, 0);
 				return eff;
 			});
-			("step 3");
+			"step 3";
 			if (result.bool) {
 				var target = result.targets[0];
 				event.target = target;
 				player.line(target, "thunder");
 			}
-			("step 4");
+			"step 4";
 			if (cards.length == 1) {
 				event._result = { bool: true, moved: [cards, []] };
 				return;
@@ -1173,7 +1173,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				});
 				return [cards.splice(0, 1), cards];
 			});
-			("step 5");
+			"step 5";
 			if (result.bool) {
 				var cards = result.moved[0],
 					gains = result.moved[1];
@@ -1732,11 +1732,11 @@ if (lib.config.extension_星之梦_vtbEnhance) {
 				})
 				.set("effect", trigger.player.hasJudge("lebu") ? 0 : get.effect(trigger.player, { name: "lebu" }, player, player))
 				.set("logSkill", ["vtbleyu", trigger.player]);
-			("step 1");
+			"step 1";
 			if (result.bool) {
 				trigger.player.judge(lib.card.lebu.judge).judge2 = lib.card.lebu.judge2;
 			} else event.finish();
-			("step 2");
+			"step 2";
 			if (!result.bool) {
 				trigger.player.skip("phaseUse");
 			}
@@ -1833,7 +1833,7 @@ if (lib.config.extension_星之梦_vtbEnhance) {
 								return effect < 0;
 							})()
 						);
-					("step 1");
+					"step 1";
 					if (result.bool) {
 						game.log(player, "取消了", trigger.card, "的所有目标");
 						trigger.targets.length = 0;
