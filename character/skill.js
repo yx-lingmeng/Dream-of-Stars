@@ -6357,56 +6357,52 @@ const lmCharacter = {
 				player: ["damageEnd"],
 				global: ["gainAfter", "loseAsyncAfter"],
 			},
+			getIndex(event, player, triggername) {
+				return event.name == "damage" ? event.num : 1;
+			},
 			filter(event, player) {
-				if (event.name == "damage") return true;
+				if (event.name == "damage") {
+					return event.num > 0;
+				}
 				if (event.name == "loseAsync") {
-					if (event.type != "gain") return false;
-					var cards = event.getl(player).cards2;
-					return game.hasPlayer(function (current) {
-						if (current == player) return false;
-						var cardsx = event.getg(current);
-						for (var i of cardsx) {
-							if (cards.includes(i)) return true;
-						}
+					if (event.type != "gain") {
 						return false;
+					}
+					return game.hasPlayer(current => {
+						if (current == player) {
+							return false;
+						}
+						return event.getg?.(current).some(card => event.getl?.(player)?.cards2?.includes(card));
 					});
 				}
-				if (player == event.player) return false;
-				if (event.getParent().name == "gift") return false;
-				var evt = event.getl(player);
-				return evt && evt.cards2 && evt.cards2.length > 0;
+				if (player == event.player) {
+					return false;
+				}
+				if (event.getParent().name == "gift") {
+					return false;
+				}
+				return event.getl?.(player)?.cards2?.length;
 			},
 			frequent: true,
-			content() {
-				"step 0";
-				event.count = trigger.name == "damage" ? trigger.num : 1;
-				"step 1";
-				event.count--;
-				player.draw();
-				"step 2";
-				var hs = player.getCards("h");
-				if (hs.length) {
-					if (hs.length == 1) event._result = { bool: true, cards: hs };
-					else player.chooseCard("h", true, "选择一张手牌作为“权”");
-				} else event.goto(4);
-				"step 3";
-				if (result.bool && result.cards && result.cards.length) {
-					player.addToExpansion(result.cards, "giveAuto", player).gaintag.add("old_xinquanji");
+			async content(event, trigger, player) {
+				await player.draw();
+				const hs = player.getCards("h");
+				if (!hs.length) {
+					return;
 				}
-				"step 4";
-				if (event.count > 0 && player.hasSkill(event.name) && !get.is.blocked(event.name, player)) {
-					player.chooseBool(get.prompt2("old_xinquanji")).set("frequentSkill", event.name);
-				} else event.finish();
-				"step 5";
-				if (result.bool) {
-					player.logSkill("old_xinquanji");
-					event.goto(1);
+				const result = hs.length == 1 ? { bool: true, cards: hs } : await player.chooseCard("h", true, "选择一张手牌作为“权”").forResult();
+				if (result?.bool && result?.cards?.length) {
+					const next = player.addToExpansion(result.cards, player, "give");
+					next.gaintag.add(event.name);
+					await next;
 				}
 			},
 			locked: false,
 			onremove(player, skill) {
-				var cards = player.getExpansions(skill);
-				if (cards.length) player.loseToDiscardpile(cards);
+				const cards = player.getExpansions(skill);
+				if (cards.length) {
+					player.loseToDiscardpile(cards);
+				}
 			},
 			intro: {
 				content: "expansion",
@@ -6425,12 +6421,24 @@ const lmCharacter = {
 				effect: {
 					target(card, player, target) {
 						if (get.tag(card, "damage") && !target.storage.old_xinzili) {
-							if (player.hasSkillTag("jueqing", false, target)) return [1, -2];
-							if (!target.hasFriend()) return;
-							if (target.hp >= 4) return [0.5, get.tag(card, "damage") * 2];
-							if (!target.hasSkill("old_xinpaiyi") && target.hp > 1) return [0.5, get.tag(card, "damage") * 1.5];
-							if (target.hp == 3) return [0.5, get.tag(card, "damage") * 1.5];
-							if (target.hp == 2) return [1, get.tag(card, "damage") * 0.5];
+							if (player.hasSkillTag("jueqing", false, target)) {
+								return [1, -2];
+							}
+							if (!target.hasFriend()) {
+								return;
+							}
+							if (target.hp >= 4) {
+								return [0.5, get.tag(card, "damage") * 2];
+							}
+							if (!target.hasSkill("old_xinpaiyi") && target.hp > 1) {
+								return [0.5, get.tag(card, "damage") * 1.5];
+							}
+							if (target.hp == 3) {
+								return [0.5, get.tag(card, "damage") * 1.5];
+							}
+							if (target.hp == 2) {
+								return [1, get.tag(card, "damage") * 0.5];
+							}
 						}
 					},
 				},
@@ -6447,12 +6455,12 @@ const lmCharacter = {
 			filter(event, player) {
 				return player.getExpansions("old_xinquanji").length > 2;
 			},
-			content() {
-				player.awakenSkill("old_xinzili");
-				player.recover();
-				player.draw(2);
-				player.loseMaxHp();
-				player.addSkills("old_xinpaiyi");
+			async content(event, trigger, player) {
+				player.awakenSkill(event.name);
+				await player.recover();
+				await player.draw(2);
+				await player.loseMaxHp();
+				await player.addSkills("old_xinpaiyi");
 			},
 			ai: {
 				combo: "old_xinquanji",
@@ -6462,12 +6470,16 @@ const lmCharacter = {
 			audio: "xinpaiyi",
 			enable: "phaseUse",
 			filter(event, player) {
-				if (player.getStorage("old_xinpaiyi_used").length > 1) return false;
+				if (player.getStorage("old_xinpaiyi_used").length > 1) {
+					return false;
+				}
 				return player.getExpansions("old_xinquanji").length > 0;
 			},
 			chooseButton: {
 				check(button) {
-					if (typeof button.link == "object") return 1;
+					if (typeof button.link == "object") {
+						return 1;
+					}
 					var player = _status.event.player,
 						num = player.getExpansions("old_xinquanji").length - 1;
 					if (button.link == 1) {
@@ -6475,11 +6487,14 @@ const lmCharacter = {
 							game.countPlayer(function (current) {
 								return get.damageEffect(current, player, player) > 0;
 							}) < num
-						)
+						) {
 							return 0.5;
+						}
 						return 2;
 					}
-					if (num < 2) return 0;
+					if (num < 2) {
+						return 0;
+					}
 					return 1;
 				},
 				dialog(event, player) {
@@ -6501,21 +6516,31 @@ const lmCharacter = {
 				},
 				select: 2,
 				filter(button, player) {
-					if (typeof button.link == "number" && player.getStorage("old_xinpaiyi_used").includes(button.link)) return false;
-					if (ui.selected.buttons.length) return typeof ui.selected.buttons[0].link != typeof button.link;
+					if (typeof button.link == "number" && player.getStorage("old_xinpaiyi_used").includes(button.link)) {
+						return false;
+					}
+					if (ui.selected.buttons.length) {
+						return typeof ui.selected.buttons[0].link != typeof button.link;
+					}
 					return true;
 				},
 				backup(links) {
-					if (typeof links[0] == "object") links.reverse();
+					if (typeof links[0] == "object") {
+						links.reverse();
+					}
 					var next = get.copy(lib.skill["old_xinpaiyi_backup" + links[0]]);
 					next.card = links[1];
 					return next;
 				},
 				prompt(links, player) {
-					if (typeof links[0] == "object") links.reverse();
+					if (typeof links[0] == "object") {
+						links.reverse();
+					}
 					var num = get.cnNumber(Math.max(1, player.getExpansions("old_xinquanji").length - 1)),
 						card = get.translation(links[1]);
-					if (links[0] == 0) return "移去" + card + "并令一名角色摸" + num + "张牌";
+					if (links[0] == 0) {
+						return "移去" + card + "并令一名角色摸" + num + "张牌";
+					}
 					return "移去" + card + "并对至多" + num + "名角色造成1点伤害";
 				},
 			},
@@ -6535,20 +6560,25 @@ const lmCharacter = {
 					selectCard: -1,
 					filterTarget: true,
 					delay: false,
-					content() {
-						"step 0";
+					async content(event, trigger, player) {
+						const target = event.target;
+
 						player.addTempSkill("old_xinpaiyi_used", "phaseUseEnd");
 						player.markAuto("old_xinpaiyi_used", [0]);
 						var card = lib.skill.old_xinpaiyi_backup.card;
 						player.loseToDiscardpile(card);
-						"step 1";
-						target.draw(Math.max(1, player.getExpansions("old_xinquanji").length));
+
+						await target.draw(Math.max(1, player.getExpansions("old_xinquanji").length - 1)).forResult();
 					},
 					ai: {
 						result: {
 							target(player, target) {
-								if (target.hasSkill("nogain")) return 0;
-								if (player == target && !player.needsToDiscard()) return 3;
+								if (target.hasSkill("nogain")) {
+									return 0;
+								}
+								if (player == target && !player.needsToDiscard()) {
+									return 3;
+								}
 								return 1;
 							},
 						},
@@ -6565,15 +6595,18 @@ const lmCharacter = {
 					selectTarget() {
 						return [1, Math.max(1, _status.event.player.getExpansions("old_xinquanji").length - 1)];
 					},
-					content() {
-						"step 0";
+					async content(event, trigger, player) {
+						const targets = event.targets;
+
 						targets.sortBySeat();
 						player.addTempSkill("old_xinpaiyi_used", "phaseUseEnd");
 						player.markAuto("old_xinpaiyi_used", [1]);
 						var card = lib.skill.old_xinpaiyi_backup.card;
 						player.loseToDiscardpile(card);
-						"step 1";
-						for (var i of targets) i.damage();
+
+						for (var i of targets) {
+							await i.damage().forResult();
+						}
 					},
 					ai: {
 						tag: {
