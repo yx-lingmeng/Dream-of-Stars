@@ -6566,9 +6566,8 @@ const lmCharacter = {
 						player.addTempSkill("old_xinpaiyi_used", "phaseUseEnd");
 						player.markAuto("old_xinpaiyi_used", [0]);
 						var card = lib.skill.old_xinpaiyi_backup.card;
-						player.loseToDiscardpile(card);
-
-						await target.draw(Math.max(1, player.getExpansions("old_xinquanji").length - 1)).forResult();
+						await player.loseToDiscardpile(card);
+						await target.draw(Math.max(1, player.getExpansions("old_xinquanji").length)).forResult();
 					},
 					ai: {
 						result: {
