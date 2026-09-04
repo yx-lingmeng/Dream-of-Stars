@@ -6629,39 +6629,56 @@ const lmCharacter = {
 			filter(event, player) {
 				return player != event.player && event.player.getHistory("sourceDamage").length > 0 && event.player.isIn() && (player.canUse("sha", event.player, false) || player.canUse("guohe", event.player));
 			},
-			content() {
-				"step 0";
-				var target = trigger.player;
-				var choiceList = ["视为对其使用一张【杀】", "视为对其使用一张【过河拆桥】"];
-				var choices = [];
-				if (player.canUse("sha", target, false)) choices.push("选项一");
-				else choiceList[0] = "<span style='opacity:0.5'>" + choiceList[0] + "</span>";
-				if (player.canUse("guohe", target)) choices.push("选项二");
-				else choiceList[1] = "<span style='opacity:0.5'>" + choiceList[1] + "</span>";
+			async content(event, trigger, player) {
+				const target = trigger.player;
+				let result;
+
+				// step 0
+				let choiceList = ["视为对其使用一张【杀】", "视为对其使用一张【过河拆桥】"];
+				let choices = [];
+				if (player.canUse({ name: "sha" }, target, false)) {
+					choices.push("选项一");
+				} else {
+					choiceList[0] = '<span style="opacity:0.5">' + choiceList[0] + "</span>";
+				}
+				if (player.canUse("guohe", target)) {
+					choices.push("选项二");
+				} else {
+					choiceList[1] = '<span style="opacity:0.5">' + choiceList[1] + "</span>";
+				}
 				choices.push("cancel2");
-				player
+				result = await player
 					.chooseControl(choices)
 					.set("choiceList", choiceList)
 					.set("prompt", get.prompt("old_rezhuhai", target))
 					.set("ai", function () {
-						var choices = _status.event.controls;
-						var eff1 = 0,
+						let controls = _status.event.controls;
+						let eff1 = 0,
 							eff2 = 0;
-						var player = _status.event.player,
+						let player = _status.event.player,
 							target = _status.event.getTrigger().player;
-						if (choices.contains("选项一")) eff1 = get.effect(target, { name: "sha" }, player, player);
-						if (choices.contains("选项二")) eff2 = get.effect(target, { name: "guohe" }, player, player);
-						if (eff1 > 0 && ((player.hasSkill("xsqianxin") && player.isDamaged()) || eff1 > eff2)) return "选项一";
-						if (eff2 > 0) return "选项二";
+						if (controls.includes("选项一")) {
+							eff1 = get.effect(target, { name: "sha" }, player, player);
+						}
+						if (controls.includes("选项二")) {
+							eff2 = get.effect(target, { name: "guohe" }, player, player);
+						}
+						if (eff1 > 0 && eff1 >= eff2) {
+							return "选项一";
+						}
+						if (eff2 > 0) {
+							return "选项二";
+						}
 						return "cancel2";
-					});
-				"step 1";
+					})
+					.forResult();
+
+				// step 1
 				if (result.control != "cancel2") {
 					if (result.control == "选项一") {
-						player.useCard({ name: "sha", isCard: true }, trigger.player, false, "old_rezhuhai");
+						await player.useCard({ name: "sha", isCard: true }, target, "old_rezhuhai").forResult();
 					} else {
-						player.useCard({ name: "guohe", isCard: true }, trigger.player, "old_rezhuhai");
-						event.finish();
+						await player.useCard({ name: "guohe", isCard: true }, target, "old_rezhuhai").forResult();
 					}
 				}
 			},
@@ -15020,11 +15037,8 @@ const lmCharacter = {
 					targets: [target],
 					name,
 				} = event;
-				const getNum = (player, target) => {
-					let num = Math.max(
-						1,
-						game.players.reduce((sum, target) => sum + target.countMark(`old_hefeidangshi_count`), 0)
-					);
+				const getNum = player => {
+					let num = Math.max(1, player.countMark(`old_hefeidangshi_count`));
 					if (player.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(player, "hefei_lidian")) {
 						num = 3;
 					}
@@ -15032,7 +15046,7 @@ const lmCharacter = {
 				};
 				const list = [
 					["useCard", `对${get.translation(player)}使用一张非转化且非虚拟的【${get.translation(trigger.card.name)}】`],
-					["discard", `弃置${get.cnNumber(getNum(player, target))}张牌`],
+					["discard", `弃置${get.cnNumber(getNum(player))}张牌`],
 					["damage", `${get.translation(player)}对你造成1点伤害`],
 				];
 				const canChoose = list
@@ -15050,7 +15064,7 @@ const lmCharacter = {
 								);
 							}
 							case "discard": {
-								const num = getNum(player, target);
+								const num = getNum(player);
 								return target.countDiscardableCards(target, "he") >= num;
 							}
 							default: {
@@ -15086,7 +15100,7 @@ const lmCharacter = {
 										return get.damageEffect(player, trigger.player, player);
 									},
 								})
-								.set("getNum", getNum(player, target))
+								.set("getNum", getNum(player))
 								.set("canChoose", canChoose)
 								.forResult()
 						: {
@@ -15126,16 +15140,11 @@ const lmCharacter = {
 						break;
 					}
 					case "discard": {
-						const num = Math.min(target.countDiscardableCards(target, "he"), getNum(player, target));
-						target.addMark(`${name}_count`, 1, false);
-						target.addTempSkill(`${name}_count`, "roundStart");
+						const num = Math.min(target.countDiscardableCards(target, "he"), getNum(player));
+						player.addMark(`${name}_count`, 1, false);
+						player.addTempSkill(`${name}_count`, "roundStart");
 						if (num > 0) {
-							await target.chooseToDiscard({
-								position: "he",
-								forced: true,
-								selectCard: num,
-								allowChooseAll: true,
-							});
+							await target.chooseToDiscard({ position: "he", forced: true, selectCard: num, allowChooseAll: true });
 						}
 						break;
 					}
@@ -15160,10 +15169,7 @@ const lmCharacter = {
 				}
 			},
 			subSkill: {
-				count: {
-					charlotte: true,
-					onremove: true,
-				},
+				count: { charlotte: true, onremove: true },
 				effect: {
 					charlotte: true,
 					onremove: true,
