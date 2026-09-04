@@ -3548,7 +3548,7 @@ const lmCharacter = {
 							prompt: "思泣：请选择要使用的牌",
 							filter(button) {
 								const card = button.link;
-								if (!lib.filter.cardEnabled(card, player)) {
+								if (!lib.filter.cardEnabled(card, get.player())) {
 									return false;
 								}
 								if (["tao", "wuzhong"].includes(card.name) || get.type(card) == "equip") {
@@ -6349,6 +6349,7 @@ const lmCharacter = {
 			},
 		},
 
+		//新杀武将
 		//界限突破
 		//钟会
 		old_xinquanji: {
@@ -11663,6 +11664,7 @@ const lmCharacter = {
 			},
 		},
 
+		//手杀武将
 		//始计篇
 		//手杀桥公
 		old_yizhu: {
