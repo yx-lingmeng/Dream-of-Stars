@@ -537,7 +537,7 @@ const characters = {
 	oldx_renwan: {
 		sex: "female",
 		group: "wei",
-		hp: 3,
+		hp: 4,
 		skills: ["oldx_dcjuanji", "oldx_dcrenshuang"],
 		img: "image/character/renwan.jpg",
 		dieAudios: ["renwan"],
@@ -645,7 +645,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 3,
-		skills: ["dcsbbizuo", "dcsbshimou", "dcsbxianshi"],
+		skills: ["dcsbshimou", "dcsbxianshi", "dcsbbizuo"],
 		img: "image/character/dc_sb_xunyu.jpg",
 		dieAudios: ["dc_sb_xunyu"],
 		clans: ["颍川荀氏"],
