@@ -6698,6 +6698,139 @@ const lmCharacter = {
 		},
 
 		//群英荟萃
+		//新杀张曼成
+		old_dclvecheng: {
+			audio: "dclvecheng",
+			enable: "phaseUse",
+			usable: 1,
+			filterTarget: lib.filter.notMe,
+			async content(event, trigger, player) {
+				const { target } = event;
+				player.addTempSkill("old_dclvecheng_xiongluan");
+				player.markAuto("old_dclvecheng_xiongluan", [target]);
+			},
+			ai: {
+				threaten: 3.1,
+				order: 3.5,
+				expose: 0.2,
+				result: {
+					target(player, target) {
+						if (player.getStorage("old_dclvecheng_xiongluan").includes(target)) {
+							return 0;
+						}
+						if (
+							target.hasSkillTag(
+								"freeShan",
+								false,
+								{
+									player: player,
+									type: "use",
+								},
+								true
+							)
+						) {
+							return -0.6;
+						}
+						var hs = player.countCards("h", card => {
+							if (!player.canUse(card, target)) {
+								return false;
+							}
+							return get.name(card) == "sha" && get.effect(target, card, player, player) > 0;
+						});
+						var ts = target.hp;
+						if (hs >= ts && ts > 1) {
+							return -2;
+						}
+						return -1;
+					},
+				},
+			},
+			subSkill: {
+				xiongluan: {
+					trigger: { player: ["phaseEnd", "useCard1"] },
+					charlotte: true,
+					forced: true,
+					popup: false,
+					onremove(player, skill) {
+						delete player.storage[skill];
+					},
+					filter(event, player) {
+						if (event.name == "useCard") {
+							return event.card.name == "sha" && event.addCount !== false && event.targets?.some(target => player.getStorage("old_dclvecheng_xiongluan").includes(target));
+						}
+						return player.getStorage("old_dclvecheng_xiongluan").some(i => i.isIn());
+					},
+					async content(event, trigger, player) {
+						if (trigger.name == "useCard") {
+							trigger.addCount = false;
+							const stat = player.getStat().card,
+								name = trigger.card.name;
+							if (typeof stat[name] == "number") {
+								stat[name]--;
+							}
+							return;
+						}
+						const targets = player.getStorage(event.name).slice().sortBySeat();
+						if (!targets.length) {
+							return;
+						}
+						while (targets.length && player.isIn()) {
+							const target = targets.shift();
+							await target.showHandcards();
+							let cards = target.getCards("h", card => {
+								return get.name(card) === "sha" && target.canUse(card, player, false);
+							});
+							if (!cards.length) {
+								continue;
+							}
+							let forced = false;
+							while (cards.length && player.isIn()) {
+								const prompt2 = forced ? `掠城：选择对${get.translation(player)}使用的【杀】` : `掠城：是否依次对${get.translation(player)}使用所有的【杀】？`;
+								const result = await target
+									.chooseToUse(
+										forced,
+										function (card, player, event) {
+											if (get.itemtype(card) != "card" || get.name(card) != "sha") {
+												return false;
+											}
+											return lib.filter.filterCard.apply(this, arguments);
+										},
+										prompt2
+									)
+									.set("targetRequired", true)
+									.set("complexTarget", true)
+									.set("complexSelect", true)
+									.set("filterTarget", function (card, player, target) {
+										if (target != _status.event.sourcex && !ui.selected.targets.includes(_status.event.sourcex)) {
+											return false;
+										}
+										return lib.filter.targetEnabled.apply(this, arguments);
+									})
+									.set("sourcex", player)
+									.forResult();
+								if (result.bool) {
+									cards = target.getCards("h", card => {
+										return get.name(card) === "sha" && target.canUse(card, player, false);
+									});
+									forced = true;
+								} else {
+									break;
+								}
+							}
+						}
+					},
+					intro: { content: "对$使用【杀】无任何次数限制" },
+					mod: {
+						cardUsableTarget(card, player, target) {
+							if (card.name == "sha" && player.getStorage("old_dclvecheng_xiongluan").includes(target)) {
+								return true;
+							}
+						},
+					},
+				},
+			},
+		},
+
 		//新杀木鹿大王
 		old_dczhoufa: {
 			audio: "dczhoufa",
@@ -7995,6 +8128,105 @@ const lmCharacter = {
 		},
 
 		//限定专属
+		//曹芳
+		old_dczhimin: {
+			audio: "dczhimin",
+			trigger: { global: "roundStart" },
+			filter(event, player) {
+				return game.hasPlayer(current => current !== player && current.countCards("h")) && player.getHp() > 0;
+			},
+			forced: true,
+			group: ["old_dczhimin_mark", "old_dczhimin_draw"],
+			async content(event, trigger, player) {
+				const result = await player
+					.chooseTarget(
+						`置民：请选择至多${get.cnNumber(player.maxHp)}名其他角色`,
+						"你获得这些角色各自手牌中的随机一张牌",
+						(card, player, target) => {
+							return target !== player && target.countCards("h");
+						},
+						[1, player.maxHp],
+						true
+					)
+					.set("ai", target => {
+						const player = get.player();
+						return get.effect(target, { name: "shunshou_copy", position: "h" }, player, player) + 0.1;
+					})
+					.forResult();
+				if (!result?.targets?.length) {
+					return;
+				}
+				const targets = result.targets.sortBySeat();
+				player.line(targets, "thunder");
+				const toGain = [];
+				for (const target of targets) {
+					const cards = target.getGainableCards(player, "h");
+					if (cards?.length) {
+						toGain.push(...cards.randomGets(1));
+					}
+				}
+				if (toGain.length) {
+					await player.gain(toGain, "giveAuto");
+				}
+				await game.delayx();
+			},
+			ai: { threaten: 5.8 },
+			mod: {
+				aiOrder(player, card, num) {
+					if (
+						num > 0 &&
+						get.itemtype(card) === "card" &&
+						card.hasGaintag("old_dczhimin_tag") &&
+						player.countCards("h", cardx => {
+							return cardx.hasGaintag("old_dczhimin_tag") && cardx !== card;
+						}) < player.maxHp
+					) {
+						return num / 10;
+					}
+				},
+			},
+			subSkill: {
+				mark: {
+					audio: "dczhimin",
+					trigger: {
+						player: "gainAfter",
+						global: "loseAsyncAfter",
+					},
+					forced: true,
+					filter(event, player) {
+						if (_status.currentPhase === player || !event.getg(player).some(card => get.position(card) === "h" && get.owner(card) === player)) {
+							return false;
+						}
+						return true;
+					},
+					async content(event, trigger, player) {
+						player.addGaintag(
+							trigger.getg(player).filter(card => get.position(card) === "h" && get.owner(card) === player),
+							"old_dczhimin_tag"
+						);
+					},
+				},
+				draw: {
+					audio: "dczhimin",
+					trigger: {
+						player: "loseAfter",
+						global: ["equipAfter", "addJudgeAfter", "gainAfter", "loseAsyncAfter", "addToExpansionAfter"],
+					},
+					forced: true,
+					filter(event, player) {
+						const evt = event.getl(player);
+						if (!evt.hs.length || player.maxHp <= player.countCards("h")) {
+							return false;
+						}
+						return Object.values(evt.gaintag_map).flat().includes("old_dczhimin_tag");
+					},
+					async content(event, trigger, player) {
+						await player.drawTo(player.maxHp);
+					},
+				},
+			},
+		},
+
 		//新杀朱铄
 		old_dcjilie: {
 			audio: "dcjilie",
@@ -8259,7 +8491,9 @@ const lmCharacter = {
 				} else {
 					await player.link(false);
 					await player.turnOver(false);
-					const cards = get.inpileVCardList(info => info[0] == "trick" && player.hasUseTarget(info[2]));
+					const cards = get.inpileVCardList(info => {
+						return info[0] == "trick" && player.hasUseTarget(info[2]) && !player.getStorage("old_dcrenshuang_used").includes(info[2]);
+					});
 					if (!cards?.length) {
 						return;
 					}
@@ -8270,12 +8504,20 @@ const lmCharacter = {
 						})
 						.forResult();
 					if (result?.bool) {
+						player.addTempSkill("old_dcrenshuang_used", "roundStart");
+						player.markAuto("old_dcrenshuang_used", result.links[0][2]);
 						const card = new lib.element.VCard({ name: result.links[0][2] });
 						if (player.hasUseTarget(card)) {
 							await player.chooseUseTarget(card, true);
 						}
 					}
 				}
+			},
+			subSkill: {
+				used: {
+					charlotte: true,
+					onremove: true,
+				},
 			},
 		},
 
@@ -8494,21 +8736,14 @@ const lmCharacter = {
 			audio: "dcrenshuang",
 			forced: true,
 			filter(event, player) {
-				return player.hp == 1 && event.changedHp != 0;
+				return player.hp === 1 && event.changedHp !== 0;
 			},
 			async content(event, trigger, player) {
-				// 1. 复原武将牌（解除横置与翻面）
 				await player.link(false);
 				await player.turnOver(false);
-
-				// 2. 新增：令其他角色本轮对你使用的下一张牌无效
-				//    设置存储标记，并添加临时技能（回合结束时自动移除）
-				player.storage.oldx_dcrenshuang_invalid = true;
-				player.addTempSkill("oldx_dcrenshuang_invalid", "roundEnd");
-
-				// 3. 视为使用普通锦囊牌（每种牌名每轮限一次）
+				player.addTempSkill("oldx_dcrenshuang_effect", "roundStart");
 				const cards = get.inpileVCardList(info => {
-					return info[0] == "trick" && player.hasUseTarget(info[2]) && !player.getStorage("oldx_dcrenshuang_used").includes(info[2]);
+					return info[0] === "trick" && player.hasUseTarget(info[2]) && !player.getStorage("oldx_dcrenshuang_used").includes(info[2]);
 				});
 				if (!cards?.length) {
 					return;
@@ -8522,10 +8757,7 @@ const lmCharacter = {
 				if (result?.bool) {
 					player.addTempSkill("oldx_dcrenshuang_used", "roundStart");
 					player.markAuto("oldx_dcrenshuang_used", result.links[0][2]);
-					const card = new lib.element.VCard({
-						name: result.links[0][2],
-						isCard: true,
-					});
+					const card = new lib.element.VCard({ name: result.links[0][2], isCard: true });
 					if (player.hasUseTarget(card)) {
 						await player.chooseUseTarget(card, true);
 					}
@@ -8536,25 +8768,19 @@ const lmCharacter = {
 					charlotte: true,
 					onremove: true,
 				},
-				invalid: {
+				effect: {
 					charlotte: true,
-					onremove: true,
+					trigger: { target: "useCardToTarget" },
 					forced: true,
-					trigger: { global: "useCard" },
 					filter(event, player) {
-						if (!player.storage.oldx_dcrenshuang_invalid) return false;
-						if (!event.targets || !event.targets.includes(player)) return false;
-						if (event.player == player) return false;
-						return true;
+						return event.player !== player;
 					},
 					async content(event, trigger, player) {
-						trigger.excluded.add(player);
-						game.log(player, "令", trigger.player, "对", player, "使用的", trigger.card, "无效");
-						player.storage.oldx_dcrenshuang_invalid = false;
+						trigger.getParent().excluded.add(player);
+						game.log(trigger.card, "对", player, "无效");
+						await player.removeSkill("oldx_dcrenshuang_effect");
 					},
-					onremove(player) {
-						delete player.storage.oldx_dcrenshuang_invalid;
-					},
+					intro: { content: "其他角色本轮对你使用的下一张牌无效" },
 				},
 			},
 		},
@@ -12188,7 +12414,7 @@ const lmCharacter = {
 			},
 		},
 		old_dcchouxi: {
-			audio: 2,
+			audio: "dcchouxi",
 			enable: "phaseUse",
 			onChooseToUse(event) {
 				if (game.online) {
@@ -12288,7 +12514,7 @@ const lmCharacter = {
 			},
 		},
 		old_dcjichao: {
-			audio: 2,
+			audio: "dcjichao",
 			enable: "phaseUse",
 			usable: 1,
 			filter(event, player) {
@@ -21082,6 +21308,7 @@ const lmCharacter = {
 				},
 			},
 		},
+		
 		//谋公孙瓒
 		old_sbqiaomeng: {
 			audio: "sbqiaomeng",
@@ -28925,6 +29152,11 @@ const lmCharacter = {
 		old_re_zhangchunhua_prefix: "旧|界",
 
 		//群英荟萃
+		old_dc_zhangmancheng: "旧新杀张曼成",
+		old_dc_zhangmancheng_prefix: "旧|新杀",
+		old_dclvecheng: "掠城",
+		old_dclvecheng_info: "出牌阶段限一次。你可以选择一名其他角色，你于本回合对其使用【杀】无次数限制。然后回合结束时，其展示所有手牌，若其中有【杀】，其可以选择对你依次使用其中所有的【杀】。",
+
 		old_dc_muludawang: "旧新杀木鹿大王",
 		old_dc_muludawang_prefix: "旧|新杀",
 		old_dczhoufa: "咒法",
@@ -28995,7 +29227,14 @@ const lmCharacter = {
 		old_staranji_info: "锁定技，一名角色使用牌时，若此花色的牌本轮游戏使用的最少，则你摸一张牌。",
 
 		//限定专属
+		old_caofang: "旧曹芳",
+		old_caofang_prefix: "旧",
+		old_dczhimin: "置民",
+		old_dczhimin_tag: "民",
+		old_dczhimin_info: "锁定技。①每轮开始时，你选择至多X名其他角色（X为你的体力值上限），获得这些角色各自手牌中的随机一张牌。②当你于你的回合外得到牌后，你将这些牌标记为“民”。③当你失去“民”后，你将手牌补至体力上限。",
+
 		old_dc_zhushuo: "旧朱铄",
+		old_dc_zhushuo_prefix: "旧",
 		old_dcjilie: "急烈",
 		old_dcjilie_info: "出牌阶段限一次，你可弃置任意张花色不同的牌，每弃置一种花色的牌便进行两次判定。若判定结果为【杀】，你可视为使用此牌（此【杀】无距离限制且伤害为本回合你使用【杀】的次数）。",
 
@@ -29009,7 +29248,7 @@ const lmCharacter = {
 		old_dcjuanji: "狷急",
 		old_dcjuanji_info: "摸牌阶段开始时，你可以摸体力上限张牌；出牌阶段开始时，你可以失去1点体力，然后视为对一名角色使用一张【杀】；弃牌阶段开始时，你可以调整手牌至手牌上限，然后弃置一名角色区域里至多两张牌。",
 		old_dcrenshuang: "纫霜",
-		old_dcrenshuang_info: "锁定技，①你每轮首次进入濒死时，回复体力至1点并增加1点体力上限（至多以此法增加3点）。②你脱离濒死时，复原武将牌并视为使用一张普通锦囊牌。",
+		old_dcrenshuang_info: "锁定技，①你每轮首次进入濒死时，回复体力至1点并增加1点体力上限（至多以此法增加3点）。②你脱离濒死时，复原武将牌并视为使用一张普通锦囊牌。（每种牌名每轮限一次）",
 
 		oldx_renwan: "旧任婉",
 		oldx_renwan_prefix: "旧",

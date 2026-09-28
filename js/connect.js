@@ -1412,3 +1412,19 @@ lib.element.player.emotion = function (pack, id) {
 		str
 	);
 };
+//转换技换肤兜底：核心技能里的 changeSkin 是按武将ID匹配的（如 dc_sb_xunyu），
+//扩展武将（old_dc_sb_xunyu）匹配不上会让换肤与 shadow 语音静默失效，这里补上本体名的匹配
+//重做 / 改造版的武将名前缀，需要时往这里加
+const skinNamePrefix = /^(?:oldx?_|hfdiy_)/;
+const originChangeSkin = lib.element.player.changeSkin;
+lib.element.player.changeSkin = function (map, character) {
+	if (map && typeof map == "object" && typeof map.characterName == "string" && typeof character == "string") {
+		const target = map.characterName;
+		map = (player, name) => {
+			const value = player[name] || "";
+			//本身同名（核心武将、扩展自己写的 old_xxx）或去掉前缀后与本体同名都算命中
+			return value === target || value.replace(skinNamePrefix, "") === target;
+		};
+	}
+	return originChangeSkin.call(this, map, character);
+};

@@ -391,9 +391,17 @@ const characters = {
 	},
 
 	//群英荟萃
+	old_dc_zhangmancheng: {
+		sex: "male",
+		group: "qun",
+		hp: 4,
+		skills: ["old_dclvecheng", "dcchongji"],
+		img: "image/character/dc_zhangmancheng.jpg",
+		dieAudios: ["dc_zhangmancheng"],
+	},
 	old_dc_muludawang: {
 		sex: "male",
-		group: "wei",
+		group: "qun",
 		hp: 6,
 		skills: ["old_dczhoufa", "dcshouqun"],
 		img: "image/character/dc_muludawang.jpg",
@@ -493,6 +501,14 @@ const characters = {
 	},
 
 	//限定专属
+	old_caofang: {
+		sex: "male",
+		group: "wei",
+		hp: 4,
+		skills: ["old_dczhimin", "dcjujian"],
+		img: "image/character/caofang.jpg",
+		dieAudios: ["caofang"],
+	},
 	old_dc_zhushuo: {
 		sex: "male",
 		group: "wei",
@@ -521,7 +537,7 @@ const characters = {
 	oldx_renwan: {
 		sex: "female",
 		group: "wei",
-		hp: 3,
+		hp: 4,
 		skills: ["oldx_dcjuanji", "oldx_dcrenshuang"],
 		img: "image/character/renwan.jpg",
 		dieAudios: ["renwan"],
@@ -629,7 +645,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 3,
-		skills: ["dcsbbizuo", "dcsbshimou", "dcsbxianshi"],
+		skills: ["dcsbshimou", "dcsbxianshi", "dcsbbizuo"],
 		img: "image/character/dc_sb_xunyu.jpg",
 		dieAudios: ["dc_sb_xunyu"],
 		clans: ["颍川荀氏"],

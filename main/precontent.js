@@ -1171,8 +1171,13 @@ export async function precontent(config, pack) {
 		};
 	}
 	//阶段提示
-	//阶段提示：本机只维护一个提示元素，状态存在元素自己身上（广播函数会被序列化到客机执行，不能依赖闭包变量）
-	lib.skill._tphaseTip = {
+	//阶段提示：提示元素直接挂在角色框（player）内部，位置全部交给 CSS，跟着角色框走，不再用屏幕坐标计算
+	//（广播函数会被序列化到客机执行，不能依赖闭包变量，所以状态存在 player.node 上）
+	//类名加 xzm 前缀：其他扩展（如云中守望/手杀ui）也用 .tphaseTip 这个类名，挂在角色框内后会被它们的样式污染
+	//（云中守望的 .player > .tphaseTip 带黄色 radial-gradient 背景），所以这里必须用自己的类名
+	//技能名同样加 xzm 前缀：云中守望也注册了 lib.skill._tphaseTip，同名会互相覆盖（谁后加载谁生效，另一个的阶段提示直接失效）
+	//开头的下划线要保留：noname 会把 `_` 开头的技能自动注册为全局技能（game.finishSkill → addGlobalSkill）
+	lib.skill._xzmPhaseTip = {
 		trigger: {
 			global: ["phaseBegin", "phaseZhunbeiBefore", "phaseJudgeBefore", "phaseDrawBefore", "phaseUseBefore", "phaseDiscardBefore", "phaseJieshuBefore", "phaseEnd", "phaseAfter"],
 		},
@@ -1188,31 +1193,42 @@ export async function precontent(config, pack) {
 			const showTip = (phasename, player) => {
 				//只认「本机是否开启了本扩展」：没开的机器什么都不做
 				if (!lib.config.extension_星之梦_tphaseTip) return;
-				if (!player || !player.isIn()) return;
+				if (!player || !player.node) return;
 
-				const tipEl = () => document.querySelector(".tphaseTip");
-				const tipImg = () => {
-					const el = tipEl();
-					return el && el.firstChild ? el.firstChild : null;
+				//提示挂在角色框内，所以每个角色各有一个；取不到或已从框上脱落时按需重建
+				const tipEl = () => {
+					const el = player.node.xzmPhaseTip;
+					if (el && el.parentNode !== player) {
+						delete player.node.xzmPhaseTip;
+						return null;
+					}
+					return el || null;
 				};
-				//换人操作等原因导致提示易主时，先把旧提示清掉，避免残留
-				const old = tipEl();
-				if (old && old.dataset.owner !== player.playerid) {
-					old.remove();
-				}
 
 				if (phasename === "phaseAfter") {
+					//回合结束后淡出并移除，下个回合再重建
 					const current = tipEl();
 					if (current) {
+						delete player.node.xzmPhaseTip;
 						current.classList.remove("active");
 						// 等过渡结束后移除元素
-						setTimeout(() => {
-							const el = tipEl();
-							if (el) el.remove();
-						}, 300);
+						setTimeout(() => current.remove(), 300);
 					}
 					return;
 				}
+
+				//有人开始新回合时，顺手清掉其他角色框上残留的提示（换人、中途重开等情况）
+				if (phasename === "phaseBegin") {
+					game.players.concat(game.dead).forEach(current => {
+						if (current === player || !current.node) return;
+						const el = current.node.xzmPhaseTip;
+						if (!el) return;
+						delete current.node.xzmPhaseTip;
+						el.remove();
+					});
+				}
+
+				if (!player.isIn()) return;
 
 				const config = lib.config.extension_星之梦_tphaseTipStyle;
 				const basePath = "extension/星之梦/image/JDTS/";
@@ -1232,81 +1248,71 @@ export async function precontent(config, pack) {
 				// 根据配置选择对应的图片路径
 				const phase = phaseStyles[config] || phaseStyles["1"];
 				const imgSrc = phase[phasename];
-				// 位置固定：自己贴在自己框上方，别人贴在别人框下方
-				const above = player === game.me;
+				if (!imgSrc) return;
 
 				const addStyle = () => {
 					// 检查样式是否已添加
-					if (document.getElementById("tphaseTip-styles")) return;
+					if (document.getElementById("xzmPhaseTip-styles")) return;
 
 					const style = document.createElement("style");
-					style.id = "tphaseTip-styles";
+					style.id = "xzmPhaseTip-styles";
 					style.textContent = `
-                                /* 位置由 left/top 动态计算，这里只管大小和淡入淡出 */
-                                .tphaseTip {
-                                    position: fixed;
+                                /* 提示锚在角色框内，位置随角色框自动变化：别人贴在框下方，自己（data-position="0"）贴在框上方 */
+                                .player > .xzmPhaseTip {
+                                    position: absolute;
                                     left: 0;
-                                    top: 0;
-                                    width: 85px;
+                                    width: 100%;
+                                    max-width: 150px;
+                                    text-align: center;
+                                    bottom: -17px;
                                     opacity: 0;
                                     pointer-events: none;
                                     z-index: 4;
+                                    transform: translateY(-12px);
                                     transition: opacity 0.3s ease, transform 0.3s ease;
                                 }
-                                .tphaseTip.active {
+                                .player[data-position="0"] > .xzmPhaseTip {
+                                    bottom: 102%;
+                                    transform: translateY(12px);
+                                }
+                                .player > .xzmPhaseTip.active {
                                     opacity: 1;
                                     transform: translateY(0);
                                 }
-                                .tphaseTip.tphaseTip-above {
-                                    transform: translateY(12px);
+                                .player[data-position="0"] > .xzmPhaseTip.active {
+                                    opacity: 1;
+                                    transform: translateY(0);
                                 }
-                                .tphaseTip.tphaseTip-below {
-                                    transform: translateY(-12px);
-                                }
-                                .tphaseTip img {
+                                .xzmPhaseTip img {
+                                    display: block;
+                                    margin: 0 auto;
+                                    width: 85px;
                                     max-width: 100%;
                                     height: auto;
-                                    display: block;
                                 }
                             `;
 					document.head.appendChild(style);
 				};
 
-				if (!game.phaseStyle) {
-					game.phaseStyle = true;
-					addStyle();
-				}
+				addStyle();
 
-				// 把提示锚在对应角色框上：横向对齐头像，纵向贴在头像上/下方
-				const updateAnchor = el => {
-					if (!el || !player.node || !player.node.avatar) return;
-					const rect = player.getBoundingClientRect();
-					const avatarRect = player.node.avatar.getBoundingClientRect();
-					const imgWidth = el.offsetWidth || 85;
-					const avatarWidth = avatarRect.width || 100;
-					el.style.left = `${Math.round(rect.left + (avatarRect.left - rect.left) + (avatarWidth - imgWidth) / 2)}px`;
-					el.style.top = `${Math.round(above ? avatarRect.top - el.offsetHeight - 4 : avatarRect.bottom + 4)}px`;
-				};
+				// 位置交给 CSS：别人贴在别人框下方，自己（data-position="0"）贴在自己框上方
+				// 提示是角色框的子元素，所以框移动/换布局/改窗口大小时都会自动跟着走
 
 				const current = tipEl();
 				if (!current) {
-					const el = document.createElement("div");
-					el.className = above ? "tphaseTip tphaseTip-above" : "tphaseTip tphaseTip-below";
-					el.dataset.owner = player.playerid;
-					document.body.appendChild(el);
+					//挂在角色框内（ui.create.div 的第三个参数是父元素）
+					const el = ui.create.div(".xzmPhaseTip", "", player);
+					player.node.xzmPhaseTip = el;
+					el.dataset.phase = phasename;
 
 					const img = document.createElement("img");
 					img.src = imgSrc;
 					img.alt = phasename;
 					el.appendChild(img);
 
-					updateAnchor(el);
-
 					// 下一帧加 active，触发淡入 + 上浮/下沉动画
-					setTimeout(() => {
-						const tip = tipEl();
-						if (tip) tip.classList.add("active");
-					}, 10);
+					setTimeout(() => el.classList.add("active"), 10);
 
 					// 客户端同步
 					if (lib.node && lib.node.clients) {
@@ -1320,19 +1326,17 @@ export async function precontent(config, pack) {
 					}
 				} else {
 					// 新阶段先淡出，再换图淡入
-					current.dataset.owner = player.playerid;
 					current.classList.remove("active");
 					setTimeout(() => {
-						const tip = tipEl();
-						const img = tipImg();
-						if (!tip) return;
-						tip.className = above ? "tphaseTip tphaseTip-above" : "tphaseTip tphaseTip-below";
+						//淡出期间可能已被清理（回合结束、换人等），这里再确认一次元素还挂在框上
+						if (current.parentNode !== player) return;
+						const img = current.firstChild;
+						if (!img) return;
 						img.src = imgSrc;
 						img.alt = phasename;
-						updateAnchor(tip);
+						current.dataset.phase = phasename;
 						setTimeout(() => {
-							const again = tipEl();
-							if (again) again.classList.add("active");
+							if (current.parentNode === player) current.classList.add("active");
 						}, 10);
 					}, 300);
 				}

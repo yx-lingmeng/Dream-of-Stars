@@ -55,6 +55,7 @@ const characterTitles = {
 	old_re_zhangchunhua: "冷血皇后",
 
 	//群英荟萃
+	old_dc_zhangmancheng: "蚁萃宛洛",
 	old_dc_muludawang: "八纳洞主",
 	old_dc_weifeng: "趁浪逐波",
 	old_chengui: "弄虎如婴",
@@ -71,6 +72,7 @@ const characterTitles = {
 	old_star_fazheng: "定军佐功",
 
 	//限定专属
+	old_caofang: "迷瞑终觉",
 	old_dc_zhushuo: "醇浆遏斗",
 	old_liufuren: "恶嫉蔑死",
 	old_renwan: "孤贞不徙",
@@ -261,7 +263,7 @@ const characterTitles = {
 	sw_diaochan: "欲界非天",
 	sw_tw_guanyu: "魂追弗届",
 	sw_tw_lvmeng: "兼资文武",
-	sw_wechat_zhugeliang: "赤壁的妖术师", // 未定义称号
+	sw_wechat_zhugeliang: "赤壁的妖术师",
 	lm_xurong: "玄菟战魔",
 
 	//lm-diy
