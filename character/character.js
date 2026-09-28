@@ -501,6 +501,14 @@ const characters = {
 	},
 
 	//限定专属
+	old_lizhaoyi: {
+		sex: "female",
+		group: "shu",
+		hp: 3,
+		skills: ["dcmingjie", "old_dcxianfu"],
+		img: "image/character/lizhaoyi.jpg",
+		dieAudios: ["lizhaoyi"],
+	},
 	old_caofang: {
 		sex: "male",
 		group: "wei",

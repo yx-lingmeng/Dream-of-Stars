@@ -135,6 +135,7 @@ const characterReplaces = {
 	hansong: ["old_hansong", "hansong"],
 	kongshu: ["old_kongshu", "kongshu"],
 	liujinliupei: ["old_liujinliupei", "liujinliupei"],
+	lizhaoyi: ["old_lizhaoyi", "lizhaoyi"],
 	tw_niufudongxie: ["old_tw_niufudongxie", "tw_niufudongxie"],
 	pangfengyi: ["old_pangfengyi", "pangfengyi"],
 	pangxi: ["old_pangxi", "pangxi"],
