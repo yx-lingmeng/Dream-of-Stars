@@ -1020,7 +1020,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 3,
-		skills: ["twxingshang", "twfangzhu", "twsongwei"],
+		skills: ["old_sbxingshang", "old_sbfangzhu", "old_sbsongwei"],
 		img: "image/character/sb_caopi.jpg",
 		dieAudios: ["sb_caopi"],
 		isZhugong: true,
