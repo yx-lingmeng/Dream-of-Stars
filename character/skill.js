@@ -5600,140 +5600,107 @@ const lmCharacter = {
 		//王衍
 		old_cihuang: {
 			audio: "cihuang",
-			trigger: {
-				global: ["eventNeutralized", "shaMiss"],
-			},
+			trigger: { global: ["eventNeutralized", "shaMiss"] },
 			direct: true,
 			filter(event, player) {
-				if (event.player != _status.currentPhase || !event.targets || event.targets.length != 1 || event.type != "card" || !player.countCards("he")) return false;
+				if (event.player != _status.currentPhase || !event.targets || event.targets.length != 1 || event.type != "card") {
+					return false;
+				}
 				return lib.skill.old_cihuang.getList(player, event.player, true);
 			},
 			getList(player, target, bool) {
-				var natures = lib.inpile_nature.slice(0);
-				var tricks = [];
-				for (var name of lib.inpile) {
-					var info = lib.card[name];
-					if (!info || info.type != "trick" || info.notarget || (info.selectTarget && info.selectTarget != 1 && (info.selectTarget != -1 || !info.toself))) continue;
+				const natures = lib.inpile_nature.slice(0);
+				const tricks = [];
+				for (const name of lib.inpile) {
+					const info = lib.card[name];
+					if (!info || info.type != "trick" || info.notarget || (info.selectTarget && info.selectTarget != 1 && (info.selectTarget != -1 || !info.toself))) {
+						continue;
+					}
 					tricks.push(name);
 				}
-				var history = player.actionHistory;
-				var HadUsenormalSha = false;
-				for (var i = history.length - 1; i >= 0; i--) {
-					var info = history[i];
-					for (var evt of info.useCard) {
-						if (evt.card.storage && evt.card.storage.old_cihuang) {
-							var name = evt.card.name;
-							if (name == "sha") {
-								if (evt.card.nature) natures.remove(evt.card.nature);
-								else HadUsenormalSha = true;
-							} else tricks.remove(name);
+				for (const evt of player.getRoundHistory("useCard")) {
+					if (evt.skill != "old_cihuang") {
+						continue;
+					}
+					const name = evt.card?.name;
+					if (name == "sha") {
+						if (evt.card.nature) {
+							natures.remove(evt.card.nature);
 						}
-					}
-					if (info.isRound) break;
-				}
-				var vcards = [];
-				if (!HadUsenormalSha && player.canUse({ name: "sha", isCard: true }, target, false)) {
-					vcards.push(["基本", "", "sha", ""]);
-				}
-				for (var i of natures) {
-					if (
-						player.canUse(
-							{
-								name: "sha",
-								nature: i,
-								isCard: true,
-							},
-							target,
-							false
-						)
-					) {
-						if (bool) return true;
-						else vcards.push(["基本", "", "sha", i]);
+					} else if (name) {
+						tricks.remove(name);
 					}
 				}
-				for (var i of tricks) {
-					if (
-						player.canUse(
-							{
-								name: i,
-								isCard: true,
-							},
-							target,
-							false
-						)
-					) {
-						if (bool) return true;
-						else vcards.push(["锦囊", "", i]);
+				const vcards = [];
+				for (const nature of natures) {
+					const card = { name: "sha", nature, isCard: true };
+					if (player.canUse(card, target, false)) {
+						if (bool) {
+							return true;
+						}
+						vcards.push(["基本", "", "sha", nature]);
 					}
 				}
-				if (bool) return false;
-				return vcards;
+				for (const name of tricks) {
+					const card = { name, isCard: true };
+					if (player.canUse(card, target, false)) {
+						if (bool) {
+							return true;
+						}
+						vcards.push(["锦囊", "", name]);
+					}
+				}
+				return bool ? false : vcards;
 			},
-			content() {
-				"step 0";
-				var target = trigger.player;
-				var list = lib.skill.old_cihuang.getList(player, target);
-				if (_status.connectMode)
-					game.broadcastAll(function () {
-						_status.noclearcountdown = true;
-					});
-				player.chooseButton([get.prompt("old_cihuang", target), "<div class='text center'>选择一张牌并视为对" + get.translation(target) + "使用</div>", [list, "vcard"]]).set("ai", function (button) {
-					var card = {
-							name: button.link[2],
-							nature: button.link[3],
-							storage: { old_cihuang: true },
-						},
-						player = _status.event.player,
-						target = _status.event.getTrigger().player;
-					return get.effect(target, card, player, player);
-				});
-				"step 1";
-				if (result.bool) {
-					player.useCard(
-						{
-							name: result.links[0][2],
-							nature: result.links[0][3],
-							storage: { old_cihuang: true },
-							isCard: true,
-						},
-						trigger.player,
-						false,
-						"old_cihuang"
-					).oncard = function (card, player) {
-						_status.event.directHit.addArray(game.filterPlayer());
-					};
-				} else event._result = { bool: false };
-				"step 2";
-				if (_status.connectMode) {
-					game.broadcastAll(function () {
-						delete _status.noclearcountdown;
-						game.stopCountChoose();
-					});
+			async content(event, trigger, player) {
+				const target = trigger.player;
+				const list = lib.skill.old_cihuang.getList(player, target);
+				if (!list.length) {
+					return;
 				}
+				const result = await player
+					.chooseButton([get.prompt("old_cihuang", target), '<div class="text center">视为对' + get.translation(target) + "使用以下的一张牌</div>", [list, "vcard"]])
+					.set("ai", button => {
+						const player = _status.event.player;
+						const target = _status.event.getTrigger().player;
+						const card = { name: button.link[2], nature: button.link[3], storage: { old_cihuang: true } };
+						let eff = get.effect(target, card, player, player);
+						if (card.name == "jiedao" && get.attitude(player, target) > 0) {
+							eff -= 10;
+						}
+						return eff;
+					})
+					.forResult();
+				if (!result?.bool || !result.links?.length) {
+					return;
+				}
+				const link = result.links[0];
+				const card = { name: link[2], nature: link[3], isCard: true, storage: { old_cihuang: true } };
+				const next = player.useCard(card, target, "nowuxie", "old_cihuang");
+				if (card.name == "sha") {
+					next.directHit = [target];
+				}
+				await next;
 			},
 			ai: {
 				directHit_ai: true,
 				skillTagFilter(player, tag, arg) {
-					return arg && arg.card && arg.card.storage && arg.card.storage.old_cihuang;
+					return arg?.card?.storage?.old_cihuang && arg.card.name == "sha";
 				},
 			},
 		},
 		old_sanku: {
 			audio: "sanku",
-			trigger: {
-				player: "dying",
-			},
+			trigger: { player: "dying" },
 			forced: true,
-			content() {
-				"step 0";
-				player.loseMaxHp();
-				"step 1";
-				var num = player.maxHp - player.hp;
-				if (num > 0) player.recover(num);
+			async content(event, trigger, player) {
+				await player.loseMaxHp();
+				const num = player.maxHp - player.hp;
+				if (num > 0) {
+					await player.recover(num);
+				}
 			},
-			ai: {
-				halfneg: true,
-			},
+			ai: { halfneg: true },
 		},
 
 		//邓忠
@@ -16293,105 +16260,95 @@ const lmCharacter = {
 			audio: "mbdaoshu",
 			trigger: { global: "phaseUseBegin" },
 			filter(event, player) {
-				var goon = event.player != player && (get.mode() == "identity" || get.mode() == "guozhan" || event.player.isEnemyOf(player));
-				return goon && event.player.countCards("h") > 0 && event.player.hasUseTarget({ name: "jiu", isCard: true }, null, true);
+				return !player.hasSkill("old_spdaoshu_used") && event.player !== player && event.player.countCards("h") > 0;
 			},
-			round: 1,
+			check: () => true,
 			logTarget: "player",
-			check(event, player) {
-				var target = event.player;
-				var att = get.attitude(player, target);
-				if (att > 0) return false;
-				if (att == 0) return !player.inRangeOf(target);
-				return true;
-			},
-			logAudio: () => ["mbdaoshu.mp3"],
-			content() {
-				"step 0";
-				event.target = trigger.player;
-				event.target.chooseUseTarget("jiu", true);
-				"step 1";
-				if (!target.countCards("h")) {
-					event.finish();
+			prompt2: "令其视为使用一张【酒】，然后由其声明一个基本牌的牌名，你判断其手牌区内是否有该牌名的牌。",
+			async content(event, trigger, player) {
+				const target = trigger.player;
+				player.addTempSkill("old_spdaoshu_used", "roundStart");
+				await target.useCard({ name: "jiu", isCard: true }, target);
+				const list = get.inpileVCardList(info => info[0] === "basic" && !info[3]);
+				const result = await target
+					.chooseButton(["盗书：声明一个基本牌的牌名", [list, "vcard"]], true)
+					.set("ai", () => 0.1 + Math.random())
+					.forResult();
+				if (!result?.bool || !result.links?.length) {
 					return;
 				}
-				var list = [];
-				for (var i of lib.inpile) {
-					if (get.type(i) == "basic") list.push(i);
-				}
-				if (!list.length) {
-					event.finish();
-					return;
-				}
-				target
-					.chooseControl(list)
-					.set("prompt", "请声明一种基本牌")
-					.set("ai", () => _status.event.rand)
-					.set("rand", get.rand(0, list.length - 1));
-				"step 2";
-				event.cardname = result.control;
-				target.chat("我声明" + get.translation(event.cardname));
-				game.log(target, "声明的牌名为", "#y" + get.translation(event.cardname));
-				game.delayx();
-				player
-					.chooseControl("有！", "没有！")
-					.set("prompt", "你觉得" + get.translation(target) + "的手牌区里有" + get.translation(event.cardname) + "吗？")
-					.set("ai", function () {
-						return _status.event.choice;
-					})
-					.set(
-						"choice",
-						(function () {
-							var rand =
-								{
-									sha: 0.273,
-									shan: 0.149,
-									tao: 0.074,
-									jiu: 0.031,
-								}[event.cardname] || 0.1;
-							return 1 - Math.pow(1 - rand, target.countCards("h")) > 0.5 ? "有！" : "没有！";
-						})()
-					);
-				"step 3";
-				player.chat(result.control);
-				game.log(player, "认为", "#y" + result.control);
-				game.delayx();
-				"step 4";
-				var bool1 = result.index == 0;
-				var bool2 = target.hasCard(function (card) {
-					return get.name(card, target) == event.cardname;
-				}, "h");
-				if (bool1 == bool2) {
-					player.popup("判断正确", "wood");
-					game.broadcastAll(function () {
-						if (lib.config.background_speak) game.playAudio("skill", "old_spdaoshu2");
-					});
-					// player.gainPlayerCard(target, "h", 2, true);
-					var cards = target
-						.getCards("h", function (card) {
-							return lib.filter.canBeGained(card, player, target);
-						})
-						.randomGets(5);
-					if (cards.length > 0) player.gain(cards, target, "giveAuto", "bySelf");
+				const name = result.links[0][2];
+				game.log(target, "声明了", `#g【${get.translation(name)}】`);
+				const has = target.getCards("h").some(card => get.name(card) === name);
+				const guess = await player
+					.chooseControl("有", "没有")
+					.set("prompt", `盗书：判断${get.translation(target)}的手牌区内是否有【${get.translation(name)}】`)
+					.set("ai", () => (Math.random() < 0.5 ? 0 : 1))
+					.forResult();
+				const correct = (guess?.control === "有") === has;
+				game.log(player, "判断", correct ? "#g正确" : "#y错误");
+				if (correct) {
+					const cards = target.getGainableCards(player, "h").randomGets(5);
+					if (cards.length) {
+						await player.gain(cards, "giveAuto");
+					}
 				} else {
-					player.popup("判断错误", "fire");
-					game.broadcastAll(function () {
-						if (lib.config.background_speak) game.playAudio("skill", "old_spdaoshu3");
-					});
-					player.addTempSkill("old_spdaoshu_respond");
+					game.broadcastAll((player, target) => player.setStorage("old_spdaoshu_ban", target), player, target);
+					player.addTempSkill("old_spdaoshu_ban");
 				}
 			},
-			ai: { expose: 0.3 },
 			subSkill: {
-				respond: {
-					trigger: { global: "useCard1" },
-					forced: true,
-					popup: false,
-					filter(event, player) {
-						return event.player == _status.currentPhase;
+				used: {
+					charlotte: true,
+				},
+				ban: {
+					charlotte: true,
+					onremove: true,
+					getSource(event) {
+						if (!event || typeof event.getParent != "function") {
+							event = get.event();
+						}
+						return event?.getParent("useCard", true, true);
 					},
-					content() {
-						trigger.directHit.add(player);
+					isBanned(player, event) {
+						const target = player.storage.old_spdaoshu_ban;
+						if (!target || _status.currentPhase !== target) {
+							return false;
+						}
+						const source = lib.skill.old_spdaoshu_ban.getSource(event);
+						return !!source?.player && source.player.playerid === target.playerid;
+					},
+					isCounter(card, player, event) {
+						if (!lib.skill.old_spdaoshu_ban.isBanned(player, event)) {
+							return false;
+						}
+						const source = lib.skill.old_spdaoshu_ban.getSource(event)?.card;
+						const name = get.name(card);
+						if (name == "shan") {
+							return get.name(source) == "sha";
+						}
+						if (name == "wuxie") {
+							return ["trick", "delay"].includes(get.type(source));
+						}
+						return false;
+					},
+					mod: {
+						cardEnabled(card, player, event) {
+							if (!event || typeof event.getParent != "function") {
+								event = get.event();
+							}
+							if (event?.type != "wuxie") {
+								return;
+							}
+							if (lib.skill.old_spdaoshu_ban.isCounter(card, player, event)) {
+								return false;
+							}
+						},
+						cardRespondable(card, player) {
+							if (lib.skill.old_spdaoshu_ban.isCounter(card, player)) {
+								return false;
+							}
+						},
 					},
 				},
 			},
@@ -30263,9 +30220,7 @@ const lmCharacter = {
 		old_sp_jianggan: "旧蒋干",
 		old_sp_jianggan_prefix: "旧",
 		old_spdaoshu: "盗书",
-		old_spdaoshu_info: "每轮限一次。一名敌方角色的出牌阶段开始时，若其有手牌，则你可以令其视为使用一张【酒】。其须声明一个基本牌的牌名，然后你判断其手牌区内是否有该牌名的牌。若你判断正确，则你随机获得其五张手牌，否则你不能响应其使用的牌直到回合结束。",
-		old_spdaoshu_info_identity: "每轮限一次。一名其他角色的出牌阶段开始时，若其有手牌，则你可以令其视为使用一张【酒】。其须声明一个基本牌的牌名，然后你判断其手牌区内是否有该牌名的牌。若你判断正确，则你随机获得其五张手牌，否则你不能响应其使用的牌直到回合结束。",
-		old_spdaoshu_info_guozhan: "每轮限一次。一名其他角色的出牌阶段开始时，若其有手牌，则你可以令其视为使用一张【酒】。其须声明一个基本牌的牌名，然后你判断其手牌区内是否有该牌名的牌。若你判断正确，则你随机获得其五张手牌，否则你不能响应其使用的牌直到回合结束。",
+		old_spdaoshu_info: "每轮限一次。一名其他角色的出牌阶段开始时，若其有手牌，则你可以令其视为使用一张【酒】。其须声明一个基本牌的牌名，然后你判断其手牌区内是否有该牌名的牌。若你判断正确，则你随机获得其五张手牌，否则你不能响应其使用的牌直到回合结束。",
 
 		old_mb_wangjing: "旧王经",
 		old_mb_wangjing_prefix: "旧",
