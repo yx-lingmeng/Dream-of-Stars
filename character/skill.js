@@ -5677,15 +5677,13 @@ const lmCharacter = {
 				const link = result.links[0];
 				const card = { name: link[2], nature: link[3], isCard: true, storage: { old_cihuang: true } };
 				const next = player.useCard(card, target, "nowuxie", "old_cihuang");
-				if (card.name == "sha") {
-					next.directHit = [target];
-				}
+				next.directHit = [target];
 				await next;
 			},
 			ai: {
 				directHit_ai: true,
 				skillTagFilter(player, tag, arg) {
-					return arg?.card?.storage?.old_cihuang && arg.card.name == "sha";
+					return !!arg?.card?.storage?.old_cihuang;
 				},
 			},
 		},
@@ -16258,6 +16256,7 @@ const lmCharacter = {
 		//蒋干
 		old_spdaoshu: {
 			audio: "mbdaoshu",
+			logAudio: () => 1,
 			trigger: { global: "phaseUseBegin" },
 			filter(event, player) {
 				return !player.hasSkill("old_spdaoshu_used") && event.player !== player && event.player.countCards("h") > 0;
@@ -16287,6 +16286,11 @@ const lmCharacter = {
 					.forResult();
 				const correct = (guess?.control === "有") === has;
 				game.log(player, "判断", correct ? "#g正确" : "#y错误");
+				game.broadcastAll(correct => {
+					if (lib.config.background_speak) {
+						game.playAudio("skill", correct ? "mbdaoshu2" : "mbdaoshu3");
+					}
+				}, correct);
 				if (correct) {
 					const cards = target.getGainableCards(player, "h").randomGets(5);
 					if (cards.length) {
@@ -16318,34 +16322,20 @@ const lmCharacter = {
 						const source = lib.skill.old_spdaoshu_ban.getSource(event);
 						return !!source?.player && source.player.playerid === target.playerid;
 					},
-					isCounter(card, player, event) {
-						if (!lib.skill.old_spdaoshu_ban.isBanned(player, event)) {
-							return false;
-						}
-						const source = lib.skill.old_spdaoshu_ban.getSource(event)?.card;
-						const name = get.name(card);
-						if (name == "shan") {
-							return get.name(source) == "sha";
-						}
-						if (name == "wuxie") {
-							return ["trick", "delay"].includes(get.type(source));
-						}
-						return false;
-					},
 					mod: {
 						cardEnabled(card, player, event) {
 							if (!event || typeof event.getParent != "function") {
 								event = get.event();
 							}
-							if (event?.type != "wuxie") {
+							if (!["respondShan", "wuxie"].includes(event?.type)) {
 								return;
 							}
-							if (lib.skill.old_spdaoshu_ban.isCounter(card, player, event)) {
+							if (lib.skill.old_spdaoshu_ban.isBanned(player, event)) {
 								return false;
 							}
 						},
 						cardRespondable(card, player) {
-							if (lib.skill.old_spdaoshu_ban.isCounter(card, player)) {
+							if (lib.skill.old_spdaoshu_ban.isBanned(player)) {
 								return false;
 							}
 						},
