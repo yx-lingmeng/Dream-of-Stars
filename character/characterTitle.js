@@ -171,7 +171,6 @@ const characterTitles = {
 	old_sb_xiaoqiao: "矫情之花",
 
 	//兵势篇
-	old_pot_dengai: "勇气陵云",
 	old_pot_lusu: "廓开大计",
 	old_pangxi: "壁玉佐君",
 	old_mb_zhangyan: "轻勇骇势",

@@ -1269,14 +1269,6 @@ const characters = {
 	},
 
 	//兵势篇
-	old_pot_dengai: {
-		sex: "male",
-		group: "wei",
-		hp: 3,
-		skills: ["old_pottuntian", "old_potjixi", "old_potzaoxian"],
-		img: "image/character/pot_dengai.jpg",
-		dieAudios: ["pot_dengai"],
-	},
 	old_pot_lusu: {
 		sex: "male",
 		group: "wu",
