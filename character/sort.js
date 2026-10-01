@@ -18,7 +18,7 @@ const characterSorts = {
 		//系列专属
 		sp2_old: ["old_hansong", "old_star_dingfeng", "old_star_fazheng"],
 		//限定专属
-		xianding_old: ["old_caofang", "old_dc_zhushuo", "old_liufuren", "old_renwan", "oldx_renwan", "old_dc_tengfanglan", "old_liujinliupei", "old_pangfengyi", "old_zhugejing", "old_bailingyun", "old_ruanyu", "old_xurong", "old_yuanji", "old_dc_chenzhi", "old_v_machao", "old_v_zhangxingcai", "old_dc_sb_zhugeliang", "old_dc_sb_xunyu", "old_dc_sb_luxun", "old_dc_sb_hulie", "old_dc_sb_xuyou", "old_dc_sb_zhuran", "old_dc_sb_dengai", "old_dc_sb_guanyu", "old_wu_zhugeliang", "old_wu_guanyu", "old_wu_huangfusong", "old_wu_lukang", "old_dc_shen_huatuo", "old_dc_shen_sunquan"],
+		xianding_old: ["old_lizhaoyi", "old_caofang", "old_dc_zhushuo", "old_liufuren", "old_renwan", "oldx_renwan", "old_dc_tengfanglan", "old_liujinliupei", "old_pangfengyi", "old_zhugejing", "old_bailingyun", "old_ruanyu", "old_xurong", "old_yuanji", "old_dc_chenzhi", "old_v_machao", "old_v_zhangxingcai", "old_dc_sb_zhugeliang", "old_dc_sb_xunyu", "old_dc_sb_luxun", "old_dc_sb_hulie", "old_dc_sb_xuyou", "old_dc_sb_zhuran", "old_dc_sb_dengai", "old_dc_sb_guanyu", "old_wu_zhugeliang", "old_wu_guanyu", "old_wu_huangfusong", "old_wu_lukang", "old_dc_shen_huatuo", "old_dc_shen_sunquan"],
 
 		//手杀武将
 		//始计篇
@@ -28,7 +28,7 @@ const characterSorts = {
 		//谋攻篇
 		sb_old: ["old_sb_caopi", "old_sb_jiangwei", "old_sb_xuhuang", "old_sb_yuanshao", "old_sb_handang", "old_sb_huaxiong", "old_sb_jiaxu", "old_sb_zhugejin", "old_sb_zhangliao", "old_sb_zhanghe", "old_sb_guojia", "old_sb_gaoshun", "old_sb_xiahouyuan", "old_sb_lvbu", "old_sb_daqiao", "old_sb_sunce", "old_sb_sp_zhugeliang", "oldx_sb_sp_zhugeliang", "old_sb_menghuo", "old_sb_zhurong", "old_sb_guanyu", "old_sb_zhaoyun", "old_sb_fazheng", "old_sb_huangzhong", "old_sb_gongsunzan", "old_sb_sunquan", "old_sb_huanggai", "old_sb_ganning", "old_sb_xiaoqiao"],
 		//兵势篇
-		bingshi_old: ["old_pot_dengai", "old_pot_lusu", "old_pangxi", "old_mb_zhangyan", "old_pot_xinxianying", "old_guoyuan", "old_mb_chenzhi", "old_pot_weiyan", "old_pot_taishici", "old_pot_lougui", "old_pot_chendao", "old_pot_yuji"],
+		bingshi_old: ["old_pot_lusu", "old_pangxi", "old_mb_zhangyan", "old_pot_xinxianying", "old_guoyuan", "old_mb_chenzhi", "old_pot_weiyan", "old_pot_taishici", "old_pot_lougui", "old_pot_chendao", "old_pot_yuji"],
 
 		//海外
 		tw_old: ["old_tw_huojun", "old_tw_guohuai", "oldx_quancong", "old_tw_baoxin", "old_tw_zhangmancheng", "old_tw_guanqiujian", "old_tw_niufudongxie", "old_xia_guanyu", "old_xia_zhaoe", "old_huan_zhugeliang", "old_huan_weiyan", "old_huan_zhugeguo", "old_huan_caoang", "old_tw_gexuan", "old_jsrg_huangfusong", "old_tw_huangfusong", "old_yinfuren", "old_tw_jiangji", "old_tw_zhangzhao", "old_tw_zhanghong", "old_tw_shen_lvmeng"],

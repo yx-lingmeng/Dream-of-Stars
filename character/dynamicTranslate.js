@@ -57,5 +57,12 @@ const dynamicTranslates = {
 		}
 		return "这衣服，岂是你配穿的？";
 	},
+
+	old_sbfangzhu(player) {
+		if (get.mode() === "doudizhu") {
+			return lib.translate.old_sbfangzhu_info_doudizhu;
+		}
+		return lib.translate.old_sbfangzhu_info;
+	},
 };
 export default dynamicTranslates;

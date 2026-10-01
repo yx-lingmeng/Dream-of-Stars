@@ -1540,6 +1540,38 @@ export async function precontent(config, pack) {
 			},
 			[],
 		];
+	//动态翻译：dynamicTranslate 是函数不是数据，其它 payload 都没带它，
+	//不送过去的话没装本扩展的客机上 lib.dynamicTranslate 是空的，技能描述不会随状态/模式变化
+	if (!_status.postReconnect.lm_dynamicTranslate)
+		_status.postReconnect.lm_dynamicTranslate = [
+			function (dynamicTranslates) {
+				for (const key in dynamicTranslates) lib.dynamicTranslate[key] ??= dynamicTranslates[key];
+			},
+			character.dynamicTranslate,
+		];
+	//转换技换肤名单：客机没有这张表时 changeSkin 静默失效（player.js:3725），
+	//dynamicTranslate 里的 old_mbweizhuang 也会读它
+	if (!_status.postReconnect.lm_characterSubstitute)
+		_status.postReconnect.lm_characterSubstitute = [
+			function (substitute) {
+				for (const name in substitute) lib.characterSubstitute[name] ??= substitute[name];
+			},
+			character.characterSubstitute,
+		];
+	//扩展包的其余字段：称号 / 武将简介 / 珠联璧合 / 扩展包内分包
+	if (!_status.postReconnect.lm_packExtra)
+		_status.postReconnect.lm_packExtra = [
+			function (titles, intros, pairs, sorts) {
+				for (const name in titles) lib.characterTitle[name] ??= titles[name];
+				for (const name in intros) lib.characterIntro[name] ??= intros[name];
+				for (const name in pairs) lib.perfectPair[name] ??= pairs[name];
+				for (const pack in sorts) lib.characterSort[pack] ??= sorts[pack];
+			},
+			character.characterTitle,
+			character.characterIntro,
+			character.perfectPair,
+			character.characterSort,
+		];
 	//联机素材同步：把扩展目录下的武将图发给没装本扩展的客机
 	syncCharacterAssets();
 	lib.element.content.waitForPlayer = function () {

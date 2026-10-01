@@ -501,6 +501,14 @@ const characters = {
 	},
 
 	//限定专属
+	old_lizhaoyi: {
+		sex: "female",
+		group: "shu",
+		hp: 3,
+		skills: ["dcmingjie", "old_dcxianfu"],
+		img: "image/character/lizhaoyi.jpg",
+		dieAudios: ["lizhaoyi"],
+	},
 	old_caofang: {
 		sex: "male",
 		group: "wei",
@@ -1012,7 +1020,7 @@ const characters = {
 		sex: "male",
 		group: "wei",
 		hp: 3,
-		skills: ["twxingshang", "twfangzhu", "twsongwei"],
+		skills: ["old_sbxingshang", "old_sbfangzhu", "old_sbsongwei"],
 		img: "image/character/sb_caopi.jpg",
 		dieAudios: ["sb_caopi"],
 		isZhugong: true,
@@ -1261,14 +1269,6 @@ const characters = {
 	},
 
 	//兵势篇
-	old_pot_dengai: {
-		sex: "male",
-		group: "wei",
-		hp: 3,
-		skills: ["old_pottuntian", "old_potjixi", "old_potzaoxian"],
-		img: "image/character/pot_dengai.jpg",
-		dieAudios: ["pot_dengai"],
-	},
 	old_pot_lusu: {
 		sex: "male",
 		group: "wu",
