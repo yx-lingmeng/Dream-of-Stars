@@ -222,7 +222,7 @@ const characters = {
 		sex: "male",
 		group: "qun",
 		hp: 4,
-		skills: ["oldx_oljiawei", "old_olqujia"],
+		skills: ["oljiawei", "old_olqujia"],
 		img: "image/character/ol_yangfeng.jpg",
 		dieAudios: ["ol_yangfeng"],
 	},
@@ -326,14 +326,6 @@ const characters = {
 		skills: ["yangkuang", "old_cihuang", "old_sanku"],
 		img: "image/character/wangyan.jpg",
 		dieAudios: ["wangyan"],
-	},
-	old_dengzhong: {
-		sex: "male",
-		group: "wei",
-		hp: 4,
-		skills: ["old_dzkanpo", "old_dzgengzhan"],
-		img: "image/character/dengzhong.jpg",
-		dieAudios: ["dengzhong"],
 	},
 	old_zhanghua: {
 		sex: "male",
@@ -625,6 +617,14 @@ const characters = {
 		img: "image/character/dc_chenzhi.jpg",
 		dieAudios: ["dc_chenzhi"],
 	},
+	old_v_guanyinping: {
+		sex: "female",
+		group: "shu",
+		hp: 4,
+		skills: ["old_dcshaowei", "dcdichou"],
+		img: "image/character/v_guanyinping.jpg",
+		dieAudios: ["v_guanyinping"],
+	},
 	old_v_machao: {
 		sex: "male",
 		group: "qun",
@@ -871,6 +871,7 @@ const characters = {
 		group: "wei",
 		hp: 3,
 		skills: ["old_mbqianlong", "old_mbweitong"],
+		img: "image/character/lx_caomao.jpg",
 		isZhugong: true,
 	},
 	old_mb_cuilingyi: {
@@ -1269,6 +1270,22 @@ const characters = {
 	},
 
 	//兵势篇
+	old_pot_chenqun: {
+		sex: "male",
+		group: "wei",
+		hp: 3,
+		skills: ["old_potfaen", "old_potdingpin"],
+		img: "image/character/pot_chenqun.jpg",
+		dieAudios: ["pot_chenqun"],
+	},
+	old_pot_heqi: {
+		sex: "male",
+		group: "wu",
+		hp: 4,
+		skills: ["old_potshanxi", "old_potqizhou"],
+		img: "image/character/pot_heqi.jpg",
+		dieAudios: ["pot_heqi"],
+	},
 	old_pot_lusu: {
 		sex: "male",
 		group: "wu",
@@ -1484,7 +1501,7 @@ const characters = {
 		sex: "male",
 		group: "qun",
 		hp: 4,
-		skills: ["twguanhuo", "old_twjuxia"],
+		skills: ["old_twjuxia"],
 		img: "image/character/jsrg_huangfusong.jpg",
 		dieAudios: ["jsrg_huangfusong"],
 		names: "皇甫|嵩",
@@ -1853,7 +1870,7 @@ const characters = {
 		sex: "male",
 		group: "shen",
 		hp: 4,
-		skills: ["drlt_duorui", "lmzhiti", "shenwuzaishi"],
+		skills: ["drlt_duorui", "hf_zhiti", "shenwuzaishi"],
 		img: "image/character/shen_zhangliao.jpg",
 		dieAudios: ["shen_zhangliao"],
 		groupInGuozhan: "wei",

@@ -43,7 +43,6 @@ const characterTitles = {
 	old_ol_hujinding: "怀子求怜",
 	old_ol_luyusheng: "义姑",
 	old_wangyan: "玄虚陆沉",
-	old_dengzhong: "惠唐亭侯",
 	old_zhanghua: "连理分枝",
 	old_tengfanglan: "铃兰凋落",
 
@@ -87,6 +86,7 @@ const characterTitles = {
 	old_xurong: "玄菟战魔",
 	old_yuanji: "文明皇后",
 	old_dc_chenzhi: "朝野弄权",
+	old_v_guanyinping: "凋棠醒春薄",
 	old_v_machao: "雄烈盖世",
 	old_v_zhangxingcai: "帼姿凤舞",
 	old_dc_sb_zhugeliang: "威谋定疆",
@@ -171,6 +171,8 @@ const characterTitles = {
 	old_sb_xiaoqiao: "矫情之花",
 
 	//兵势篇
+	old_pot_chenqun: "片言折狱",
+	old_pot_heqi: "青銮云耸",
 	old_pot_lusu: "廓开大计",
 	old_pangxi: "壁玉佐君",
 	old_mb_zhangyan: "轻勇骇势",
