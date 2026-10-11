@@ -4803,7 +4803,6 @@ const lmCharacter = {
 		},
 
 		//牵招
-		//牵招
 		old_olkuansai: {
 			audio: "olkuansai",
 			trigger: {
@@ -22394,7 +22393,7 @@ const lmCharacter = {
 		//兵势篇
 		//势陈群
 		old_potfaen: {
-			audio: "potfaen", //复用核心【法恩】语音（改名后必须写引用，见说明1）
+			audio: "potfaen",
 			logAudio: () => 2,
 			trigger: { global: "useCard" },
 			filter(event, player) {
