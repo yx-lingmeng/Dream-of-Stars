@@ -43,7 +43,6 @@ const characterTitles = {
 	old_ol_hujinding: "怀子求怜",
 	old_ol_luyusheng: "义姑",
 	old_wangyan: "玄虚陆沉",
-	old_dengzhong: "惠唐亭侯",
 	old_zhanghua: "连理分枝",
 	old_tengfanglan: "铃兰凋落",
 

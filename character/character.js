@@ -222,7 +222,7 @@ const characters = {
 		sex: "male",
 		group: "qun",
 		hp: 4,
-		skills: ["oldx_oljiawei", "old_olqujia"],
+		skills: ["oljiawei", "old_olqujia"],
 		img: "image/character/ol_yangfeng.jpg",
 		dieAudios: ["ol_yangfeng"],
 	},
@@ -326,14 +326,6 @@ const characters = {
 		skills: ["yangkuang", "old_cihuang", "old_sanku"],
 		img: "image/character/wangyan.jpg",
 		dieAudios: ["wangyan"],
-	},
-	old_dengzhong: {
-		sex: "male",
-		group: "wei",
-		hp: 4,
-		skills: ["old_dzkanpo", "old_dzgengzhan"],
-		img: "image/character/dengzhong.jpg",
-		dieAudios: ["dengzhong"],
 	},
 	old_zhanghua: {
 		sex: "male",

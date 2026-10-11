@@ -130,7 +130,6 @@ const characterReplaces = {
 
 	//本体没有替换的
 	bailingyun: ["old_bailingyun", "bailingyun"],
-	dengzhong: ["old_dengzhong", "dengzhong"],
 	fuqian: ["old_fuqian", "fuqian"],
 	guoyuan: ["old_guoyuan", "guoyuan"],
 	clan_hanrong: ["old_clan_hanrong", "clan_hanrong"],
