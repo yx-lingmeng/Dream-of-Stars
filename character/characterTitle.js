@@ -101,8 +101,9 @@ const characterTitles = {
 	old_wu_guanyu: "义武千秋",
 	old_wu_huangfusong: "襄武翼汉",
 	old_wu_lukang: "桢武熙朝",
-	old_dc_shen_huatuo: "灵魂的医者",
+	old_dc_shen_zhangliao: "雁门之刑天",
 	old_dc_shen_sunquan: "瀚海碧君",
+	old_dc_shen_huatuo: "灵魂的医者",
 
 	//手杀武将
 	//始计篇

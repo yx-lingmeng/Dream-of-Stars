@@ -180,7 +180,7 @@ const characterReplaces = {
 	shen_caopi: ["old_shen_caopi", "sw_caopi"],
 	shen_simayi: ["old_new_simayi", "sw_simayi"],
 	shen_caocao: ["sw_caocao", "lm_old_caocao"],
-	shen_zhangliao: ["sw_zhangliao"],
+	shen_zhangliao: ["old_dc_shen_zhangliao", "sw_zhangliao"],
 	shen_zhenji: ["sw_zhenji"],
 
 	shen_jiangwei: ["old_mb_shen_jiangwei", "oldx_mb_shen_jiangwei"],
