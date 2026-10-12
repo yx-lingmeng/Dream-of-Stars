@@ -12268,7 +12268,7 @@ const lmCharacter = {
 			getSkills(target) {
 				return target.getSkills(null, false, false).filter(skill => {
 					const info = get.info(skill);
-					return info && !info.sub && !info.charlotte && !info.persevereSkill && !info.hiddenSkill && !info.zhuSkill && !info.juexingji && !info.dutySkill && !(info.unique && !info.gainable) && !lib.skill.old_dcduorui.bannedList.includes(skill);
+					return info && !info.sub && !info.charlotte && !info.persevereSkill && !info.hiddenSkill && !info.zhuSkill && !info.juexingji && !info.dutySkill && !(info.unique && !info.gainable) && !(target.disabledSkills[skill] || []).includes("old_dcduorui_effect") && !lib.skill.old_dcduorui.bannedList.includes(skill);
 				});
 			},
 			async content(event, trigger, player) {
@@ -12382,7 +12382,14 @@ const lmCharacter = {
 						}
 					},
 					onremove(player, skill) {
-						game.broadcastAll((player, skill) => player.enableSkill(skill), player, skill);
+						game.broadcastAll(
+							(player, skill) => {
+								delete player.storage[skill];
+								player.enableSkill(skill);
+							},
+							player,
+							skill
+						);
 					},
 					locked: true,
 					mark: true,
@@ -30490,7 +30497,7 @@ const lmCharacter = {
 		old_dckegou_info: "出牌阶段限一次或你使用或打出过牌且不为你的回合结束时，你可与一名其他角色拼点。若你赢，你获得牌堆中X个不同较小点数的牌各一张（X为拼点牌点数的差值且最多为3）；若你没赢，其视为对你使用一张【杀】，然后你可以继续与其拼点并重复上述流程。",
 
 		old_dc_shen_zhangliao: "旧新杀神张辽",
-		old_dc_shen_huatuo_prefix: "旧|新杀神",
+		old_dc_shen_zhangliao_prefix: "旧|新杀|神",
 		old_dccuxi: "猝袭",
 		old_dccuxi_info: "其他角色回合开始时，你可以弃置两张牌，然后令其选择一项：1.由你代替其执行摸牌阶段；2.受到你造成的1点伤害。",
 		old_dcduorui: "夺锐",
