@@ -743,14 +743,14 @@ const characters = {
 		dieAudios: ["wu_lukang"],
 		clans: ["吴郡陆氏"],
 	},
-	old_dc_shen_huatuo: {
+	old_dc_shen_zhangliao: {
 		sex: "male",
 		group: "shen",
-		hp: 3,
-		skills: ["old_jingyu", "lvxin", "huandao"],
-		img: "image/character/dc_shen_huatuo.jpg",
-		dieAudios: ["dc_shen_huatuo"],
-		groupInGuozhan: "qun",
+		hp: 5,
+		skills: ["old_dccuxi", "old_dcduorui", "old_dczhiti"],
+		img: "image/character/dc_shen_zhangliao.jpg",
+		dieAudios: ["shen_zhangliao"],
+		groupInGuozhan: "wei",
 	},
 	old_dc_shen_sunquan: {
 		sex: "male",
@@ -760,6 +760,15 @@ const characters = {
 		img: "image/character/dc_shen_sunquan.jpg",
 		dieAudios: ["dc_shen_sunquan"],
 		groupInGuozhan: "wu",
+	},
+	old_dc_shen_huatuo: {
+		sex: "male",
+		group: "shen",
+		hp: 3,
+		skills: ["old_jingyu", "lvxin", "huandao"],
+		img: "image/character/dc_shen_huatuo.jpg",
+		dieAudios: ["dc_shen_huatuo"],
+		groupInGuozhan: "qun",
 	},
 
 	//手杀武将
