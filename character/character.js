@@ -749,7 +749,7 @@ const characters = {
 		hp: 5,
 		skills: ["old_dccuxi", "old_dcduorui", "old_dczhiti"],
 		img: "image/character/dc_shen_zhangliao.jpg",
-		dieAudios: ["dc_shen_zhangliao"],
+		dieAudios: ["shen_zhangliao"],
 		groupInGuozhan: "wei",
 	},
 	old_dc_shen_sunquan: {
