@@ -151,7 +151,11 @@ export let config = {
 					game.saveConfig("extension_星之梦_pausescrollsize", val);
 					game.saveConfig("pausescrollsize", val);
 					let element = document.querySelector(".pausedbg>.scrollbar");
-					if (element) element.style.right = val.toFixed(1) + "%";
+					if (element) {
+						// 与 js/pause.js 保持一致：默认值 22 对应记录框右缘的默认位置，其余数值为相对偏移（越大越靠左）
+						element.style.left = `calc(34.7% + var(--pauseboxw, 42%) - 3% - ${(val - 22).toFixed(1)}%)`;
+						element.style.right = "auto";
+					}
 				}
 				jianwu.onclick = () => changeValue(-5);
 				jianyi.onclick = () => changeValue(-1);

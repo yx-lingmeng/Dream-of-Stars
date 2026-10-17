@@ -1,3 +1,9 @@
+/*● 新增：记录框尺寸改用“屏幕百分比”控制——换设备/改界面缩放时尺寸保持不变 */
+.pausedbg {
+	--pauseboxw: 42%; /* 记录框宽度 */
+	--pauseboxh: 101%; /* 记录框高度 */
+	--avatarTopOffset: 1%;/*小头像整体下移量*/
+}
 /* 历史记录栏 */
 .pausedbg > .resumedbg {
 	left: 0 !important;
@@ -9,8 +15,9 @@
 .pausedbg > .historybg {
 	transition: all 0.2s linear;
 	display: flex;
-	width: 467px;
-	height: 524px;
+	width: var(--pauseboxw, 42%);
+	height: var(--pauseboxh, 100%);
+	box-sizing: border-box;
 	border-width: 18px 28px 37px 28px;
 	border-style: solid;
 	border-color: transparent;
@@ -21,7 +28,7 @@
     align-items: center;
     justify-content: center;*/
 	position: absolute;
-	top: 0.7%;
+	top: 1%;
 	left: 34.7%;
 	z-index: 6;
 	/*transform: translateY(-50%) scale(1.0);*/
@@ -48,13 +55,17 @@
 	background-size: 100% 100%;
 	background-position: center;
 }
+
+/*●右侧进度条*/
 .pausedbg > .scrollbar {
 	z-index: 6;
-	position: fixed; /* 固定位置，以便在滚动时保持在视图中 */
-	width: 10px;
-	height: 85%;
-	top: 5%;
-	right: 22%;
+	position: absolute;
+	width: 0.8%;
+	box-sizing: border-box;
+	top: 4.5%;
+	height: calc(var(--pauseboxh, 100%) - 10%);
+	left: calc(34.7% + var(--pauseboxw, 42%) - 3%);
+	right: auto;
 	border-width: 4px 0px 7px 0px;
 	border-style: solid;
 	border-color: transparent;
@@ -90,62 +101,84 @@
 	top: 0.7%;
 	left: 34.7%;
 }
+/*●武将小头像*/
 .pausedbg > .content {
 	left: 29.2% !important;
-	top: 2.7% !important;
+	top: calc(2.7% + var(--avatarTopOffset, 0%)) !important;
 	overflow: visible;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	align-content: flex-start;
-	max-width: 88px;
+	width: 7.1%;
 	z-index: 6;
+	/* 改动：武将头像列表上下滚动时不显示浏览器默认滚动条 */
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+/* 改动：隐藏默认滚动条（webkit内核） */
+.pausedbg > .content::-webkit-scrollbar {
+	width: 0 !important;
+	height: 0 !important;
+	display: none;
 }
 .pausedbg > .content > .headbg {
-	width: 88px !important;
-	height: 88px !important;
-	margin: -1px;
+	position: relative;
+	width: 76%;
+	aspect-ratio: 1 / 1;
+	margin: -1%;
 	background-image: url("../image/pause/game_hist_headbg.png");
 	background-size: 100% 100%;
 	background-position: center;
-	zoom: 0.79;
+	/* zoom: 0.76; */ /*●删除：zoom 与百分比混用时宽度会被“缩放坐标系”抵消而失效，改用上面的 width:76% 实现同样的缩小 */
 	opacity: 1;
 	z-index: 6;
 }
+/*●小头像尺寸*/
 .pausedbg > .content > .headbg > .char {
 	position: absolute;
-	width: 80px;
-	height: 80px;
+	width: 90%;
+	height: 90%;
 	background-repeat: no-repeat;
-	background-size: 180px;
+	background-size: 225%;
 	background-position-y: 10%;
 	background-position-x: 50%;
 	/* background-size: 100% 100% !important; */
 	/* background-position: center; */
-	margin: 4px;
+	margin: 4%;
 }
 .pausedbg > .content > .headbg > .char > .namebg {
-	width: 80px;
-	height: 16px;
+	width: 100%;
+	height: 20%;
 	bottom: 0px;
 	left: 0px;
-	line-height: 19px;
+	line-height: 15px;
 	white-space: nowrap;
 	font-weight: 200;
+	overflow: hidden;/*●隐藏超出的武将名*/
 }
 .pausedbg > .content > .headbg > .char > .namebg > .name {
 	display: flex;
-	font-size: 20px;
+	font-size: 15px;
 	font-family: "shousha";
-	top: -10px;
+	top: -7.6px;
 	color: rgb(217, 194, 153);
 	justify-content: center;
+	/* ● 新增：给小头像上的武将名加描边+阴影，使其在头像背景上更清晰明显 */
+	font-weight: 600;
+	text-shadow:
+		0 0.5px 0 rgb(33, 22, 16),
+		0 -0.5px 0 rgb(33, 22, 16),
+		0.5px 0 0 rgb(33, 22, 16),
+		-0.5px 0 0 rgb(33, 22, 16),
+		0 0 1px rgb(33, 22, 16),
+		0 0 1px rgba(0, 0, 0, 0.4);
 }
 .pausedbg > .content > .headbg > .headbg_selected {
 	position: absolute;
-	width: 94px;
-	height: 92px;
-	margin: -4px !important;
+	width: 106%;
+	height: 104%;
+	margin: -4% !important;
 	background-image: none;
 	/*background-position-x: 50%;*/
 	background-size: 100% 100% !important;
@@ -157,12 +190,12 @@
 }
 .pausedbg > .content > .headbg > .identity {
 	right: auto;
-	top: -25px;
-	left: -20px;
-	width: 43px;
-	height: 47px;
-	line-height: 51px;
-	font-size: 31px;
+	top: -28%;
+	left: -22%;
+	width: 48%;
+	height: 53%;
+	line-height: 38px;
+	font-size: 23px;
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -170,17 +203,23 @@
 	transform: none;
 	transition: none;
 }
+
+/*●国战小头像*/
 .pausedbg > .content.guozhan {
+	width: 18.5%;
 	left: 16.8% !important;
-	top: 1.8% !important;
-	max-width: 222px;
+	top: calc(1.8% + var(--avatarTopOffset, 0%)) !important;
 }
 .pausedbg > .content.guozhan > .headbg.guozhan {
-	width: 222px !important;
-	height: 93px !important;
+	width: 73%;
+	aspect-ratio: 213 / 89;
 	background-image: url("../image/pause/game_hist_gz_headbg.png");
 }
+
 .pausedbg > .content.guozhan > .headbg.guozhan > .char {
+	width: 37%;
+	height: 90%;
+	margin: 2%;
 	top: 3%;
 	left: 22.3%;
 }
@@ -188,40 +227,41 @@
 	left: 61.3%;
 }
 .pausedbg > .content.guozhan > .headbg.guozhan > .char > .char_biaoji {
-	top: 6px;
-	right: 54px;
+	top: 7.5%;
+	right: 67.5%;
 	color: rgb(151, 133, 106);
 	font-family: "shousha";
 	font-weight: 900;
-	font-size: 21px;
-	letter-spacing: 1.5px;
+	font-size: 16px;
+	letter-spacing: 1.1px;
 	text-shadow:
-		rgb(43, 31, 25) -1.7px 0px 2.5px,
-		rgb(43, 31, 25) 0px -1.7px 2.5px,
-		rgb(43, 31, 25) 1.7px 0px 2.5px,
-		rgb(43, 31, 25) 0px 1.7px 2.5px;
-	filter: drop-shadow(rgb(43, 31, 25) 0px 0px 0.5px) drop-shadow(rgb(43, 31, 25) 0px 0px 0.5px);
+		rgb(43, 31, 25) -1.29px 0px 1.9px,
+		rgb(43, 31, 25) 0px -1.29px 1.9px,
+		rgb(43, 31, 25) 1.29px 0px 1.9px,
+		rgb(43, 31, 25) 0px 1.29px 1.9px;
+	filter: drop-shadow(rgb(43, 31, 25) 0px 0px 0.38px) drop-shadow(rgb(43, 31, 25) 0px 0px 0.38px);
 }
 .pausedbg > .content.guozhan > .headbg.guozhan > .headbg_selected.guozhan {
-	width: 227px;
-	height: 100px;
+	width: 106%;
+	height: 112%;
 }
 .pausedbg > .content.guozhan > .headbg.guozhan > .identity.guozhan {
-	top: -10px;
-	left: 200px;
-	width: 50px;
-	height: 50px;
+	top: -11%;
+	left: 94%;
+	width: 23%;
+	height: 56%;
 }
 .pausedbg > .content.guozhan > .headbg.guozhan > .headbg_selected.guozhan.light {
 	background-image: url("../image/pause/game_hist_gz_head_selected.png");
 }
 .pausedbg > .content.guozhan > .headbg.guozhan > .seat_num {
 	z-index: 1;
-	width: 75px;
-	height: 65px;
-	bottom: 12px;
-	left: -25px;
-	background-image: url("../image/pause/game_hist_num8.png");
+	position: absolute;
+	width: 35%;
+	height: 73%;
+	bottom: 13%;
+	left: -12%;
+	background-image: url("../image/pause/game_hist_num0.png");/*●*/
 	background-size: 100% 100%;
 	background-position: center;
 }
@@ -249,21 +289,29 @@
 .pausedbg > .content.guozhan > .headbg[data-seat-num="8"].guozhan > .seat_num {
 	background-image: url("../image/pause/game_hist_num8.png");
 }
+/*●*/
+.pausedbg > .content.guozhan > .headbg[data-seat-num="9"].guozhan > .seat_num {
+	background-image: url("../image/pause/game_hist_num9.png");
+}
+.pausedbg > .content.guozhan > .headbg[data-seat-num="10"].guozhan > .seat_num {
+	background-image: url("../image/pause/game_hist_num10.png");
+}
+
 .pausedbg > .identity_btn > .identity_cai.guozhan {
 	background-image: url("../image/pause/game_hist_gz_unknown.png");
 }
 #sidebar {
 	left: 0;
 	top: 0;
-	width: 467px;
+	width: 98%;
 	height: calc(100% - 15px);
 	text-align: left;
 	padding: 0px;
 	overflow-y: scroll;
 	z-index: 6;
-	font-size: 18px;
+	font-size: 20px;
 	color: rgb(217, 194, 153);
-	line-height: 19px;
+	line-height: 21px;
 	/*display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: wrap;*/
@@ -271,79 +319,77 @@
 #sidebar > div {
 	font-family: "shousha";
 }
+
+/* ● 新增：记录框里的“空白记录行”显示成一条按记录框宽度自适应、两端渐隐的分隔线。 空行是本体在回合开始前打的一条空记录，js/pause.js 给它加了 recg-sep 类 */
+.pausedbg > .historybg #sidebar > div.recg-sep {
+	width: 88%;
+	height: 0.5%;
+	min-height: 0;
+	/*覆盖 #sidebar > div 的 min-height，避免这条线被撑粗*/
+	margin: 4% 0;
+	/*线的上和下各空出一行（约一个行高的留白）*/
+	background-color: rgb(72, 55, 47);
+	box-shadow: 0 -1px 0 0 rgb(44, 29, 22), 0 1px 0 0 rgb(44, 29, 22);
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 88%, transparent 100%);
+	-webkit-mask-repeat: no-repeat;
+	mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 88%, transparent 100%);
+	mask-repeat: no-repeat;
+}
+
+/*● 新增：记录框里隐藏“某某进入了XX阶段”这类记录（js/pause.js 会给这类记录加 recg-hide 类）*/
+.pausedbg > .historybg #sidebar > div.recg-hide {
+	display: none !important;
+}
+/* 新增：兜底规则——若上面的结构选择器仍未匹配（不同版本 DOM 结构差异），只要节点在暂停界面（记录框）内就隐藏 recg-hide */
+.pausedbg .recg-hide {
+	display: none !important;
+}
 #sidebar > div,
 #sidebar3 > div {
 	margin: 5px;
 }
-/* 卡牌名称 */
+
+/*●卡牌名称 */
+/* 改动：卡牌名颜色改为 金黄色 */
+/* 改动：原来是 16 层 3px 模糊描边导致文字发虚，改为 1px 实心描边，文字更清晰 */
 #sidebar > div > .yellowtext {
-	color: rgb(255, 255, 25);
+	color: rgb(219, 158, 74);
 	letter-spacing: 4px;
 	text-shadow:
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037;
+		0 1px 0 #4c4037,
+		0 -1px 0 #4c4037,
+		1px 0 0 #4c4037,
+		-1px 0 0 #4c4037,
+		0 0 1px #4c4037;
 }
-/* 武将名称 */
+/*●武将名称 */
+/* 改动：武将名颜色改为浅青绿 rgb(193,216,165) */
 #sidebar > div > .bluetext {
-	color: rgb(37, 197, 35);
+	color: rgb(193, 216, 165);
 }
-/* 技能名称 */
+/* ●技能名称 */
+/* 改动：技能名颜色改为 铜褐橙 */
 #sidebar > div > .greentext {
-	color: rgb(189, 100, 32);
+	color: rgb(190, 100, 40);
 	letter-spacing: 4px;
 	text-shadow:
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037;
+		0 1px 0 #4c4037,
+		0 -1px 0 #4c4037,
+		1px 0 0 #4c4037,
+		-1px 0 0 #4c4037,
+		0 0 1px #4c4037;
 }
-/* 弃牌堆卡牌名称 */
+/*●弃牌堆卡牌名称 */
 #sidebar3 > div {
-	color: rgb(255, 255, 25);
+	color: rgb(255, 255, 25);/*亮黄*/
+	font-size: 19px;
 	letter-spacing: 4px;
 	text-shadow:
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037,
-		0px 0px 3px #4c4037,
-		0 0 3px #4c4037,
-		0 0 3px #4c4037;
+		0 1px 0 #4c4037,
+		0 -1px 0 #4c4037,
+		1px 0 0 #4c4037,
+		-1px 0 0 #4c4037,
+		0 0 1px #4c4037;
 }
 /* #sidebar::-webkit-scrollbar {
     width: 18px;
@@ -371,6 +417,8 @@
 .pausedbg > .content > .headbg > .identity.guessing {
 	cursor: help;
 }
+
+/*●标记身份弹窗*/
 .pausedbg > .content > .headbg > .identity-mark-box {
 	display: flex;
 	position: absolute;
@@ -378,9 +426,9 @@
 	flex-wrap: wrap;
 	/* top: 20%; */
 	top: 4%;
-	left: 16%;
+	left: -22%;
 	/* width: 68%; */
-	width: 136%;
+	width: 142%;
 	height: auto;
 	z-index: 99;
 }
@@ -388,10 +436,10 @@
 	position: static;
 	width: auto;
 	height: auto;
-	min-width: 20px;
+	min-width: 18px;
 	line-height: 20px;
 	border-style: solid;
-	border-width: 10px;
+	border-width: 8px;
 	border-image-width: 18px;
 	border-image-slice: 31 31 fill;
 	border-image-source: url("../image/pause/item_bg.png");
@@ -408,4 +456,9 @@
 }
 .pausedbg > .content > .headbg > .identity-mark-box > .identity-mark-item:active {
 	transform: scale(0.9);
+}
+
+/* 新增：身份标记弹窗浮到头像之上 */
+.pausedbg > .content > .headbg:has(.identity-mark-box) {
+	z-index: 100;
 }

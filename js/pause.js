@@ -31,7 +31,11 @@ if (lib.config.extension_星之梦_pause) {
 		if (!this.classList.contains("guessing")) return;
 
 		if (!window.pauseContainer) {
-			window.pauseContainer = decadeUI.element.create("identity-mark-box");
+			if (window.decadeUI && decadeUI.element) {
+				window.pauseContainer = decadeUI.element.create("identity-mark-box");
+			} else {
+				window.pauseContainer = ui.create.div(".identity-mark-box");
+			}
 			window.pauseContainer.ondeactive = function () {
 				window.pauseContainer.remove();
 				_status.clicked = false;
@@ -45,7 +49,11 @@ if (lib.config.extension_星之梦_pause) {
 		for (const key in identityList) {
 			node = nodes[index];
 			if (!node) {
-				node = decadeUI.element.create("identity-mark-item", window.pauseContainer);
+				if (window.decadeUI && decadeUI.element) {
+					node = decadeUI.element.create("identity-mark-item", window.pauseContainer);
+				} else {
+					node = ui.create.div(".identity-mark-item", window.pauseContainer);
+				}
 				node.addEventListener(lib.config.touchscreen ? "touchend" : "click", function () {
 					event.stopPropagation(); // 阻止事件冒泡
 
@@ -191,13 +199,46 @@ if (lib.config.extension_星之梦_pause) {
 		}
 		ui.system.hide();
 		game.pause2();
-		for (var element of ui.sidebar.children) {
-			element.style.display = "block";
-		}
+		// ● 新增：统一刷新记录行显隐的辅助函数。filterNames 为 null 时显示全部记录；否则只显示文本包含这些名字的记录。
+		//   关键修复：对“分隔线”（空白记录行）做“不连续”限制——只有当上一条“可见”的记录不是分隔线时，才显示当前这条分隔线。
+		//   这样点头像筛选后，中间被隐藏的回合所残留的多条空分隔线，不会连成一大串（解决“分隔线出现太多”）
+		var applySidebarDisplay = function (filterNames) {
+			var prevShownIsSep = false;
+			var seenContent = false; // ● 新增：筛选模式下，是否已经出现过“可见的普通记录”（用于去掉筛选结果最顶部那条多余的分隔线）
+			for (var element of ui.sidebar.children) {
+				// 已被标记的“进入XX阶段”记录始终隐藏，不参与显示计算
+				if (element.classList.contains("recg-hide")) continue;
+				var text = element.textContent || "";
+				var isSep = text.trim().length == 0;
+				var show;
+				// ● 改动：筛选时（filterNames 有值）分隔线还必须“前面已经有可见记录”才显示，从而去掉最顶部那条多余的分隔线
+				if (isSep) show = !prevShownIsSep && (!filterNames || seenContent);
+				else
+					show =
+						!filterNames ||
+						filterNames.some(function (name) {
+							return text.indexOf(name) >= 0;
+						});
+				element.style.display = show ? "block" : "none";
+				if (show) {
+					prevShownIsSep = isSep;
+					if (!isSep) seenContent = true;
+				}
+			}
+		};
+		applySidebarDisplay(null);
 		var node = ui.create.pause();
 		if (!node) return;
 		node.addTempClass("start");
 		var historybg = ui.create.div(".historybg", node);
+		// ● 改动：点击记录框本身不关闭暂停界面，只有点记录框以外的空白区域才关闭（阻止点击/触摸事件冒泡到 .pausedbg 上的关闭逻辑）
+		historybg.addEventListener(lib.config.touchscreen ? "touchend" : "click", function (e) {
+			e.stopPropagation();
+		});
+		// ● 改动：右键点记录框也不关闭暂停界面（桌面上 .pausedbg 绑定了 oncontextmenu 关闭，此处一并拦截，保证与左键行为一致）
+		historybg.addEventListener("contextmenu", function (e) {
+			e.stopPropagation();
+		});
 		var columnbox = ui.create.div(".content", node);
 		if (get.mode() == "guozhan") columnbox.classList.add("guozhan");
 		// 获取场上所有角色
@@ -277,10 +318,8 @@ if (lib.config.extension_星之梦_pause) {
 					event.link = this;
 				}
 				if (selected == this) {
-					// 调整显示内容
-					for (var element of ui.sidebar.children) {
-						element.style.display = "block";
-					}
+					// 调整显示内容：显示全部记录；分隔线仍按“不连续”规则去重
+					applySidebarDisplay(null);
 				} else {
 					if (click[0]) {
 						click[0].classList.remove("light");
@@ -300,22 +339,8 @@ if (lib.config.extension_星之梦_pause) {
 						var names = [current.name, current.name1, current.name2];
 						names = [...new Set(names)];
 						names = names.map(name => get.translation(name)).filter(name => name.length > 0);
-						for (var element of ui.sidebar.children) {
-							var hasPlayer = false;
-							var text = element.innerText || element.textContent || "";
-							if (text.trim().length == 0) {
-								element.style.display = "block";
-								continue;
-							}
-							for (var name of names) {
-								if (text.includes(name)) {
-									hasPlayer = true;
-									element.style.display = "block";
-									break;
-								}
-							}
-							if (!hasPlayer) element.style.display = "none";
-						}
+						// ● 改动：改用统一的显示刷新函数。筛选后残留的多条空分隔线会被去重成“相邻只保留一条”，不再连成一大串
+						applySidebarDisplay(names);
 					}
 				}
 			});
@@ -360,6 +385,36 @@ if (lib.config.extension_星之梦_pause) {
 				identity.addEventListener(lib.config.touchscreen ? "touchend" : "click", ui.click.pauseClick);
 			}
 		}
+		// ● 改动：场上武将较多时，左侧头像列表可上下滚动（否则最下面的头像点不到）
+		if (columnbox.childNodes.length) {
+			var firstIdentity = columnbox.querySelector(".identity");
+			var overX = 0;
+			var overY = 0;
+			if (firstIdentity) {
+				var contentRect = columnbox.getBoundingClientRect();
+				var identityRect = firstIdentity.getBoundingClientRect();
+				// ● 改动：身份标记向左、向上溢出头像列，用内边距预留空间，避免被滚动容器裁掉
+				overX = Math.max(0, Math.ceil(contentRect.left - identityRect.left) + 1);
+				overY = Math.max(0, Math.ceil(contentRect.top - identityRect.top) + 1);
+			}
+			var isGuozhanList = columnbox.classList.contains("guozhan");
+			//●新增：读取 CSS 里的 --avatarTopOffset（见 pause.css），使 CSS 与这里始终用同一个值，避免 CSS 改了却被下面的行内样式覆盖
+			var avatarTopOffset = parseFloat(window.getComputedStyle(node).getPropertyValue("--avatarTopOffset")) || 0;
+			var topPercent = ((isGuozhanList ? 1.8 : 2.7) + avatarTopOffset).toFixed(1) + "%"; //●改动：原为写死的 1.8%/2.7%，现在叠加整列头像下移量
+			var leftPercent = isGuozhanList ? "16.8%" : "29.2%";
+			columnbox.style.overflowY = "auto";
+			columnbox.style.overflowX = "hidden";
+			// ● 改动：保持头像视觉位置不变——容器向外挪出溢出量，再把内边距补回来
+			if (overX > 0) {
+				columnbox.style.paddingLeft = overX + "px";
+				columnbox.style.setProperty("left", "calc(" + leftPercent + " - " + overX + "px)", "important");
+			}
+			if (overY > 0) {
+				columnbox.style.paddingTop = overY + "px";
+				columnbox.style.setProperty("top", "calc(" + topPercent + " - " + overY + "px)", "important");
+			}
+			columnbox.style.height = "calc(100% - " + topPercent + " - 1%)";
+		}
 		ui.sidebar3.innerHTML = "";
 		if (lib.config.show_discardpile) {
 			for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
@@ -369,6 +424,28 @@ if (lib.config.extension_星之梦_pause) {
 			}
 		}
 		historybg.appendChild(ui.sidebar);
+		// ● 新增：记录框内的记录行标记（空白行 → 分隔线；进入阶段 → 隐藏），并刷新一次显隐
+		if (ui.sidebar.children.length) {
+			var logNodes = Array.prototype.slice.call(ui.sidebar.children);
+			// ● 新增：给“空白记录”打标记。本体在每名角色回合开始前会 game.log() 打一条空记录（见 noname 的 phase 事件），
+			//   这里把内容为空白的记录节点加上 recg-sep 类；配合 pause.css 里的规则，只在记录框内把这条空行显示成图2那样的分隔线，
+			//   正常对战时（记录栏不在记录框内）不受影响
+			for (var m = 0; m < logNodes.length; m++) {
+				var sepText = logNodes[m].textContent.trim();
+				if (!sepText) logNodes[m].classList.add("recg-sep");
+				// ● 新增：给“某某进入了XX阶段”这类记录打标记（本体 phase 事件里 game.log(player,"进入了准备/判定/摸牌/出牌/弃牌/结束阶段")）。
+				//   配合 pause.css 的规则，只在记录框里隐藏这类记录；正常对战的记录栏不受影响
+				else if (sepText.indexOf("进入了") >= 0 && sepText.indexOf("阶段") >= 0) {
+					logNodes[m].classList.add("recg-hide");
+					// ● 新增：同时用带 !important 的行内样式直接隐藏，双保险——万一 CSS 选择器没匹配上也能隐藏。
+					//   注意：下面三处筛选循环都会跳过 recg-hide 节点，不会再把它的 display 覆盖成 block，所以这里设的隐藏不会被冲掉
+					logNodes[m].style.setProperty("display", "none", "important");
+				}
+			}
+			// ● 说明：本扩展的 game.log 已改成把新记录 append 到 ui.sidebar（旧的在上、新的在下），
+			//   所以这里不需要参考包里那套 _logSeq 重排；只需在打完标记后按逻辑顺序刷新一次显隐并去重
+			applySidebarDisplay(null);
+		}
 		node.appendChild(ui.sidebar3);
 		ui.historybar.classList.add("paused");
 		ui.arena.classList.add("paused");
@@ -387,7 +464,11 @@ if (lib.config.extension_星之梦_pause) {
 			return typeof val !== "undefined" || val ? val : def;
 		}
 		var scrollbar = ui.create.div(".scrollbar", node);
-		scrollbar.style.right = getConfig("星之梦", "pausescrollsize", 22).toFixed(1) + "%";
+		// ● 改动：滚轮位置改由 CSS 固定（.pausedbg > .scrollbar 的 left，紧跟记录框右缘）；
+		//   “滚轮横向调整”只作为相对偏移，默认值 22 与参考包位置完全重合（数值越大越靠左，与旧版方向一致）
+		var scrollbarOffset = (getConfig("星之梦", "pausescrollsize", 22) - 22).toFixed(1);
+		scrollbar.style.left = `calc(34.7% + var(--pauseboxw, 42%) - 3% - ${scrollbarOffset}%)`;
+		scrollbar.style.right = "auto";
 		var scrollbutton = ui.create.div(".scrollbutton", scrollbar);
 		scrollbutton.classList.add("bottom");
 		ui.sidebar.scrollTop = ui.sidebar.scrollHeight - ui.sidebar.clientHeight; // 设置初始位置为最底部
