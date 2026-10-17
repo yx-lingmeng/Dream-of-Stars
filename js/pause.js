@@ -2,6 +2,39 @@ import { lib, game, ui, get, ai, _status } from "noname";
 if ((lib.config.show_log != "off") & lib.config.extension_星之梦_shoushalog) {
 	lib.init.css(lib.assetURL + "extension/星之梦/css", "shoushalog");
 }
+// ● 记录框头像尺寸：自动按设备（手机 76%、电脑 100%），也可在扩展设置「记录框头像大小」里固定
+//   css/pause.css 读取 body 上的 xzm-avatar-mobile / xzm-avatar-pc 两个类
+function xzmApplyAvatarSize() {
+	if (!document.body) return;
+	const mode = lib.config.extension_星之梦_avatarSize || "auto";
+	let mobile;
+	if (mode === "mobile") mobile = true;
+	else if (mode === "pc") mobile = false;
+	else mobile = !!lib.config.touchscreen && window.innerWidth <= 1200;
+	document.body.classList.toggle("xzm-avatar-mobile", mobile);
+	document.body.classList.toggle("xzm-avatar-pc", mode === "pc");
+}
+xzmApplyAvatarSize();
+// ● 记录框里的身份标记：手杀UI/国战等本身带身份图时沿用图片；默认布局的身份是“白字+彩色描边”，
+//   原来的实现只复制 background-image，所以默认布局下记录框里的身份是空白的（点了标记也看不到）
+function xzmApplyRecordIdentity(identity, source) {
+	if (!identity || !source) return;
+	const image = window.getComputedStyle(source).backgroundImage || "";
+	if (image.indexOf("url(") === 0) {
+		const url = decodeURIComponent(image).replace(/url\(["']?(.*?)["']?\)/i, "$1");
+		identity.setBackgroundImage(url.slice(lib.assetURL.length));
+		identity.textContent = "";
+		identity.style.backgroundColor = "";
+		return;
+	}
+	const textNode = source.firstChild && source.firstChild.nodeType === 1 ? source.firstChild : source;
+	identity.style.backgroundImage = "none";
+	identity.textContent = (textNode.textContent || "").trim();
+	const style = window.getComputedStyle(textNode);
+	identity.style.color = style.color;
+	identity.style.textShadow = style.textShadow;
+	identity.style.backgroundColor = "rgba(0, 0, 0, 0.35)";
+}
 if (lib.config.extension_星之梦_pause) {
 	lib.init.css(lib.assetURL + "extension/星之梦/css", "pause");
 	//历史记录栏美化
@@ -101,13 +134,8 @@ if (lib.config.extension_星之梦_pause) {
 									} else {
 										// 修改player的身份
 										tar.setIdentity(this.link);
-										// 修改headbg的身份
-										var style = window.getComputedStyle(element);
-										var backgroundImage = style.backgroundImage;
-										backgroundImage = decodeURIComponent(backgroundImage); // 将经过URL编码的字符串转换回其原始的UTF-8字符串
-										var url = backgroundImage.replace(/url\([""]?(.*?)[""]?\)/i, "$1");
-										url = url.slice(lib.assetURL.length);
-										identity.setBackgroundImage(url);
+										// 修改记录框头像上的身份（文字身份和图片身份都同步）
+										xzmApplyRecordIdentity(identity, element);
 									}
 								}
 								break;
@@ -199,6 +227,8 @@ if (lib.config.extension_星之梦_pause) {
 		}
 		ui.system.hide();
 		game.pause2();
+		// ● 每次打开记录框时按当前设置刷新一次头像尺寸（改设置后不用重启）
+		xzmApplyAvatarSize();
 		// ● 新增：统一刷新记录行显隐的辅助函数。filterNames 为 null 时显示全部记录；否则只显示文本包含这些名字的记录。
 		//   关键修复：对“分隔线”（空白记录行）做“不连续”限制——只有当上一条“可见”的记录不是分隔线时，才显示当前这条分隔线。
 		//   这样点头像筛选后，中间被隐藏的回合所残留的多条空分隔线，不会连成一大串（解决“分隔线出现太多”）
@@ -371,11 +401,8 @@ if (lib.config.extension_星之梦_pause) {
 						if (group in group_dict) identity.setBackgroundImage(`extension/星之梦/image/pause/game_hist_gz_${group_dict[group]}.png`);
 						else identity.setBackgroundImage(`extension/星之梦/image/pause/game_hist_gz_${group_dict["unknown"]}.png`);
 					} else {
-						var style = window.getComputedStyle(element);
-						var backgroundImage = style.backgroundImage;
-						var url = backgroundImage.replace(/url\([""]?(.*?)[""]?\)/i, "$1");
-						url = url.slice(lib.assetURL.length);
-						identity.setBackgroundImage(url);
+						// ● 默认布局的身份是文字（白字+彩色描边），手杀UI/国战是图片，两种都支持
+						xzmApplyRecordIdentity(identity, element);
 					}
 					break;
 				}

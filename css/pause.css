@@ -1,6 +1,6 @@
 /*● 新增：记录框尺寸改用“屏幕百分比”控制——换设备/改界面缩放时尺寸保持不变 */
 .pausedbg {
-	--pauseboxw: 42%; /* 记录框宽度 */
+	--pauseboxw: 45%; /* 记录框宽度 */
 	--pauseboxh: 101%; /* 记录框高度 */
 	--avatarTopOffset: 1%;/*小头像整体下移量*/
 }
@@ -124,15 +124,27 @@
 }
 .pausedbg > .content > .headbg {
 	position: relative;
-	width: 76%;
+	/* 电脑端 100%；手机/平板由下面的媒体查询或 body 上的 xzm-avatar-mobile 改成 76% */
+	width: 100%;
 	aspect-ratio: 1 / 1;
 	margin: -1%;
 	background-image: url("../image/pause/game_hist_headbg.png");
 	background-size: 100% 100%;
 	background-position: center;
-	/* zoom: 0.76; */ /*●删除：zoom 与百分比混用时宽度会被“缩放坐标系”抵消而失效，改用上面的 width:76% 实现同样的缩小 */
+	/* zoom: 0.76; */ /*●删除：zoom 与百分比混用时宽度会被“缩放坐标系”抵消而失效，改用上面的 width 百分比控制尺寸 */
 	opacity: 1;
 	z-index: 6;
+}
+/*●手机/平板（触屏设备或窄窗口）头像用参考包原值 76%；电脑端沿用上面的 100%
+   优先看扩展设置/自动判断（js/pause.js 给 body 加类）；媒体查询只作为 JS 没运行时的兜底 */
+@media (pointer: coarse), (hover: none), (max-width: 950px) {
+	body:not(.xzm-avatar-pc) .pausedbg > .content > .headbg {
+		width: 76%;
+	}
+}
+/* 扩展设置选「手机（76%）」或自动判断为手机时 */
+body.xzm-avatar-mobile .pausedbg > .content > .headbg {
+	width: 76%;
 }
 /*●小头像尺寸*/
 .pausedbg > .content > .headbg > .char {
@@ -194,8 +206,16 @@
 	left: -22%;
 	width: 48%;
 	height: 53%;
-	line-height: 38px;
+	line-height: 1;
 	font-size: 23px;
+	/* 默认布局的身份是文字，用 flex 居中；手杀UI/国战是图片时这些属性不影响图片显示 */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "shousha", "xinwei";
+	text-align: center;
+	white-space: nowrap;
+	border-radius: 50%;
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	background-position: center;

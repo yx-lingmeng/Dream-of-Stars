@@ -100,6 +100,16 @@ export let config = {
 		init: true,
 		intro: "注意：将“设置-显示-标记身份操作”设置为【菜单】<br>补充：将“设置-显示-暂停时显示弃牌堆”开启，可以显示弃牌堆",
 	},
+	avatarSize: {
+		name: "记录框头像大小",
+		init: "auto",
+		intro: "自动：手机 76%、电脑 100%（8 人场一列）；识别不对时可以直接在这里固定",
+		item: {
+			auto: "自动",
+			mobile: "手机（76%）",
+			pc: "电脑（100%）",
+		},
+	},
 	pausescrollsize: {
 		name: "历史记录栏|滚轮横向调整",
 		clear: true,
