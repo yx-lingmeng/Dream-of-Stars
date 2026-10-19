@@ -37,6 +37,26 @@ function xzmApplyRecordIdentity(identity, source) {
 }
 if (lib.config.extension_星之梦_pause) {
 	lib.init.css(lib.assetURL + "extension/星之梦/css", "pause");
+	// ● 记录框里保留“某某进入了XX阶段”的记录：
+	//   参考包（以及游戏里可能装的十周年UI）会在暂停时给这些行加 recg-hide 并隐藏，
+	//   这里在暂停界面出现后把它们恢复显示，不依赖记录框最终由哪个扩展创建
+	function xzmShowPhaseLogs() {
+		document.querySelectorAll(".pausedbg #sidebar > div.recg-hide").forEach(node => {
+			node.classList.remove("recg-hide");
+			node.style.removeProperty("display");
+		});
+	}
+	if (window.MutationObserver && ui.window) {
+		new MutationObserver(() => {
+			if (document.querySelector(".pausedbg")) {
+				// 记录行是在同一轮点击里构建的，稍后再清一次，兼容异步构建的版本
+				setTimeout(xzmShowPhaseLogs, 0);
+				setTimeout(xzmShowPhaseLogs, 200);
+			}
+		}).observe(ui.window, {
+			childList: true,
+		});
+	}
 	//历史记录栏美化
 	ui.click.pauseClick = function (e) {
 		event.stopPropagation(); // 阻止事件冒泡
@@ -451,7 +471,8 @@ if (lib.config.extension_星之梦_pause) {
 			}
 		}
 		historybg.appendChild(ui.sidebar);
-		// ● 新增：记录框内的记录行标记（空白行 → 分隔线；进入阶段 → 隐藏），并刷新一次显隐
+		// ● 新增：记录框内的记录行标记（空白行 → 分隔线），并刷新一次显隐
+		//   注：参考包原本会把“某某进入了XX阶段”这类记录也隐藏掉（recg-hide），这里保留显示，和本体记录一致
 		if (ui.sidebar.children.length) {
 			var logNodes = Array.prototype.slice.call(ui.sidebar.children);
 			// ● 新增：给“空白记录”打标记。本体在每名角色回合开始前会 game.log() 打一条空记录（见 noname 的 phase 事件），
@@ -460,14 +481,6 @@ if (lib.config.extension_星之梦_pause) {
 			for (var m = 0; m < logNodes.length; m++) {
 				var sepText = logNodes[m].textContent.trim();
 				if (!sepText) logNodes[m].classList.add("recg-sep");
-				// ● 新增：给“某某进入了XX阶段”这类记录打标记（本体 phase 事件里 game.log(player,"进入了准备/判定/摸牌/出牌/弃牌/结束阶段")）。
-				//   配合 pause.css 的规则，只在记录框里隐藏这类记录；正常对战的记录栏不受影响
-				else if (sepText.indexOf("进入了") >= 0 && sepText.indexOf("阶段") >= 0) {
-					logNodes[m].classList.add("recg-hide");
-					// ● 新增：同时用带 !important 的行内样式直接隐藏，双保险——万一 CSS 选择器没匹配上也能隐藏。
-					//   注意：下面三处筛选循环都会跳过 recg-hide 节点，不会再把它的 display 覆盖成 block，所以这里设的隐藏不会被冲掉
-					logNodes[m].style.setProperty("display", "none", "important");
-				}
 			}
 			// ● 说明：本扩展的 game.log 已改成把新记录 append 到 ui.sidebar（旧的在上、新的在下），
 			//   所以这里不需要参考包里那套 _logSeq 重排；只需在打完标记后按逻辑顺序刷新一次显隐并去重
