@@ -100,6 +100,16 @@ export let config = {
 		init: true,
 		intro: "注意：将“设置-显示-标记身份操作”设置为【菜单】<br>补充：将“设置-显示-暂停时显示弃牌堆”开启，可以显示弃牌堆",
 	},
+	avatarSize: {
+		name: "记录框头像大小",
+		init: "auto",
+		intro: "自动：手机 76%、电脑 100%（8 人场一列）；识别不对时可以直接在这里固定",
+		item: {
+			auto: "自动",
+			mobile: "手机（76%）",
+			pc: "电脑（100%）",
+		},
+	},
 	pausescrollsize: {
 		name: "历史记录栏|滚轮横向调整",
 		clear: true,
@@ -151,7 +161,11 @@ export let config = {
 					game.saveConfig("extension_星之梦_pausescrollsize", val);
 					game.saveConfig("pausescrollsize", val);
 					let element = document.querySelector(".pausedbg>.scrollbar");
-					if (element) element.style.right = val.toFixed(1) + "%";
+					if (element) {
+						// 与 js/pause.js 保持一致：默认值 22 对应记录框右缘的默认位置，其余数值为相对偏移（越大越靠左）
+						element.style.left = `calc(34.7% + var(--pauseboxw, 42%) - 3% - ${(val - 22).toFixed(1)}%)`;
+						element.style.right = "auto";
+					}
 				}
 				jianwu.onclick = () => changeValue(-5);
 				jianyi.onclick = () => changeValue(-1);
