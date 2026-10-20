@@ -1,4 +1,22 @@
 import { lib, game, ui, get, ai, _status } from "noname";
+
+//禁止默认昵称（无名玩家 / 请修改昵称 / 点击修改昵称）加入房间
+const bannedDefaultNicknames = ["无名玩家", "请修改昵称", "点击修改昵称"];
+const originServerInit = lib.message?.server?.init;
+if (typeof originServerInit == "function") {
+	lib.message.server.init = function (version, config, banned_info) {
+		//版本或扩展检查不通过时交给本体提示，避免用昵称提示掩盖真正原因
+		const baseAllowed = version == lib.versionOL && !(get.config("check_versionLocal", "connect") && config && config.versionLocal != lib.version) && !(get.config("check_extension", "connect") && config && config.extension);
+		if (baseAllowed && lib.config.extension_星之梦_banDefaultNickname && (!config || typeof config.nickname != "string" || !config.nickname || bannedDefaultNicknames.includes(config.nickname)) && !(config && config.id && lib.playerOL && lib.playerOL[config.id])) {
+			this.send("denied", "加入失败，请修改联机模式的默认昵称后加入。");
+			lib.node.clients.remove(this);
+			this.closed = true;
+			return;
+		}
+		return originServerInit.call(this, version, config, banned_info);
+	};
+}
+
 if (lib.config.extension_星之梦_lianji) {
 	//聊天
 	lib.translate.hehua = "荷花";

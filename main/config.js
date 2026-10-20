@@ -15,7 +15,7 @@ export let config = {
 	cancelwindow: {
 		//搬运自群英会
 		name: "取消弹窗警告",
-		init: true,
+		init: false,
 		intro: "开启此项后取消弹窗警告（自欺欺人），推荐用于忽略报错勉强能玩的场景等，重启游戏后生效。",
 	},
 	guanfangshili: {
@@ -188,6 +188,11 @@ export let config = {
 		init: true,
 		intro: "包括单人开房，连续交互，特殊字体等。",
 	},
+	banDefaultNickname: {
+		name: "禁止默认昵称加入",
+		init: true,
+		intro: "开启后，昵称为“无名玩家”（即未设置联机昵称）、“请修改昵称”或“点击修改昵称”的玩家无法加入你创建的房间，并会收到提示：加入失败，请修改联机模式的默认昵称后加入。<br>仅房主需要开启此项，客机无需安装本扩展。",
+	},
 	fileimport: {
 		name: "导入交互素材",
 		init: false,
@@ -263,12 +268,12 @@ export let config = {
 	},
 	scsEnhance: {
 		name: "增强十常侍",
-		init: true,
+		init: false,
 		intro: "开启后，将十常侍增强为最强版本。",
 	},
 	zxEnhance: {
 		name: "增强郑玄",
-		init: true,
+		init: false,
 		intro: "开启后，将郑玄，水果忍者的斗地主数值调整为与其他模式相同。",
 	},
 	syEnhance: {
