@@ -5635,7 +5635,11 @@ const lmCharacter = {
 					.set("ai", button => {
 						const player = _status.event.player;
 						const target = _status.event.getTrigger().player;
-						const card = { name: button.link[2], nature: button.link[3], storage: { old_cihuang: true } };
+						const card = {
+							name: button.link[2],
+							nature: button.link[3],
+							storage: { old_cihuang: true },
+						};
 						let eff = get.effect(target, card, player, player);
 						if (card.name == "jiedao" && get.attitude(player, target) > 0) {
 							eff -= 10;
@@ -5647,7 +5651,12 @@ const lmCharacter = {
 					return;
 				}
 				const link = result.links[0];
-				const card = { name: link[2], nature: link[3], isCard: true, storage: { old_cihuang: true } };
+				const card = {
+					name: link[2],
+					nature: link[3],
+					isCard: true,
+					storage: { old_cihuang: true },
+				};
 				const next = player.useCard(card, target, "nowuxie", "old_cihuang");
 				next.directHit = [target];
 				await next;
@@ -11535,7 +11544,12 @@ const lmCharacter = {
 							.set("ai", button => {
 								const player = get.player();
 								const user = get.event().user;
-								return user.getUseValue({ name: button.link[2], nature: button.link[3] }) * get.attitude(player, user);
+								return (
+									user.getUseValue({
+										name: button.link[2],
+										nature: button.link[3],
+									}) * get.attitude(player, user)
+								);
 							});
 						const result = await next.forResult();
 						if (!result?.links?.length) {
@@ -12268,12 +12282,13 @@ const lmCharacter = {
 			getSkills(target) {
 				return target.getSkills(null, false, false).filter(skill => {
 					const info = get.info(skill);
-					return info && !info.sub && !info.charlotte && !info.persevereSkill && !info.hiddenSkill && !info.zhuSkill && !info.juexingji && !info.dutySkill && !(info.unique && !info.gainable) && !(target.disabledSkills[skill] || []).includes("old_dcduorui_effect") && !lib.skill.old_dcduorui.bannedList.includes(skill);
+					return info && !info.sub && !info.charlotte && !info.limited && !get.skillCategoriesOf(skill, target).includes("持恒技") && !info.hiddenSkill && !info.zhuSkill && !info.juexingji && !info.dutySkill && !(info.unique && !info.gainable) && !(target.disabledSkills[skill] || []).includes("old_dcduorui_effect") && !lib.skill.old_dcduorui.bannedList.includes(skill);
 				});
 			},
 			async content(event, trigger, player) {
 				const target = event.targets[0];
 				const storage = player.getStorage(event.name, []);
+				//记录按「目标 + 所在出牌阶段」登记，同一窗口内对同一目标只留一条；不在出牌阶段内则记 "next"
 				let phseUse = trigger.getParent(evt => evt.name === "phaseUse" && evt.player === player, true);
 				let info = storage.find(info => info.player === target && info.phaseUse === phseUse);
 				let infoIndex = storage.findIndex(info => info.player === target && info.phaseUse === phseUse);
@@ -12330,10 +12345,17 @@ const lmCharacter = {
 					if (!result?.bool) {
 						return;
 					}
-					const list = result.links.slice();
+					//下发前按同一口径再滤一次，列表来源以后变了也不会绕过这条规则
+					const list = result.links.slice().filter(skill => {
+						const info = get.info(skill);
+						return info && !info.limited && !get.skillCategoriesOf(skill, target).includes("持恒技");
+					});
+					if (!list.length) {
+						return;
+					}
 					info.skill ??= [];
 					info.skill.addArray(list);
-					//客机不跑技能的init，storage与disabledSkills只能靠广播同步
+					//客机不跑 init：storage 与 disabledSkills 只能靠广播同步
 					game.broadcastAll(
 						(target, key, list) => {
 							target.storage[key] = list;
@@ -12376,8 +12398,11 @@ const lmCharacter = {
 			subSkill: {
 				effect: {
 					init(player, skill) {
-						const list = player.storage[skill];
-						if (list?.length) {
+						const list = (player.storage[skill] || []).filter(key => {
+							const info = get.info(key);
+							return info && !info.limited && !get.skillCategoriesOf(key, player).includes("持恒技");
+						});
+						if (list.length) {
 							player.disableSkill(skill, list);
 						}
 					},
@@ -12417,6 +12442,7 @@ const lmCharacter = {
 					},
 					forced: true,
 					silent: true,
+					//你的下个出牌阶段开始：按座位顺序依次恢复废除的装备栏、解除失效技能
 					async content(event, trigger, player) {
 						lib.tempSortSeat = player;
 						const storage = player.getStorage("old_dcduorui", []).sort(({ player: a }, { player: b }) => lib.sort.seat(a, b));
@@ -12424,6 +12450,7 @@ const lmCharacter = {
 						const newStorage = [];
 						while (storage.length) {
 							const info = storage.shift();
+							//目标已离场，或记录就产生于本次出牌阶段开始，先留着
 							if (!info.player?.isIn() || info.phaseUse === trigger) {
 								newStorage.push(info);
 							}
@@ -22925,7 +22952,10 @@ const lmCharacter = {
 			onuse(result, player) {
 				const cards = result.cards || [];
 				if (result.card) {
-					result.card.storage = { ...result.card.storage, old_potshanxi: cards.length || 1 };
+					result.card.storage = {
+						...result.card.storage,
+						old_potshanxi: cards.length || 1,
+					};
 				}
 				const target = result.targets?.[0];
 				if (target) {
@@ -29883,65 +29913,62 @@ const lmCharacter = {
 					const targets = game.filterPlayer(current => current != player && player.inRangeOf(current));
 					return targets.length > 0 && targets.every(current => current.isDamaged()) && game.hasPlayer(current => current != player && current.countEnabledSlot() > 0);
 				}
-				// ② 自己没有可恢复的装备栏就不必发动
+				//② 自己没有可恢复的装备栏就不必发动
 				if (!player.hasDisabledSlot()) {
 					return false;
 				}
-				// ② 受到伤害后
+				//② 受到伤害后
 				if (name == "damageEnd") {
 					return true;
 				}
 				if (![event.player, event.target].includes(player)) {
 					return false;
 				}
-				// ②【决斗】胜利
+				//②【决斗】胜利
 				if (name == "juedouAfter") {
 					return !!event.turn && event.turn !== player;
 				}
-				// ②拼点胜利
+				//② 拼点胜利
 				if (event.preserve) {
 					return false;
 				}
 				return player === event.player ? event.num1 > event.num2 : event.num1 < event.num2;
 			},
 			async content(event, trigger, player) {
-				// ③ 摸牌阶段的额定摸牌数
+				//③ 摸牌阶段的额定摸牌数
 				if (event.triggername == "phaseDrawBegin2") {
 					trigger.num += game.countPlayer(current => current.isDamaged());
 					return;
 				}
-				// ① 废除一名其他角色的一个随机装备栏
+				//① 废除一名其他角色的一个装备栏
 				if (event.triggername == "phaseEnd") {
 					const result = await player
 						.chooseTarget(
-							"止啼：请选择一名其他角色，废除其一个随机装备栏",
+							"止啼：请选择一名其他角色，废除其一个装备栏",
 							true,
 							(card, player, target) => target != player && target.countEnabledSlot() > 0,
 							target => -get.attitude(get.player(), target)
 						)
 						.forResult();
-					const target = result.targets[0];
-					const slots = [];
-					for (let i = 1; i <= 5; i++) {
-						if (target.countEnabledSlot(i) > 0) {
-							slots.push("equip" + i);
-						}
-					}
-					if (!slots.length) {
+					const { targets } = result;
+					//chooseToDisable 的决策者是 source，栏位由发动者指定
+					const ai = (event, receiver, list) => {
+						const cards = receiver.getCards("e");
+						const may = list.filter(slot => cards.some(card => get.subtypes(card).includes(slot)));
+						return (may.length ? may : list).randomGet();
+					};
+					await targets[0].chooseToDisable({ source: player, ai });
 						return;
 					}
-					await target.disableEquip(slots.randomGet());
-					return;
-				}
-				// ② 恢复一个装备栏
+				//② 恢复一个装备栏
 				await player.chooseToEnable();
 			},
 			mod: {
-				// ③ 手牌上限
+				//③ 手牌上限
 				maxHandcard(player, num) {
 					return num + game.countPlayer(current => current.isDamaged());
 				},
-				// ③ 出杀次数
+				//③ 出杀次数
 				cardUsable(card, player, num) {
 					if (card.name == "sha") {
 						return num + game.countPlayer(current => current.isDamaged());
@@ -30503,7 +30530,7 @@ const lmCharacter = {
 		old_dcduorui: "夺锐",
 		old_dcduorui_effect: "失效技能",
 		old_dcduorui_effect_bg: "锐",
-		old_dcduorui_info: "你对其他角色造成伤害时，你可以选择一项：1.废除其一个装备栏直到你的下个出牌阶段开始；2.令其当前拥有的一个技能失效直到你的下个出牌阶段开始。(觉醒技，主公技，隐匿技，使命技等特殊技能除外)",
+		old_dcduorui_info: "你对其他角色造成伤害时，你可以选择一项：1.废除其一个装备栏直到你的下个出牌阶段开始；2.令其当前拥有的一个技能失效直到你的下个出牌阶段开始。(限定技，觉醒技，主公技，隐匿技，使命技等特殊技能除外)",
 		old_dczhiti: "止啼",
 		old_dczhiti_info: "锁定技，摸牌阶段你多摸X张牌（X为场上所有被废除的装备栏数）；其他角色弃牌阶段结束时，若其有被废除的装备栏，你弃置其区域内等量张牌。",
 
@@ -31352,7 +31379,7 @@ const lmCharacter = {
 		"#ext:星之梦/audio/die/wangtaowangyue2:die": "这次比试不算，再来……",
 
 		hf_zhiti: "止啼",
-		hf_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；回合结束时，若你攻击范围内的其他角色均已受伤，你废除一名其他角色的一个随机装备栏。②当你拼点或【决斗】胜利/受到伤害后，你恢复一个装备栏。③你的手牌上限，出杀次数，摸牌阶段的额定摸牌数+X（X为场上已受伤的角色数）",
+		hf_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；回合结束时，若你攻击范围内的其他角色均已受伤，你废除一名其他角色的一个装备栏。②当你拼点或【决斗】胜利/受到伤害后，你恢复一个装备栏。③你的手牌上限，出杀次数，摸牌阶段的额定摸牌数+X（X为场上已受伤的角色数）",
 	},
 };
 if (!_status.postReconnect.extErdai_skill) {

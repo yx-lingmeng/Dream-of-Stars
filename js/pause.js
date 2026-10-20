@@ -15,13 +15,43 @@ function xzmApplyAvatarSize() {
 	document.body.classList.toggle("xzm-avatar-pc", mode === "pc");
 }
 xzmApplyAvatarSize();
+// ● 头像列按可用高度自适应：100% 宽度在 16:9 屏上 8 个头像会比可用高度高约 3%（第 8 个要轻微滚动），
+//   这里反推一个 ≤1 的缩放系数写到 .content 的 --avatarFit 上（css/pause.css 里用 width: calc(...) 读取）
+function xzmFitAvatarColumn(columnbox) {
+	if (!columnbox) return;
+	columnbox.style.removeProperty("--avatarFit");
+	var items = columnbox.children;
+	var count = items.length;
+	if (count < 2) return;
+	// 用 getComputedStyle 的 height（布局尺寸，带小数、不含 transform/zoom 的视觉效果）和 client* 同量纲比较，避免动画/缩放时算错
+	var itemH = parseFloat(window.getComputedStyle(items[0]).height) || items[0].offsetHeight;
+	if (!itemH) return;
+	var style = window.getComputedStyle(columnbox);
+	var padX = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+	var padY = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+	var innerW = columnbox.clientWidth - padX; // 头像列内容宽度（默认 7.1%，国战 18.5%）
+	var innerH = columnbox.clientHeight - padY; // 头像列可用高度
+	if (innerW <= 0 || innerH <= 0) return;
+	// 每个 .headbg 是 margin:-1%（按列宽算），所以 n 行占的总高度约 n*(itemH - 2*margin)
+	var margin = innerW * 0.01;
+	var fit = (Math.max(0, innerH - 4) / count + 2 * margin) / itemH;
+	if (fit < 0.999) columnbox.style.setProperty("--avatarFit", Math.max(0.5, fit).toFixed(4));
+}
 // ● 记录框里的身份标记：手杀UI/国战等本身带身份图时沿用图片；默认布局的身份是“白字+彩色描边”，
 //   原来的实现只复制 background-image，所以默认布局下记录框里的身份是空白的（点了标记也看不到）
 function xzmApplyRecordIdentity(identity, source) {
 	if (!identity || !source) return;
-	const image = window.getComputedStyle(source).backgroundImage || "";
+	let image = "";
+	try {
+		image = window.getComputedStyle(source).backgroundImage || "";
+	} catch (e) {}
 	if (image.indexOf("url(") === 0) {
-		const url = decodeURIComponent(image).replace(/url\(["']?(.*?)["']?\)/i, "$1");
+		// 图片身份（手杀UI/国战）：沿用图片。URL 里可能有 % 等字符，解码失败就直接用原值，避免整个记录框构建中断
+		let url = image;
+		try {
+			url = decodeURIComponent(image);
+		} catch (e) {}
+		url = url.replace(/url\(["']?(.*?)["']?\)/i, "$1");
 		identity.setBackgroundImage(url.slice(lib.assetURL.length));
 		identity.textContent = "";
 		identity.style.backgroundColor = "";
@@ -461,6 +491,8 @@ if (lib.config.extension_星之梦_pause) {
 				columnbox.style.setProperty("top", "calc(" + topPercent + " - " + overY + "px)", "important");
 			}
 			columnbox.style.height = "calc(100% - " + topPercent + " - 1%)";
+			// ● 高度确定后再算缩放（这时 clientHeight / 头像实测尺寸才是最终值）
+			xzmFitAvatarColumn(columnbox);
 		}
 		ui.sidebar3.innerHTML = "";
 		if (lib.config.show_discardpile) {
