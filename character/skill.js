@@ -11857,7 +11857,7 @@ const lmCharacter = {
 			audio: "dczhizhe",
 			enable: "phaseUse",
 			limited: true,
-			filterCard: true,
+			filterCard: card => get.type(card) !== "equip",
 			position: "h",
 			discard: false,
 			lose: false,
@@ -11865,7 +11865,7 @@ const lmCharacter = {
 			skillAnimation: true,
 			animationColor: "metal",
 			check(card) {
-				if (get.type(card) !== "basic" && get.type(card) !== "trick") {
+				if (get.type(card) === "equip") {
 					return 0;
 				}
 				return get.value(card) - 7.5;
@@ -30514,7 +30514,7 @@ const lmCharacter = {
 		old_dcqingshi_info: "当你于出牌阶段使用牌时，若你手牌中有同名牌，你可以选择一项：1.令此牌对其中一个目标角色造成的伤害+1；2.令任意名其他角色各摸一张牌；3.摸X张牌，然后【情势】于本回合失效（X为你的体力值）。",
 		old_dczhizhe: "智哲",
 		old_dczhizhe_clear: "invisible",
-		old_dczhizhe_info: "限定技。出牌阶段，你可以选择一张手牌并复制之。该复制牌不计入你的手牌上限，且当你使用或打出此牌结算结束后，你获得之，然后你本回合不能再使用或打出此牌。",
+		old_dczhizhe_info: "限定技。出牌阶段，你可以选择一张手牌中的非装备牌并复制之。该复制牌不计入你的手牌上限，且当你使用或打出此牌结算结束后，你获得之，然后你本回合不能再使用或打出此牌。",
 
 		old_wu_lukang: "旧武陆抗",
 		old_wu_lukang_prefix: "旧|武",
