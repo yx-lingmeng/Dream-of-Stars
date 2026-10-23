@@ -15,13 +15,43 @@ function xzmApplyAvatarSize() {
 	document.body.classList.toggle("xzm-avatar-pc", mode === "pc");
 }
 xzmApplyAvatarSize();
+// ● 头像列按可用高度自适应：100% 宽度在 16:9 屏上 8 个头像会比可用高度高约 3%（第 8 个要轻微滚动），
+//   这里反推一个 ≤1 的缩放系数写到 .content 的 --avatarFit 上（css/pause.css 里用 width: calc(...) 读取）
+function xzmFitAvatarColumn(columnbox) {
+	if (!columnbox) return;
+	columnbox.style.removeProperty("--avatarFit");
+	var items = columnbox.children;
+	var count = items.length;
+	if (count < 2) return;
+	// 用 getComputedStyle 的 height（布局尺寸，带小数、不含 transform/zoom 的视觉效果）和 client* 同量纲比较，避免动画/缩放时算错
+	var itemH = parseFloat(window.getComputedStyle(items[0]).height) || items[0].offsetHeight;
+	if (!itemH) return;
+	var style = window.getComputedStyle(columnbox);
+	var padX = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+	var padY = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+	var innerW = columnbox.clientWidth - padX; // 头像列内容宽度（默认 7.1%，国战 18.5%）
+	var innerH = columnbox.clientHeight - padY; // 头像列可用高度
+	if (innerW <= 0 || innerH <= 0) return;
+	// 每个 .headbg 是 margin:-1%（按列宽算），所以 n 行占的总高度约 n*(itemH - 2*margin)
+	var margin = innerW * 0.01;
+	var fit = (Math.max(0, innerH - 4) / count + 2 * margin) / itemH;
+	if (fit < 0.999) columnbox.style.setProperty("--avatarFit", Math.max(0.5, fit).toFixed(4));
+}
 // ● 记录框里的身份标记：手杀UI/国战等本身带身份图时沿用图片；默认布局的身份是“白字+彩色描边”，
 //   原来的实现只复制 background-image，所以默认布局下记录框里的身份是空白的（点了标记也看不到）
 function xzmApplyRecordIdentity(identity, source) {
 	if (!identity || !source) return;
-	const image = window.getComputedStyle(source).backgroundImage || "";
+	let image = "";
+	try {
+		image = window.getComputedStyle(source).backgroundImage || "";
+	} catch (e) {}
 	if (image.indexOf("url(") === 0) {
-		const url = decodeURIComponent(image).replace(/url\(["']?(.*?)["']?\)/i, "$1");
+		// 图片身份（手杀UI/国战）：沿用图片。URL 里可能有 % 等字符，解码失败就直接用原值，避免整个记录框构建中断
+		let url = image;
+		try {
+			url = decodeURIComponent(image);
+		} catch (e) {}
+		url = url.replace(/url\(["']?(.*?)["']?\)/i, "$1");
 		identity.setBackgroundImage(url.slice(lib.assetURL.length));
 		identity.textContent = "";
 		identity.style.backgroundColor = "";
@@ -37,6 +67,26 @@ function xzmApplyRecordIdentity(identity, source) {
 }
 if (lib.config.extension_星之梦_pause) {
 	lib.init.css(lib.assetURL + "extension/星之梦/css", "pause");
+	// ● 记录框里保留“某某进入了XX阶段”的记录：
+	//   参考包（以及游戏里可能装的十周年UI）会在暂停时给这些行加 recg-hide 并隐藏，
+	//   这里在暂停界面出现后把它们恢复显示，不依赖记录框最终由哪个扩展创建
+	function xzmShowPhaseLogs() {
+		document.querySelectorAll(".pausedbg #sidebar > div.recg-hide").forEach(node => {
+			node.classList.remove("recg-hide");
+			node.style.removeProperty("display");
+		});
+	}
+	if (window.MutationObserver && ui.window) {
+		new MutationObserver(() => {
+			if (document.querySelector(".pausedbg")) {
+				// 记录行是在同一轮点击里构建的，稍后再清一次，兼容异步构建的版本
+				setTimeout(xzmShowPhaseLogs, 0);
+				setTimeout(xzmShowPhaseLogs, 200);
+			}
+		}).observe(ui.window, {
+			childList: true,
+		});
+	}
 	//历史记录栏美化
 	ui.click.pauseClick = function (e) {
 		event.stopPropagation(); // 阻止事件冒泡
@@ -441,6 +491,8 @@ if (lib.config.extension_星之梦_pause) {
 				columnbox.style.setProperty("top", "calc(" + topPercent + " - " + overY + "px)", "important");
 			}
 			columnbox.style.height = "calc(100% - " + topPercent + " - 1%)";
+			// ● 高度确定后再算缩放（这时 clientHeight / 头像实测尺寸才是最终值）
+			xzmFitAvatarColumn(columnbox);
 		}
 		ui.sidebar3.innerHTML = "";
 		if (lib.config.show_discardpile) {
@@ -451,7 +503,8 @@ if (lib.config.extension_星之梦_pause) {
 			}
 		}
 		historybg.appendChild(ui.sidebar);
-		// ● 新增：记录框内的记录行标记（空白行 → 分隔线；进入阶段 → 隐藏），并刷新一次显隐
+		// ● 新增：记录框内的记录行标记（空白行 → 分隔线），并刷新一次显隐
+		//   注：参考包原本会把“某某进入了XX阶段”这类记录也隐藏掉（recg-hide），这里保留显示，和本体记录一致
 		if (ui.sidebar.children.length) {
 			var logNodes = Array.prototype.slice.call(ui.sidebar.children);
 			// ● 新增：给“空白记录”打标记。本体在每名角色回合开始前会 game.log() 打一条空记录（见 noname 的 phase 事件），
@@ -460,14 +513,6 @@ if (lib.config.extension_星之梦_pause) {
 			for (var m = 0; m < logNodes.length; m++) {
 				var sepText = logNodes[m].textContent.trim();
 				if (!sepText) logNodes[m].classList.add("recg-sep");
-				// ● 新增：给“某某进入了XX阶段”这类记录打标记（本体 phase 事件里 game.log(player,"进入了准备/判定/摸牌/出牌/弃牌/结束阶段")）。
-				//   配合 pause.css 的规则，只在记录框里隐藏这类记录；正常对战的记录栏不受影响
-				else if (sepText.indexOf("进入了") >= 0 && sepText.indexOf("阶段") >= 0) {
-					logNodes[m].classList.add("recg-hide");
-					// ● 新增：同时用带 !important 的行内样式直接隐藏，双保险——万一 CSS 选择器没匹配上也能隐藏。
-					//   注意：下面三处筛选循环都会跳过 recg-hide 节点，不会再把它的 display 覆盖成 block，所以这里设的隐藏不会被冲掉
-					logNodes[m].style.setProperty("display", "none", "important");
-				}
 			}
 			// ● 说明：本扩展的 game.log 已改成把新记录 append 到 ui.sidebar（旧的在上、新的在下），
 			//   所以这里不需要参考包里那套 _logSeq 重排；只需在打完标记后按逻辑顺序刷新一次显隐并去重

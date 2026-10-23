@@ -21,7 +21,7 @@ lib.skill._OpenTheGame = {
 	direct: true,
 	firstDo: true,
 	priority: Infinity,
-	content: function () {
+	async content(event, trigger, player) {
 		player.$fullscreenpop("游戏开始", "fire");
 		game.broadcastAll(function (config) {
 			if (lib.config.background_audio) game.playAudio("..", "extension", "星之梦/audio/effect", "bilibili_OpenTheGame" + (config === "default" ? "" : "_" + config));
@@ -39,7 +39,7 @@ lib.skill._bilibili_miaoshou = {
 	direct: true,
 	firstDo: true,
 	forceDie: true,
-	content: function () {
+	async content(event, trigger, player) {
 		const config = lib.config.extension_星之梦_HDfightAudio;
 		trigger.player.$fullscreenpop({ default: "妙手回春", decade: "青囊济世", ol: "悬壶济世" }[config], "water");
 		game.broadcastAll(function (config) {
@@ -58,7 +58,7 @@ lib.skill._bilibili_yishu = {
 	direct: true,
 	firstDo: true,
 	forceDie: true,
-	content: function () {
+	async content(event, trigger, player) {
 		const config = lib.config.extension_星之梦_HDfightAudio;
 		trigger.player.$fullscreenpop({ default: "医术高超", decade: "神医妙手", ol: "杏林春满" }[config], "water");
 		game.broadcastAll(function (config) {
@@ -81,15 +81,15 @@ lib.skill._recovertrigger = {
 	direct: true,
 	firstDo: true,
 	forceDie: true,
-	content: function () {
+	async content(event, trigger, player) {
 		if (trigger.name === "phase") delete player.storage.jstxyishugaochao;
-		else if (_status.currentPhase !== player) _status.event.trigger("xmiaoshou");
+		else if (_status.currentPhase !== player) await event.trigger("xmiaoshou");
 		else {
 			if (player.storage.jstxyishugaochao == undefined) player.storage.jstxyishugaochao = trigger.num;
 			else player.storage.jstxyishugaochao += trigger.num;
 			if (player.storage.jstxyishugaochao >= 3) {
 				player.storage.jstxyishugaochao -= 3;
-				_status.event.trigger("xyishu");
+				await event.trigger("xyishu");
 			}
 		}
 	},
@@ -104,11 +104,9 @@ lib.skill._jishaAudio = {
 	},
 	direct: true,
 	firstDo: true,
-	content: function () {
-		"step 0";
+	async content(event, trigger, player) {
 		if (!player.storage.bilibili_kill) player.storage.bilibili_kill = 0;
 		player.storage.bilibili_kill++;
-		"step 1";
 		let config = lib.config.extension_星之梦_HDfightAudio;
 		config = config === "default" ? lib.config.extension_星之梦_HDkillAudio : config;
 		let list;
@@ -150,7 +148,7 @@ lib.skill._bilibili_HighDamageAudio = {
 	direct: true,
 	lastDo: true,
 	priority: -Infinity,
-	content: function () {
+	async content(event, trigger, player) {
 		const config = lib.config.extension_星之梦_HDfightAudio === "decade";
 		if (trigger.num == 3) {
 			player.$fullscreenpop(config ? "万夫莫敌" : "癫狂屠戮", "fire");

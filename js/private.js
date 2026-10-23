@@ -283,26 +283,26 @@ if (lib.config.extension_星之梦_tmEnhance) {
 			}
 			return true;
 		},
-		content() {
-			"step 0";
-			player.chooseToDiscard(2, true, "he");
-			player.draw(2);
-			"step 1";
-			player.chooseTarget("是否令一名角色弃置两张牌，然后摸两张牌？").set("ai", function (target) {
-				var cards = target.getCards("he");
-				if (cards.length <= 2) {
-					for (var i = 0; i < cards.length; i++) {
-						if (cards[i].name == "shan" || cards[i].name == "tao") return 0;
+		async content(event, trigger, player) {
+			await player.chooseToDiscard(2, true, "he");
+			await player.draw(2);
+			const result = await player
+				.chooseTarget("是否令一名角色弃置两张牌，然后摸两张牌？")
+				.set("ai", function (target) {
+					var cards = target.getCards("he");
+					if (cards.length <= 2) {
+						for (var i = 0; i < cards.length; i++) {
+							if (cards[i].name == "shan" || cards[i].name == "tao") return 0;
+						}
 					}
-				}
-				return get.attitude(player, target) * (target == player ? 1.2 : 1);
-			});
-			"step 2";
+					return get.attitude(player, target) * (target == player ? 1.2 : 1);
+				})
+				.forResult();
 			if (result.bool) {
 				var target = result.targets[0];
 				player.line(target);
-				target.chooseToDiscard(2, true, "he");
-				target.draw(2);
+				await target.chooseToDiscard(2, true, "he");
+				await target.draw(2);
 			}
 		},
 		ai: {
@@ -713,9 +713,8 @@ if (lib.config.extension_星之梦_scsEnhance) {
 		filter(event, player) {
 			return event.card.name == "sha" && event.target.hp > 0 && event.target.countCards("he") > 0;
 		},
-		content() {
-			"step 0";
-			var next = player.choosePlayerCard(trigger.target, "he", [1, 2], get.prompt("scschiyan", trigger.target));
+		async content(event, trigger, player) {
+			const next = player.choosePlayerCard(trigger.target, "he", [1, 2], get.prompt("scschiyan", trigger.target));
 			setTimeout(function () {
 				game.broadcastAll(function () {
 					decadeUI.animation.playSpine({ name: "shichangshi/scs_zhaozhong/XingXiang", action: "GongJi" }, { x: [0, 0.4], y: [0, 0.4], scale: 0.44 });
@@ -729,12 +728,14 @@ if (lib.config.extension_星之梦_scsEnhance) {
 			});
 			next.set("goon", get.attitude(player, trigger.target) <= 0);
 			next.set("forceAuto", true);
-			"step 1";
+			const result = await next.forResult();
 			if (result.bool) {
 				var target = trigger.target;
 				player.logSkill("scschiyan", target);
 				target.addSkill("scschiyan_get");
-				target.addToExpansion("giveAuto", result.cards, target).gaintag.add("scschiyan_get");
+				const expansion = target.addToExpansion("giveAuto", result.cards, target);
+				expansion.gaintag.add("scschiyan_get");
+				await expansion;
 			}
 		},
 		ai: {
@@ -757,12 +758,10 @@ if (lib.config.extension_星之梦_scsEnhance) {
 				filter(event, player) {
 					return player.getExpansions("scschiyan_get").length > 0;
 				},
-				content() {
-					"step 0";
-					var cards = player.getExpansions("scschiyan_get");
-					player.gain(cards, "draw");
+				async content(event, trigger, player) {
+					const cards = player.getExpansions("scschiyan_get");
+					await player.gain(cards, "draw");
 					game.log(player, "收回了" + get.cnNumber(cards.length) + "张“鸱咽”牌");
-					"step 1";
 					player.removeSkill("scschiyan_get");
 				},
 				intro: {
@@ -784,7 +783,7 @@ if (lib.config.extension_星之梦_scsEnhance) {
 					var target = event.player;
 					return event.getParent().name == "sha" && player.countCards("h") >= target.countCards("h") && player.countCards("e") >= target.countCards("e");
 				},
-				content() {
+				async content(event, trigger, player) {
 					trigger.num++;
 				},
 			},
@@ -803,14 +802,15 @@ if (lib.config.extension_星之梦_scsEnhance) {
 		filterTarget(card, player, current) {
 			return player.canCompare(current);
 		},
-		content() {
-			"step 0";
-			player.chooseToCompare(target);
-			"step 1";
+		async content(event, trigger, player) {
+			const target = event.target;
+			const result = await player.chooseToCompare(target).forResult();
 			if (result.bool) {
 				target.skip("phaseDraw");
 				target.addTempSkill("scsyaozhuo_skip", { player: "phaseDrawSkipped" });
-			} else player.chooseToDiscard(1, true, "he");
+			} else {
+				await player.chooseToDiscard(1, true, "he");
+			}
 		},
 		subSkill: {
 			skip: {
@@ -841,20 +841,20 @@ if (lib.config.extension_星之梦_scsEnhance) {
 		audio: 1,
 		enable: "phaseUse",
 		usable: 1,
-		content() {
-			"step 0";
+		async content(event, trigger, player) {
 			setTimeout(function () {
 				game.broadcastAll(function () {
 					decadeUI.animation.playSpine({ name: "shichangshi/scs_hankui/XingXiang", action: "GongJi" }, { x: [0, 0.4], y: [0, 0.4], scale: 0.49 });
 				});
 			}, 100);
-			player.draw(3);
-			"step 1";
-			var num = player.countCards("he");
-			if (!num) event.finish();
-			else if (num < 3) event._result = { index: 1 };
-			else
-				player
+			await player.draw(3);
+			const num = player.countCards("he");
+			if (!num) return;
+			let result;
+			if (num < 3) {
+				result = { index: 1 };
+			} else {
+				result = await player
 					.chooseControl()
 					.set("choiceList", ["将三张牌交给一名其他角色", "弃置三张手牌"])
 					.set("ai", function () {
@@ -865,36 +865,37 @@ if (lib.config.extension_星之梦_scsEnhance) {
 						)
 							return 0;
 						return 1;
-					});
-			"step 2";
-			if (result.index == 0) {
-				player.chooseCardTarget({
-					position: "he",
-					filterCard: true,
-					selectCard: 3,
-					filterTarget(card, player, target) {
-						return player != target;
-					},
-					ai1(card) {
-						return get.unuseful(card);
-					},
-					ai2(target) {
-						var att = get.attitude(_status.event.player, target);
-						if (target.hasSkillTag("nogain")) att /= 10;
-						if (target.hasJudge("lebu")) att /= 5;
-						return att;
-					},
-					prompt: "选择三张牌，交给一名其他角色",
-					forced: true,
-				});
-			} else {
-				player.chooseToDiscard(3, true, "he");
-				event.finish();
+					})
+					.forResult();
 			}
-			"step 3";
-			if (result.bool) {
-				var target = result.targets[0];
-				player.give(result.cards, target);
+			if (result.index == 0) {
+				result = await player
+					.chooseCardTarget({
+						position: "he",
+						filterCard: true,
+						selectCard: 3,
+						filterTarget(card, player, target) {
+							return player != target;
+						},
+						ai1(card) {
+							return get.unuseful(card);
+						},
+						ai2(target) {
+							var att = get.attitude(_status.event.player, target);
+							if (target.hasSkillTag("nogain")) att /= 10;
+							if (target.hasJudge("lebu")) att /= 5;
+							return att;
+						},
+						prompt: "选择三张牌，交给一名其他角色",
+						forced: true,
+					})
+					.forResult();
+				if (result.bool) {
+					var target = result.targets[0];
+					await player.give(result.cards, target);
+				}
+			} else {
+				await player.chooseToDiscard(3, true, "he");
 			}
 		},
 		ai: {
@@ -917,8 +918,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 		filter(event, player) {
 			return !player.hasSkill("zhengjing3");
 		},
-		content() {
-			"step 0";
+		async content(event, trigger, player) {
 			//game.trySkillAudio('zhengjing_guanju',player);
 			if (_status.connectMode) event.time = lib.configOL.choose_timeout;
 			var cards = [];
@@ -937,7 +937,6 @@ if (lib.config.extension_星之梦_zxEnhance) {
 			}
 			event.cards = cards;
 			if (!cards.length) {
-				event.finish();
 				return;
 			}
 			event.videoId = lib.status.videoId++;
@@ -945,19 +944,22 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				game.swapPlayerAuto(player);
 			}
 			var switchToAuto = function () {
-				names.remove("du");
-				game.pause();
-				game.countChoose();
-				setTimeout(function () {
-					_status.imchoosing = false;
-					event._result = {
-						bool: true,
-						links: names.slice(0),
-					};
-					if (event.dialog) event.dialog.close();
-					if (event.control) event.control.close();
-					game.resume();
-				}, 5000);
+				return new Promise(function (resolve) {
+					names.remove("du");
+					game.pause();
+					game.countChoose();
+					setTimeout(function () {
+						_status.imchoosing = false;
+						event._result = {
+							bool: true,
+							links: names.slice(0),
+						};
+						if (event.dialog) event.dialog.close();
+						if (event.control) event.control.close();
+						game.resume();
+						resolve(event._result);
+					}, 5000);
+				});
 			};
 			var createDialog = function (player, id) {
 				if (_status.connectMode) lib.configOL.choose_timeout = "30";
@@ -965,7 +967,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				var str = get.translation(player) + "正在整理经书...<br>";
 				ui.create.dialog(str).videoId = id;
 			};
-			var chooseButton = function (list) {
+			var chooseButton = function (list, resolve) {
 				var roundmenu = false;
 				if (ui.roundmenu && ui.roundmenu.display != "none") {
 					roundmenu = true;
@@ -1006,6 +1008,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 					game.resume();
 					_status.imchoosing = false;
 					if (roundmenu) ui.roundmenu.style.display = "";
+					resolve?.(event._result);
 				};
 				event.dialog.classList.add("fixed");
 				event.dialog.classList.add("scroll1");
@@ -1092,16 +1095,22 @@ if (lib.config.extension_星之梦_zxEnhance) {
 			};
 			//event.switchToAuto=switchToAuto;
 			game.broadcastAll(createDialog, player, event.videoId);
+			let result;
 			if (event.isMine()) {
-				chooseButton(names);
+				result = await new Promise(function (resolve) {
+					chooseButton(names, resolve);
+				});
 			} else if (event.isOnline()) {
+				const { promise, resolve } = Promise.withResolvers();
 				event.player.send(chooseButton, names);
-				event.player.wait();
+				event.player.wait(function (result) {
+					resolve(result);
+				});
 				game.pause();
+				result = await promise;
 			} else {
-				switchToAuto();
+				result = await switchToAuto();
 			}
-			"step 1";
 			game.broadcastAll(
 				function (id, time) {
 					if (_status.connectMode) lib.configOL.choose_timeout = time;
@@ -1113,73 +1122,74 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				event.videoId,
 				event.time
 			);
-			var result = event.result || result;
 			for (var i = 0; i < cards.length; i++) {
 				//if(cards.length==1) break;
 				if (!result.links.includes(cards[i].name)) cards.splice(i--, 1);
 			}
 			if (cards.length) {
-				player.showCards(cards, get.translation(player) + "整理出了以下经典");
-				game.cardsGotoOrdering(cards);
+				await player.showCards(cards, get.translation(player) + "整理出了以下经典");
+				await game.cardsGotoOrdering(cards);
 			} else {
 				game.log(player, "并没有整理出经典");
 				player.popup("杯具");
-				event.finish();
-			}
-			"step 2";
-			game.updateRoundNumber();
-			player.chooseTarget(true, "将整理出的经典置于一名角色的武将牌上").set("ai", function (target) {
-				if (target.hasSkill("xinfu_pdgyingshi")) return 0;
-				let player = _status.event.player,
-					cards = _status.event.getParent().cards,
-					att = get.attitude(player, target),
-					js = target.getCards("j", i => {
-						let name = i.viewAs || i.name,
-							info = lib.card[name];
-						if (!info || !info.judge) return false;
-						return true;
-					}),
-					eff = -1.5 * get.effect(target, { name: "draw" }, player, player);
-				if (js.length)
-					eff += js.reduce((acc, i) => {
-						let name = i.viewAs || i.name;
-						return acc - 0.7 * get.effect(target, get.autoViewAs({ name }, [i]), target, player);
-					}, 0);
-				return eff;
-			});
-			"step 3";
-			if (result.bool) {
-				var target = result.targets[0];
-				event.target = target;
-				player.line(target, "thunder");
-			}
-			"step 4";
-			if (cards.length == 1) {
-				event._result = { bool: true, moved: [cards, []] };
 				return;
 			}
-			var next = player.chooseToMove("整经：请分配整理出的经典", true);
-			next.set("list", [["置于" + get.translation(target) + "的武将牌上", cards], ["自己获得"]]);
-			next.set("filterMove", function (from, to, moved) {
-				if (moved[0].length == 1 && to == 1 && from.link == moved[0][0]) return false;
-				return true;
-			});
-			next.set("filterOk", function (moved) {
-				return moved[0].length > 0;
-			});
-			next.set("processAI", function (list) {
-				var cards = list[0][1].slice(0).sort(function (a, b) {
-					return get.value(a) - get.value(b);
+			game.updateRoundNumber();
+			const targetResult = await player
+				.chooseTarget(true, "将整理出的经典置于一名角色的武将牌上")
+				.set("ai", function (target) {
+					if (target.hasSkill("xinfu_pdgyingshi")) return 0;
+					let player = _status.event.player,
+						cards = _status.event.getParent().cards,
+						att = get.attitude(player, target),
+						js = target.getCards("j", i => {
+							let name = i.viewAs || i.name,
+								info = lib.card[name];
+							if (!info || !info.judge) return false;
+							return true;
+						}),
+						eff = -1.5 * get.effect(target, { name: "draw" }, player, player);
+					if (js.length)
+						eff += js.reduce((acc, i) => {
+							let name = i.viewAs || i.name;
+							return acc - 0.7 * get.effect(target, get.autoViewAs({ name }, [i]), target, player);
+						}, 0);
+					return eff;
+				})
+				.forResult();
+			if (!targetResult.bool) return;
+			var target = targetResult.targets[0];
+			event.target = target;
+			player.line(target, "thunder");
+			let moveResult;
+			if (cards.length == 1) {
+				moveResult = { bool: true, moved: [cards, []] };
+			} else {
+				const next = player.chooseToMove("整经：请分配整理出的经典", true);
+				next.set("list", [["置于" + get.translation(target) + "的武将牌上", cards], ["自己获得"]]);
+				next.set("filterMove", function (from, to, moved) {
+					if (moved[0].length == 1 && to == 1 && from.link == moved[0][0]) return false;
+					return true;
 				});
-				return [cards.splice(0, 1), cards];
-			});
-			"step 5";
-			if (result.bool) {
-				var cards = result.moved[0],
-					gains = result.moved[1];
+				next.set("filterOk", function (moved) {
+					return moved[0].length > 0;
+				});
+				next.set("processAI", function (list) {
+					var cards = list[0][1].slice(0).sort(function (a, b) {
+						return get.value(a) - get.value(b);
+					});
+					return [cards.splice(0, 1), cards];
+				});
+				moveResult = await next.forResult();
+			}
+			if (moveResult.bool) {
+				const puts = moveResult.moved[0],
+					gains = moveResult.moved[1];
 				target.addSkill("zhengjing2");
-				target.addToExpansion(cards, "gain2").gaintag.add("zhengjing2");
-				if (gains.length) player.gain(gains, "gain2");
+				const expansion = target.addToExpansion(puts, "gain2");
+				expansion.gaintag.add("zhengjing2");
+				await expansion;
+				if (gains.length) await player.gain(gains, "gain2");
 			}
 		},
 		ai: {
@@ -1212,7 +1222,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 					if (cards.length >= 5) break;
 				} else break;
 			}
-			if (!cards.length) return event.finish();
+			if (!cards.length) return;
 			let cardx = { du: names.length },
 				num = [3, 4].randomGet();
 			for (const i of names) cardx[i] = num; //切牌数
@@ -1533,7 +1543,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				game.pause();
 				next = promise;
 			} else next = switchToAuto();
-			const result = await next.forResult();
+			const result = await next;
 			game.broadcastAll(
 				(id, time) => {
 					if (_status.connectMode) lib.configOL.choose_timeout = time;
@@ -1550,7 +1560,7 @@ if (lib.config.extension_星之梦_zxEnhance) {
 				game.log(player, "并没有整理出经典");
 				player.popup("杯具");
 				await game.delayx();
-				return event.finish();
+				return;
 			}
 			player.popup("洗具");
 			game.broadcastAll(() => {
@@ -1719,9 +1729,8 @@ if (lib.config.extension_星之梦_vtbEnhance) {
 		filter(event, player) {
 			return player.countCards("he") >= 2;
 		},
-		content() {
-			"step 0";
-			player
+		async content(event, trigger, player) {
+			const result = await player
 				.chooseToDiscard(get.prompt2("vtbleyu", trigger.player), 2, "he")
 				.set("ai", card => {
 					if (ui.selected.cards.length == 2) return 10 - get.value(card);
@@ -1731,13 +1740,11 @@ if (lib.config.extension_星之梦_vtbEnhance) {
 					return 0;
 				})
 				.set("effect", trigger.player.hasJudge("lebu") ? 0 : get.effect(trigger.player, { name: "lebu" }, player, player))
-				.set("logSkill", ["vtbleyu", trigger.player]);
-			"step 1";
-			if (result.bool) {
-				trigger.player.judge(lib.card.lebu.judge).judge2 = lib.card.lebu.judge2;
-			} else event.finish();
-			"step 2";
-			if (!result.bool) {
+				.set("logSkill", ["vtbleyu", trigger.player])
+				.forResult();
+			if (!result.bool) return;
+			const judgeResult = await trigger.player.judge(lib.card.lebu.judge).set("judge2", lib.card.lebu.judge2).forResult();
+			if (!judgeResult.bool) {
 				trigger.player.skip("phaseUse");
 			}
 		},
@@ -1792,9 +1799,8 @@ if (lib.config.extension_星之梦_vtbEnhance) {
 					);
 				},
 				direct: true,
-				content() {
-					"step 0";
-					player
+				async content(event, trigger, player) {
+					const result = await player
 						.chooseToDiscard(get.prompt("vtbshanwu_shan"), "弃置一张【闪】，取消此【杀】对" + get.translation(trigger.targets) + "的目标", { name: "shan" })
 						.set("logSkill", "vtbshanwu")
 						.set("ai", card => {
@@ -1832,8 +1838,8 @@ if (lib.config.extension_星之梦_vtbEnhance) {
 								}
 								return effect < 0;
 							})()
-						);
-					"step 1";
+						)
+						.forResult();
 					if (result.bool) {
 						game.log(player, "取消了", trigger.card, "的所有目标");
 						trigger.targets.length = 0;
@@ -1976,7 +1982,6 @@ lib.skill.olfangquan = {
 	},
 	direct: true,
 	async content(event, trigger, player) {
-		// step 0
 		var fang = player.countMark("olfangquan2") == 0 && player.hp >= 2 && player.countCards("h") <= player.hp + 2;
 		const result = await player
 			.chooseBool(get.prompt2("olfangquan"))
@@ -1996,7 +2001,6 @@ lib.skill.olfangquan = {
 			})
 			.set("fang", fang)
 			.forResult();
-		// step 1
 		if (result.bool) {
 			player.logSkill("olfangquan");
 			trigger.cancel();
@@ -2120,7 +2124,7 @@ lib.skill.jxxiongzi = {
 	filter(event, player) {
 		return !event.numFixed;
 	},
-	content() {
+	async content(event, trigger, player) {
 		trigger.num += player.hp;
 	},
 	ai: {

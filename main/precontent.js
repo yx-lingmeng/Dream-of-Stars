@@ -1151,19 +1151,18 @@ export async function precontent(config, pack) {
 				//     return i.includes("doublegroup");
 				// }
 			},
-			content() {
-				"step 0";
+			async content(event, trigger, player) {
 				var name = player.name1;
+				let result;
 				if (get.is.double(name)) {
-					player.chooseControl(get.is.double(name, true)).set("prompt", "请选择你的势力");
+					result = await player.chooseControl(get.is.double(name, true)).set("prompt", "请选择你的势力").forResult();
 				} else if (lib.character[name][1] == "shen" || lib.character[name][1] == "devil") {
 					var list = lib.group.slice(0);
 					list.remove("shen");
 					list.remove("devil");
-					player.chooseControl(list).set("prompt", "请选择武将的势力");
+					result = await player.chooseControl(list).set("prompt", "请选择武将的势力").forResult();
 				}
-				"step 1";
-				if (result.control) {
+				if (result && result.control) {
 					player.changeGroup(result.control);
 				}
 			},
@@ -1573,8 +1572,7 @@ export async function precontent(config, pack) {
 		];
 	//联机素材同步已移除：不再把扩展目录下的武将图广播给客机，
 	//没装本扩展的客机上这些武将显示默认剪影（与加入联机前的表现一致）
-	lib.element.content.waitForPlayer = function () {
-		"step 0";
+	lib.element.content.waitForPlayer = async function (event, trigger, player) {
 		ui.auto.hide();
 		ui.pause.hide();
 		game.createServer();
@@ -1602,8 +1600,7 @@ export async function precontent(config, pack) {
 		if (window.isNonameServer) {
 			document.querySelector("#server_status").innerHTML = "等待中";
 		}
-		game.pause();
-		"step 1";
+		await game.pause();
 		_status.waitingForPlayer = false;
 		lib.configOL.gameStarted = true;
 		if (window.isNonameServer) {
@@ -1633,6 +1630,7 @@ export async function precontent(config, pack) {
 			}
 		}, _status.postReconnect);
 		game.broadcast("gameStart");
+		//这里不 await：先让 UI 立即恢复，只让牌局延迟 2 秒开始（与本体 async waitForPlayer 一致）
 		game.delay(2);
 		ui.auto.show();
 		ui.pause.show();
