@@ -164,7 +164,8 @@ lib.skill._bilibili_HighDamageAudio = {
 	},
 };
 //skillAnimation技能配音播放
-var originTrySkillAnimate = lib.element.player.trySkillAnimate;
+//原函数挂到 lib.element.player 上，包装函数不引用模块作用域变量（联机沙盒会按源码重建包装函数）
+Object.defineProperty(lib.element.player, "_xzmOriginTrySkillAnimate", { configurable: true, writable: true, value: lib.element.player.trySkillAnimate });
 lib.element.player.trySkillAnimate = function (name, popname, checkShow) {
 	if (!game.online && lib.config.skill_animation_type != "off" && lib.skill[name] && lib.skill[name].skillAnimation && lib.config.extension_星之梦_HDskillAnimateAudio) {
 		game.broadcastAll(function (name) {
@@ -175,5 +176,5 @@ lib.element.player.trySkillAnimate = function (name, popname, checkShow) {
 			if (ui.backgroundMusic) ui.backgroundMusic.play();
 		}, 4000);
 	}
-	originTrySkillAnimate.apply(this, arguments);
+	lib.element.player._xzmOriginTrySkillAnimate.apply(this, arguments);
 };

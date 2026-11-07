@@ -5547,7 +5547,7 @@ const lmCharacter = {
 				if (num) {
 					trigger.num -= Math.min(trigger.num, num);
 				}
-				await game.asyncDelayx();
+				await game.delayx();
 			},
 			group: "old_olcangxin_yingzi",
 			subSkill: {
@@ -13142,7 +13142,7 @@ const lmCharacter = {
 						return lib.filter.filterTarget.apply(this, arguments);
 					})
 					.set("sourcex", player);
-				"step 1";
+				("step 1");
 				if (!result.bool) {
 					target.addSkill("old_spyinju2");
 				}
@@ -13263,9 +13263,9 @@ const lmCharacter = {
 						player.gain(card, target, "give");
 					} else event.finish();
 				}
-				"step 1";
+				("step 1");
 				if (player.getCards("h").includes(card) && get.type(card, null, player) == "equip" && player.hasUseTarget(card)) player.chooseUseTarget(card, true, "nopopup");
-				"step 2";
+				("step 2");
 				var hs = target.getCards("h", function (card) {
 					return target.canUse(get.autoViewAs({ name: "sha" }, [card]), player, false);
 				});
@@ -13281,7 +13281,7 @@ const lmCharacter = {
 								return get.effect(_status.event.getParent().player, get.autoViewAs({ name: "sha" }, [card]), _status.event.player);
 							});
 				} else event.finish();
-				"step 3";
+				("step 3");
 				if (result.bool) target.useCard({ name: "sha" }, result.cards, player, false);
 			},
 			ai: {
@@ -15783,7 +15783,7 @@ const lmCharacter = {
 								}
 								return 8 - get.value(card);
 							});
-						"step 1";
+						("step 1");
 						if (!result.bool) {
 							trigger.player.damage();
 						}
@@ -15815,7 +15815,7 @@ const lmCharacter = {
 								}
 								return 8 - get.value(card);
 							});
-						"step 1";
+						("step 1");
 						if (!result.bool) {
 							trigger.player.damage();
 						} else {
@@ -16804,9 +16804,9 @@ const lmCharacter = {
 							var card = get.cardPile2(card => get.type2(card) == type);
 							if (card) target.gain(card, "gain2");
 							else game.log("但牌堆里已经没有", "#y" + get.translation(type) + "牌", "了！");
-							"step 1";
+							("step 1");
 							player.markAuto("old_jiaohua", [lib.skill.old_jiaohua_backup.type]);
-							"step 2";
+							("step 2");
 							if (!["basic", "trick", "equip"].some(type => !player.getStorage("old_jiaohua").includes(type))) {
 								player.popup("教化");
 								player.unmarkAuto("old_jiaohua", player.getStorage("old_jiaohua"));
@@ -16849,7 +16849,7 @@ const lmCharacter = {
 						return player != target && target != _status.event.getTrigger().source && target.countGainableCards(player, "he");
 					})
 					.set("ai", target => get.effect(target, { name: "shunshou_copy2" }, player, player) /** (target.countCards("he")>1?1.5:1)*/);
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var target = result.targets[0];
 					player.logSkill("oldx_jiebing", target);
@@ -16859,7 +16859,7 @@ const lmCharacter = {
 					player.gain(target, cards, "give", "bySelf");
 					player.showCards(cards, "借兵");
 				} else event.finish();
-				"step 2";
+				("step 2");
 				for (var card of cards) {
 					if (get.type(card) == "equip" && player.hasUseTarget(card) && get.owner(card) == player) {
 						player.chooseUseTarget(card, true);
@@ -16898,7 +16898,7 @@ const lmCharacter = {
 			content() {
 				"step 0";
 				player.chooseToCompare(target);
-				"step 1";
+				("step 1");
 				if (!result.tie) {
 					var players = [player, target];
 					if (result.bool) players.reverse();
@@ -17469,12 +17469,12 @@ const lmCharacter = {
 				"step 0";
 				player.give(cards, target);
 				player.draw(3);
-				"step 1";
+				("step 1");
 				var cards = player.getExpansions("old_jueyong");
 				if (cards.length) player.loseToDiscardpile(cards);
 				player.unmarkSkill("old_jueyong");
 				player.loseHp();
-				"step 2";
+				("step 2");
 				player.skip("phaseDiscard");
 				game.delayx();
 			},
@@ -18600,7 +18600,7 @@ const lmCharacter = {
 						if (get.effect(target, { name: "juedou" }, source, source) >= 10 && button.link[2] == "db_def2" && Math.random() < 0.5) return 10;
 						return 1 + Math.random();
 					});
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					if (result.player == "db_def1") {
 						if (target.hasJudge("bingliang")) player.gainPlayerCard(target, "he", true);
@@ -20098,7 +20098,7 @@ const lmCharacter = {
 							})
 							.set("targets", trigger.targets)
 							.set("card", trigger.card);
-						"step 1";
+						("step 1");
 						if (result.bool) {
 							if (!event.isMine() && !event.isOnline()) {
 								game.delayx();
@@ -20107,7 +20107,7 @@ const lmCharacter = {
 						} else {
 							event.finish();
 						}
-						"step 2";
+						("step 2");
 						if (event.targets) {
 							player.logSkill("old_sbjiang_add", event.targets);
 							trigger.targets.addArray(event.targets);
@@ -20189,11 +20189,11 @@ const lmCharacter = {
 				"step 0";
 				player.awakenSkill(event.name);
 				player.loseMaxHp();
-				"step 1";
+				("step 1");
 				player.changeHujia(2, null, true);
-				"step 2";
+				("step 2");
 				player.draw(3);
-				"step 3";
+				("step 3");
 				player.addSkills(["sbyingzi", "gzyinghun"]);
 			},
 			ai: {
@@ -20246,7 +20246,7 @@ const lmCharacter = {
 				if (!event.targets.length) {
 					event.finish();
 				}
-				"step 1";
+				("step 1");
 				var target = targets.shift();
 				target.damage("nosource");
 				if (targets.length) {
@@ -20287,7 +20287,7 @@ const lmCharacter = {
 					content() {
 						"step 0";
 						target.damage("fire");
-						"step 1";
+						("step 1");
 						var targets = game.filterPlayer(current => {
 							if (current == player || current == target) {
 								return false;
@@ -20577,13 +20577,13 @@ const lmCharacter = {
 				if (cards.length) player.loseToDiscardpile(cards);
 				var bool = player.getAllHistory("useSkill", evt => evt.skill == "old_sbguanxing").length > 1;
 				event.num = Math.min(7, bool ? cards.length + 1 : 7);
-				"step 1";
+				("step 1");
 				var cards2 = get.cards(num);
 				player.$gain2(cards2, false);
 				game.log(player, "将", cards2, "置于了武将牌上");
 				player.loseToSpecial(cards2, "old_sbguanxing").visible = true;
 				player.markSkill("old_sbguanxing");
-				"step 2";
+				("step 2");
 				var cards = player.getCards("s", card => card.hasGaintag("old_sbguanxing"));
 				if (cards.length) {
 					player
@@ -20612,7 +20612,7 @@ const lmCharacter = {
 							return moved[1].length;
 						});
 				} else event._result = { bool: false };
-				"step 3";
+				("step 3");
 				if (result.bool) {
 					var cards = result.moved[1];
 					player.loseToDiscardpile(cards, ui.cardPile, "insert").log = false;
@@ -20720,7 +20720,7 @@ const lmCharacter = {
 					content() {
 						"step 0";
 						target.damage("fire");
-						"step 1";
+						("step 1");
 						var targets = game.filterPlayer(current => {
 							if (current == player || current == target) {
 								return false;
@@ -21028,7 +21028,7 @@ const lmCharacter = {
 				if (cards.length) player.loseToDiscardpile(cards);
 				var num = player.countMark("oldx_sbguanxingx") - 1;
 				event.num = Math.max(0, 7 - lib.skill.oldx_sbguanxing.getNum * num);
-				"step 1";
+				("step 1");
 				if (num) {
 					var cards2 = get.cards(num);
 					player.$gain2(cards2, false);
@@ -21036,7 +21036,7 @@ const lmCharacter = {
 					player.loseToSpecial(cards2, "oldx_sbguanxing").visible = true;
 					player.markSkill("oldx_sbguanxing");
 				}
-				"step 2";
+				("step 2");
 				var cards = player.getCards("s", card => card.hasGaintag("oldx_sbguanxing"));
 				if (cards.length) {
 					player
@@ -21065,7 +21065,7 @@ const lmCharacter = {
 							return moved[1].length;
 						});
 				} else event._result = { bool: false };
-				"step 3";
+				("step 3");
 				if (result.bool) {
 					var cards = result.moved[1];
 					player.loseToDiscardpile(cards, ui.cardPile, "insert").log = false;
@@ -21174,7 +21174,7 @@ const lmCharacter = {
 					var att = get.attitude(player, target);
 					return 3 - get.sgn(att) + Math.abs(att / 1000);
 				});
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var targets = result.targets;
 					targets.sortBySeat();
@@ -21182,7 +21182,7 @@ const lmCharacter = {
 					player.logSkill("old_sbzaiqi", targets);
 					player.removeCharge(targets.length);
 				} else event.finish();
-				"step 2";
+				("step 2");
 				var target = targets.shift();
 				event.target = target;
 				if (!target.countCards("he")) event._result = { bool: false };
@@ -21197,7 +21197,7 @@ const lmCharacter = {
 						})
 						.set("eff", get.recoverEffect(player, player, target))
 						.set("att", get.attitude(target, player));
-				"step 3";
+				("step 3");
 				target.line(player);
 				if (result.bool) {
 					player.recover();
@@ -21243,13 +21243,13 @@ const lmCharacter = {
 			content() {
 				"step 0";
 				player.draw();
-				"step 1";
+				("step 1");
 				if (player.canCompare(trigger.target)) {
 					player.chooseToCompare(trigger.target);
 				} else {
 					event.finish();
 				}
-				"step 2";
+				("step 2");
 				if (result.bool) {
 					player.addTempSkill("old_sblieren_damage");
 					if (!trigger.card.storage) {
@@ -21284,7 +21284,7 @@ const lmCharacter = {
 							})
 							.set("targeted", target)
 							.set("ai", targetx => get.damageEffect(targetx, _status.event.player, _status.event.player));
-						"step 1";
+						("step 1");
 						if (result.bool) {
 							var target = result.targets[0];
 							player.logSkill("old_sblieren_damage", target);
@@ -21326,7 +21326,7 @@ const lmCharacter = {
 					var player = _status.event.player;
 					return Math.max(0, target.getUseValue({ name: "nanman" })) * get.attitude(player, target) * (target == player ? 0.5 : 1);
 				});
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var target = result.targets[0];
 					player.logSkill("old_sbjuxiang", target);
@@ -22286,7 +22286,7 @@ const lmCharacter = {
 						break;
 					}
 				}
-				"step 1";
+				("step 1");
 				var all = event.num;
 				player.draw((all ? 1 + player.countMark("old_sbtongye") : 0) + cards.length);
 			},
@@ -22334,7 +22334,7 @@ const lmCharacter = {
 						if (Math.random() < 0.3) return "变化";
 						return "不变";
 					});
-				"step 1";
+				("step 1");
 				if (result.control == "变化") {
 					player.addSkill("old_sbtongye_change", 1);
 					player.chat("变！");
@@ -22644,14 +22644,14 @@ const lmCharacter = {
 						return -get.effect(target, trigger.card, trigger.player, _status.event.player);
 					})
 					.set("targets", trigger.targets);
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					player.logSkill("old_sbfenwei", result.targets);
 					player.awakenSkill("old_sbfenwei");
 					trigger.getParent().excluded.addArray(result.targets);
 					event.num = Math.min(4, result.targets.length);
 				} else event.finish();
-				"step 2";
+				("step 2");
 				var cards = [];
 				for (var i = 0; i < num; i++) {
 					var card = get.cardPile2(function (card) {
@@ -25252,7 +25252,7 @@ const lmCharacter = {
 			content() {
 				"step 0";
 				player.draw(player.hp);
-				"step 1";
+				("step 1");
 				if (
 					player.getHistory("sourceDamage").length ||
 					player.getHistory("gain", function (evt) {
@@ -25290,7 +25290,7 @@ const lmCharacter = {
 						return [0, 1].randomGet();
 					})
 					.set("source", trigger.source);
-				"step 1";
+				("step 1");
 				if (result.control != "cancel2") {
 					player.logSkill("old_yuzhang", trigger.source);
 					player.removeMark("old_twjingce", 1);
@@ -25430,13 +25430,13 @@ const lmCharacter = {
 								.set("ai", function (target) {
 									return get.attitude(player, target) * Math.sqrt(target.countCards("h") + 1);
 								});
-							"step 1";
+							("step 1");
 							if (result.bool) {
 								player.logSkill("old_zhenshan", result.targets);
 								player.swapHandcards(result.targets[0]);
 								delete event.result.skill;
 							} else event.finish();
-							"step 2";
+							("step 2");
 							game.delayx();
 						},
 					};
@@ -25704,7 +25704,7 @@ const lmCharacter = {
 						return _status.event.choice;
 					})
 					.set("choice", skills.sort((a, b) => (map[b](target, player) || 0.5) - (map[a](target, player) || 0.5))[0]);
-				"step 1";
+				("step 1");
 				var skill = result.control;
 				player.addSkills(skill);
 				event.old_twbudao_skill = skill;
@@ -25713,7 +25713,7 @@ const lmCharacter = {
 					if (player.identity == "nei") return 0;
 					return get.attitude(player, target);
 				});
-				"step 2";
+				("step 2");
 				if (result.bool) {
 					var target = result.targets[0];
 					event.target = target;
@@ -25724,7 +25724,7 @@ const lmCharacter = {
 					else if (cards.length == 1) event._result = { bool: true, cards: cards };
 					else target.chooseCard("he", true, "交给" + get.translation(player) + "一张牌作为学费");
 				} else event.finish();
-				"step 3";
+				("step 3");
 				if (result.bool) target.give(result.cards, player);
 			},
 			mark: true,
@@ -25762,7 +25762,7 @@ const lmCharacter = {
 						return !target.hasSkill("old_twxiongjun");
 					})
 					.set("ai", target => get.attitude(player, target) - 2);
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var target = result.targets[0];
 					player.logSkill("old_twjuntun", target);
@@ -25865,7 +25865,7 @@ const lmCharacter = {
 			content() {
 				"step 0";
 				player.chooseTarget("言誓：选择一名其他角色", lib.filter.notMe, true).set("ai", target => get.attitude(_status.event.player, target));
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var target = result.targets[0];
 					player.logSkill("old_twyanshi", target);
@@ -25959,11 +25959,11 @@ const lmCharacter = {
 					avengers = [player];
 				}
 				event.avengers = avengers;
-				"step 1";
+				("step 1");
 				var avenger = event.avengers.shift();
 				avenger.line(trigger.source, "fire");
 				trigger.source.damage(avenger, avenger.hp);
-				"step 2";
+				("step 2");
 				if (event.avengers.length && trigger.source.isIn()) {
 					event.goto(1);
 				}
@@ -27175,7 +27175,7 @@ const lmCharacter = {
 						}
 						return 1 - get.attitude(player, target);
 					});
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var targets = result.targets.sortBySeat();
 					event.targets = targets;
@@ -27185,13 +27185,13 @@ const lmCharacter = {
 				} else {
 					event.finish();
 				}
-				"step 2";
+				("step 2");
 				var card = result.cards[0];
 				player.line(targets[0]);
 				player.showCards(card, get.translation(player) + "对" + get.translation(targets[0]) + "发动了【媵予】");
 				event.cards.push(card);
 				player.choosePlayerCard(targets[1], true, "h");
-				"step 3";
+				("step 3");
 				var card = result.cards[0];
 				player.line(targets[1]);
 				player.showCards(card, get.translation(player) + "对" + get.translation(targets[1]) + "发动了【媵予】");
@@ -27199,7 +27199,7 @@ const lmCharacter = {
 				if (get.suit(cards[0], targets[0]) == get.suit(cards[1], targets[1])) {
 					event.finish();
 				}
-				"step 4";
+				("step 4");
 				var str1 = get.translation(targets[0]),
 					str2 = get.translation(targets[1]);
 				player
@@ -27207,7 +27207,7 @@ const lmCharacter = {
 					.set("choiceList", ["令" + str1 + "获得" + str2 + "的" + get.translation(cards[1]), "令" + str2 + "获得" + str1 + "的" + get.translation(cards[0])])
 					.set("goon", get.attitude(player, targets[0]) > 0 ? 0 : 1)
 					.set("ai", () => _status.event.goon);
-				"step 5";
+				("step 5");
 				if (result.control != "cancel2") {
 					var i = result.index;
 					targets[1 - i].give(cards[1 - i], targets[i], "give");
@@ -27239,7 +27239,7 @@ const lmCharacter = {
 					player.storage.old_dcyingyu = true;
 				}
 				player.give(cards, target);
-				"step 1";
+				("step 1");
 				var list = [];
 				for (var i of cards) {
 					list.add(get.suit(i, player));
@@ -27380,244 +27380,6 @@ const lmCharacter = {
 				maixie: true,
 				maixie_defend: true,
 				threaten: 0.7,
-			},
-		},
-
-		//张昭
-		old_twchungang: {
-			audio: "twchungang",
-			init: () => {
-				game.addGlobalSkill("old_twchungang_global", null, null, false);
-			},
-			onremove: player => {
-				if (
-					!game.hasPlayer(i => {
-						return i.hasSkill("old_twchungang");
-					}, true)
-				) {
-					game.removeGlobalSkill("old_twchungang_global");
-				}
-			},
-			trigger: { global: ["gainAfter", "loseAsyncAfter"] },
-			filter(event, player) {
-				var evt = event.getParent("phaseDraw");
-				return game.hasPlayer(target => {
-					if (target == player || (evt && evt.player == target)) {
-						return false;
-					}
-					return event.getg(target).length > 1 && target.countCards("he");
-				});
-			},
-			forced: true,
-			logTarget(event, player) {
-				var evt = event.getParent("phaseDraw");
-				return game.filterPlayer(target => {
-					if (target == player || (evt && evt.player == target)) {
-						return false;
-					}
-					return event.getg(target).length > 1 && target.countCards("he");
-				});
-			},
-			content() {
-				for (var i of lib.skill.old_twchungang.logTarget(trigger, player)) {
-					i.chooseToDiscard("he", true);
-				}
-			},
-			subSkill: {
-				global: {
-					trigger: {
-						player: "dieAfter",
-					},
-					filter(event, player) {
-						return !game.hasPlayer(i => i.hasSkill("old_twchungang", null, null, false), true);
-					},
-					silent: true,
-					forceDie: true,
-					charlotte: true,
-					content() {
-						game.removeGlobalSkill("old_twchungang_global");
-					},
-					ai: {
-						effect: {
-							target(card, player, target) {
-								if ((get.tag(card, "gain") || 0) < 2 && (get.tag(card, "draw") || 0) < 2) {
-									return;
-								}
-								let evt = _status.event.getParent("phaseDraw"),
-									dis = game.countPlayer(i => {
-										return target !== i && i.hasSkill("old_twchungang");
-									});
-								if (!dis || (evt && evt.player === target)) {
-									return;
-								}
-								return [1, -dis];
-							},
-						},
-					},
-				},
-			},
-		},
-
-		//张纮
-		old_twquanqian: {
-			audio: "twquanqian",
-			sunbenSkill: true,
-			enable: "phaseUse",
-			filter(event, player) {
-				return !player.hasSkill("old_twquanqian_sunben") && player.countCards("h") && game.countPlayer() > 1;
-			},
-			filterCard(card, player) {
-				return !ui.selected.cards.some(cardx => get.suit(cardx, player) == get.suit(card, player));
-			},
-			selectCard: [1, 4],
-			check(card) {
-				return 1 / (get.value(card) || 0.5);
-			},
-			position: "h",
-			complexCard: true,
-			discard: false,
-			lose: false,
-			delay: false,
-			filterTarget: lib.filter.notMe,
-			usable: 1,
-			content() {
-				"step 0";
-				player.addSkill("old_twquanqian_sunben");
-				player.give(cards, target);
-				if (cards.length < 2) {
-					event.finish();
-				}
-				"step 1";
-				var card = get.cardPile2(card => get.type(card) == "equip");
-				if (card) {
-					player.gain(card, "gain2");
-				}
-				"step 2";
-				if (player.countCards("h") >= target.countCards("h")) {
-					if (target.countCards("h")) {
-						event._result = { index: 1 };
-					} else {
-						event.finish();
-					}
-				} else {
-					var str = get.translation(target);
-					player
-						.chooseControl()
-						.set("choiceList", ["将手牌数摸至与" + str + "相同", "观看" + str + "的手牌并获得其一种花色的所有手牌"])
-						.set("ai", () => {
-							var player = _status.event.player;
-							var target = _status.event.target;
-							if (target.countCards("h") - player.countCards("h") > target.countCards("h") / 4 || get.attitude(player, target) > 0) {
-								return 0;
-							}
-							return 1;
-						})
-						.set("target", target);
-				}
-				"step 3";
-				if (result.index == 0) {
-					player.drawTo(target.countCards("h"));
-					event.finish();
-					return;
-				}
-				var list = [];
-				var dialog = ["劝迁：获得" + get.translation(target) + "一种花色的所有牌"];
-				for (var suit of lib.suit.concat("none")) {
-					if (target.countCards("h", { suit: suit })) {
-						dialog.push('<div class="text center">' + get.translation(suit + "2") + "牌</div>");
-						dialog.push(target.getCards("h", { suit: suit }));
-						list.push(suit);
-					}
-				}
-				if (!list.length) {
-					event.finish();
-					return;
-				}
-				player
-					.chooseControl(list)
-					.set("dialog", dialog)
-					.set("ai", () => {
-						return _status.event.control;
-					})
-					.set(
-						"control",
-						(() => {
-							var getv = cards => cards.map(i => get.value(i)).reduce((p, c) => p + c, 0);
-							return list.sort((a, b) => {
-								return getv(target.getCards("h", { suit: b })) - getv(target.getCards("h", { suit: a }));
-							})[0];
-						})()
-					);
-				"step 4";
-				if (result.control) {
-					player.gain(target.getCards("h", { suit: result.control }), target, "give");
-				}
-			},
-			ai: {
-				order: 7,
-				result: {
-					target(player, target) {
-						return target.countCards("h");
-					},
-				},
-			},
-			subSkill: {
-				sunben: {
-					charlotte: true,
-					init(player) {
-						player.storage.old_twquanqian_sunben = 0;
-					},
-					onremove: true,
-					mark: true,
-					intro: {
-						markcount(num) {
-							return (num || 0).toString();
-						},
-						content: "弃牌进度：#/6",
-					},
-					trigger: {
-						player: "loseAfter",
-						global: "loseAsyncAfter",
-					},
-					filter(event, player) {
-						if (event.type != "discard") {
-							return false;
-						}
-						var evt = event.getl(player);
-						return evt && evt.hs && evt.hs.length;
-					},
-					forced: true,
-					popup: false,
-					firstDo: true,
-					content() {
-						"step 0";
-						player.addMark("old_twquanqian_sunben", trigger.getl(player).hs.length, false);
-						"step 1";
-						if (player.countMark("old_twquanqian_sunben") >= 6) {
-							player.removeSkill("old_twquanqian_sunben");
-							player.popup("劝迁");
-							game.log(player, "恢复了技能", "#g【劝迁】");
-						}
-					},
-				},
-			},
-		},
-		old_twrouke: {
-			audio: "twrouke",
-			trigger: {
-				player: "gainAfter",
-				global: "loseAsyncAfter",
-			},
-			filter(event, player) {
-				var evt = event.getParent("phaseDraw");
-				if (evt && evt.player == player) {
-					return false;
-				}
-				return event.getg(player).length > 1;
-			},
-			forced: true,
-			content() {
-				player.draw();
 			},
 		},
 
@@ -28123,7 +27885,7 @@ const lmCharacter = {
 			content() {
 				"step 0";
 				player.damage("nosource");
-				"step 1";
+				("step 1");
 				if (game.countPlayer() < 2) event.finish();
 				if (game.countPlayer() == 2)
 					event._result = {
@@ -28148,7 +27910,7 @@ const lmCharacter = {
 							return target == get.event().aiTargets[ui.selected.targets.length] ? 10 : 0;
 						})
 						.set("aiTargets", lib.skill.old_mbhuiyao.getUnrealDamageTargets(player, [game.filterPlayer(i => i != player), game.filterPlayer()], true));
-				"step 2";
+				("step 2");
 				if (result.bool) {
 					var targets = result.targets;
 					player.line2(targets, "green");
@@ -28278,7 +28040,7 @@ const lmCharacter = {
 						hp = target.getHp();
 					return len + target.isTurnedOver() * 2 + (1.5 * Math.min(4, target.getDamagedHp())) / (hp + 1);
 				});
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var target = result.targets[0];
 					event.target = target;
@@ -28298,14 +28060,14 @@ const lmCharacter = {
 							.set("len", len);
 					}
 				} else event.finish();
-				"step 2";
+				("step 2");
 				if (result.index == 1) {
 					target.recover();
 					event.finish();
 				} else target.draw(Math.max(lib.skill.old_mbquesong.getNum(target), 1));
-				"step 3";
+				("step 3");
 				target.link(false);
-				"step 4";
+				("step 4");
 				target.turnOver(false);
 			},
 			getNum(player) {
@@ -28941,7 +28703,7 @@ const lmCharacter = {
 					let player = _status.event.player;
 					player.addMark("old_gouzhu", 1, false);
 					game.log(player, "手牌上限+1");
-					await game.asyncDelay();
+					await game.delay();
 				},
 				主公技: async function () {
 					let player = _status.event.player;
@@ -29248,7 +29010,7 @@ const lmCharacter = {
 						return _status.event.controls[list.indexOf(num)];
 					})
 					.set("prompt", get.prompt2("miniqinyin"));
-				"step 1";
+				("step 1");
 				if (result.control != "cancel2") {
 					player.logSkill("miniqinyin");
 					if (result.control == "失去体力") game.playAudio("skill", "qinyin2");
@@ -29259,7 +29021,7 @@ const lmCharacter = {
 						event.finish();
 					}
 				} else event.finish();
-				"step 2";
+				("step 2");
 				game.delayx();
 			},
 			ai: { expose: 0.2 },
@@ -29294,7 +29056,7 @@ const lmCharacter = {
 						var player = _status.event.player;
 						return -get.sgn(get.attitude(player, target)) * target.countCards("he");
 					});
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					var target = result.targets[0];
 					player.logSkill("minimeihun", target);
@@ -29318,7 +29080,7 @@ const lmCharacter = {
 						})
 						.set("target", target);
 				} else event.finish();
-				"step 2";
+				("step 2");
 				var suit = result.control;
 				player.chat(get.translation(suit + 2));
 				game.log(player, "选择了", "#y" + get.translation(suit + 2));
@@ -29358,7 +29120,7 @@ const lmCharacter = {
 				"step 0";
 				event.list = [];
 				targets[0].chooseToCompare(targets[1]);
-				"step 1";
+				("step 1");
 				for (var target of targets) {
 					if (result.winner !== target) event.list.push(target);
 				}
@@ -29384,14 +29146,14 @@ const lmCharacter = {
 						return suits[0];
 					})
 					.set("list", event.list);
-				"step 2";
+				("step 2");
 				var suit = result.control;
 				if (suit != "cancel2") {
 					player.chat(get.translation(suit + 2));
 					game.log(player, "选择了", "#y" + get.translation(suit + 2));
 					event.suit = suit;
 				} else event.finish();
-				"step 3";
+				("step 3");
 				var target = event.list.shift();
 				event.target = target;
 				player.line(target);
@@ -29401,13 +29163,13 @@ const lmCharacter = {
 						.chooseControl()
 						.set("choiceList", ["交给" + get.translation(player) + "所有的" + get.translation(event.suit) + "牌", "不能使用或打出" + get.translation(event.suit) + "牌直到你的下个回合结束"])
 						.set("ai", () => 1);
-				"step 4";
+				("step 4");
 				if (result.index == 0) player.gain(target.getCards("he", { suit: event.suit }), target, "giveAuto");
 				else {
 					target.addTempSkill("minihuoxin_use", { player: "phaseEnd" });
 					target.markAuto("minihuoxin_use", [event.suit]);
 				}
-				"step 5";
+				("step 5");
 				if (event.list.length) event.goto(3);
 			},
 			ai: {
@@ -29445,7 +29207,7 @@ const lmCharacter = {
 				}).judge2 = function (result) {
 					return result.bool ? true : false;
 				};
-				"step 1";
+				("step 1");
 				if (result.bool) player.recover();
 			},
 		},
@@ -29519,7 +29281,7 @@ const lmCharacter = {
 							var player = _status.event.player;
 							return get.damageEffect(target, player, player);
 						});
-						"step 1";
+						("step 1");
 						if (result.bool) {
 							var targets = result.targets.sortBySeat();
 							player.logSkill("wechattianfa", targets);
@@ -29710,7 +29472,7 @@ const lmCharacter = {
 						}
 						break;
 				}
-				"step 1";
+				("step 1");
 				if (result.bool) {
 					switch (result.links[0][2]) {
 						case "sw_guilongzhanyuedao":
@@ -29999,19 +29761,19 @@ const lmCharacter = {
 		old_olsblucun: "赂存",
 		old_olsblucun_info: "每回合限一次，你可以视为使用一张本轮未以此法使用过的基本牌或普通锦囊牌。此牌结算完毕后，当前回合角色将一张手牌置于你的武将牌上，称为“赂”；本回合结束时，你将一张“赂”置入弃牌堆并摸一张牌（若你本回合因此技能使用的牌名包含你选择移去的“赂”的牌名，则你额外摸一张牌）。",
 		old_olsbtuisheng: "蜕生",
-		old_olsbtuisheng_info: `限定技，准备阶段或当你进入濒死状态时，你可以重置你本轮${get.poptip("old_olsblucun")}使用过的牌名，然后你选择一项并回复1点体力：①将所有手牌置于你的武将牌上，称为“赂”；②令当前回合角色获得你的所有“赂”且你回复1点体力。`,
+		old_olsbtuisheng_info: `限定技，准备阶段或当你进入濒死状态时，你可以重置你本轮${get.poptip("old_olsblucun")}使用过的牌名，然后你选择一项并回复1点体力：①将所有手牌置于你的武将牌上，称为“赂”；<br>②令当前回合角色获得你的所有“赂”且你回复1点体力。`,
 
 		old_ol_sb_yl_luzhi: "旧OL谋卢植",
 		old_ol_sb_yl_luzhi_prefix: "旧|OL谋",
 		old_olsibing: "司兵",
-		old_olsibing_info: "①当你使用伤害牌指定唯一目标时，你可以弃置任意张红色牌令目标弃置等量红色手牌，否则不能响应该牌；②以你为目标的伤害牌结算完成后，若未对你造成伤害，你可以弃置一张黑色牌并视为使用一张【杀】。",
+		old_olsibing_info: "①当你使用伤害牌指定唯一目标时，你可以弃置任意张红色牌令目标弃置等量红色手牌，否则不能响应该牌；<br>②以你为目标的伤害牌结算完成后，若未对你造成伤害，你可以弃置一张黑色牌并视为使用一张【杀】。",
 		old_olliance: "敛策",
 		old_olliance_info: "每回合限一次，当你的手牌数变化后，若为全场最少，你可将手牌摸至体力上限，然后本回合下一次有角色造成伤害时，此伤害+1",
 
 		old_ol_sb_dengai: "旧OL谋邓艾",
 		old_ol_sb_dengai_prefix: "旧|OL谋",
 		old_olsbjiewan: "解腕",
-		old_olsbjiewan_info: "①每个准备阶段，你可以减少1点体力上限或移去两张“谷”，然后将一张手牌当无距离限制的【顺手牵羊】使用。②每个结束阶段，若你的手牌数与“谷”的数量相同且你的体力上限不为全场唯一最高，你增加1点体力上限。",
+		old_olsbjiewan_info: "①每个准备阶段，你可以减少1点体力上限或移去两张“谷”，然后将一张手牌当无距离限制的【顺手牵羊】使用。<br>②每个结束阶段，若你的手牌数与“谷”的数量相同且你的体力上限不为全场唯一最高，你增加1点体力上限。",
 
 		oldx_ol_sb_dengai: "废OL谋邓艾",
 		oldx_ol_sb_dengai_prefix: "废|OL谋",
@@ -30023,7 +29785,7 @@ const lmCharacter = {
 		old_ol_sb_dongzhuo: "旧OL谋董卓",
 		old_ol_sb_dongzhuo_prefix: "旧|OL谋",
 		old_olguanbian: "观变",
-		old_olguanbian_info: `锁定技。①游戏开始时，你的手牌上限、其他角色计算与你的距离、你计算与其他角色的距离+X（X为游戏人数）。②第二轮游戏开始时，或当你发动${get.poptip("olxiongni")}或${get.poptip("old_olfengshang")}后，你失去〖观变〗。`,
+		old_olguanbian_info: `锁定技。①游戏开始时，你的手牌上限、其他角色计算与你的距离、你计算与其他角色的距离+X（X为游戏人数）。<br>②第二轮游戏开始时，或当你发动${get.poptip("olxiongni")}或${get.poptip("old_olfengshang")}后，你失去〖观变〗。`,
 		old_olfengshang: "封赏",
 		old_olfengshang_info: "出牌阶段限一次或当一名角色进入濒死状态时，你可以将两张本回合进入弃牌堆中的花色相同的牌分配给等量角色。若你未以此法获得牌，你视为使用一张不计入次数的【酒】。",
 
@@ -30037,7 +29799,7 @@ const lmCharacter = {
 		old_olzishou: "自守",
 		old_olzishou_info: "摸牌阶段，你可以多摸X张牌，你以此法摸牌的结束阶段，若你本回合对其他角色造成过伤害，你弃置X张牌（X为全场势力数）。",
 		old_olzongshi: "宗室",
-		old_olzongshi_info: "锁定技。①你的手牌上限+X（X为全场势力数）。②每种势力限一次，当其他角色对你造成伤害时，你防止此伤害并令其摸一张牌。",
+		old_olzongshi_info: "锁定技。①你的手牌上限+X（X为全场势力数）。<br>②每种势力限一次，当其他角色对你造成伤害时，你防止此伤害并令其摸一张牌。",
 
 		old_ol_wangyi: "旧OL界王异",
 		old_ol_wangyi_prefix: "旧|OL界",
@@ -30047,7 +29809,7 @@ const lmCharacter = {
 		old_ol_chengpu: "旧OL界程普",
 		old_ol_chengpu_prefix: "旧|OL界",
 		old_olchunlao: "醇醪",
-		old_olchunlao_info: "①当你或你的上下家的【杀】因弃置进入弃牌堆后，你将位于弃牌堆的这些牌称为“醇”置于武将牌上。②一名角色处于濒死状态时，你可以将一张“醇”置入弃牌堆，然后令其视为使用一张【酒】。③当一名角色失去体力后，你可以获得至多两张“醇”。",
+		old_olchunlao_info: "①当你或你的上下家的【杀】因弃置进入弃牌堆后，你将位于弃牌堆的这些牌称为“醇”置于武将牌上。<br>②一名角色处于濒死状态时，你可以将一张“醇”置入弃牌堆，然后令其视为使用一张【酒】。<br>③当一名角色失去体力后，你可以获得至多两张“醇”。",
 
 		old_ol_yufan: "旧OL界虞翻",
 		old_ol_yufan_prefix: "旧|OL界",
@@ -30118,7 +29880,7 @@ const lmCharacter = {
 		old_clan_zhonghui: "旧族钟会",
 		old_clan_zhonghui_prefix: "旧|族",
 		old_clanyuzhi: "迂志",
-		old_clanyuzhi_info: "锁定技。①每轮开始时，你展示一张手牌，然后摸X张牌（X为此牌牌名字数）。②每轮结束时，若你本轮使用的牌数或你上一轮因〖迂志〗摸的牌数小于你本轮因〖迂志〗摸的牌数，你失去1点体力或失去〖保族〗。",
+		old_clanyuzhi_info: "锁定技。①每轮开始时，你展示一张手牌，然后摸X张牌（X为此牌牌名字数）。<br>②每轮结束时，若你本轮使用的牌数或你上一轮因〖迂志〗摸的牌数小于你本轮因〖迂志〗摸的牌数，你失去1点体力或失去〖保族〗。",
 		old_clanxieshu: "挟术",
 		old_clanxieshu_info: "当你使用牌造成伤害后，或受到来自牌造成的伤害后，你可以弃置Y张牌并摸你已损失体力值张牌（Y为此牌牌名字数）。",
 
@@ -30133,7 +29895,7 @@ const lmCharacter = {
 		old_zhangqiying: "旧张琪瑛",
 		old_zhangqiying_prefix: "旧",
 		old_falu: "法箓",
-		old_falu_info: "锁定技。①游戏开始时，你获得「紫薇」「后土」「玉清」「勾陈」标记。②你成为牌的目标或你的牌因弃置而进入弃牌堆后，你根据这些牌的花色获得对应的未拥有的标记：黑桃，「紫薇」；梅花，「后土」；红桃，「玉清」；方块，「勾陈」。",
+		old_falu_info: "锁定技。①游戏开始时，你获得「紫薇」「后土」「玉清」「勾陈」标记。<br>②你成为牌的目标或你的牌因弃置而进入弃牌堆后，你根据这些牌的花色获得对应的未拥有的标记：黑桃，「紫薇」；梅花，「后土」；红桃，「玉清」；方块，「勾陈」。",
 		old_dianhua: "点化",
 		old_dianhua_info: `准备阶段或结束阶段，你可以观看牌堆顶四张牌，然后获得其中一张花色已被${get.poptip("old_falu")}记录的牌，将其余牌以任意顺序放回牌堆顶或牌堆底。`,
 		old_zhenyi: "真仪",
@@ -30156,7 +29918,7 @@ const lmCharacter = {
 		old_ol_nanhualaoxian: "旧OL南华老仙",
 		old_ol_nanhualaoxian_prefix: "旧|OL",
 		old_olhedao: "合道",
-		old_olhedao_info: `锁定技。①游戏开始时，你可至多拥有两册${get.poptip("old_olhedao_faq")}。②你的首次濒死结算后，你可至多拥有三册${get.poptip("old_olhedao_faq")}。`,
+		old_olhedao_info: `锁定技。①游戏开始时，你可至多拥有两册${get.poptip("old_olhedao_faq")}。<br>②你的首次濒死结算后，你可至多拥有三册${get.poptip("old_olhedao_faq")}。`,
 		old_olhedao_faq: "“天书”",
 		old_olhedao_faq_info: "关于“天书”：<br>" + ["“天书”为随机三个时机和三个效果中各选择一个组成的技能，且时机等级越高，效果等级越高", "“天书”初始为未翻开状态，发动一次后翻开此“天书”（未翻开的“天书”技能对其他角色不可见）", "“天书”至多可发动三次，交给其他角色后至多可发动一次，“天书”次数用尽后失去此“天书”", "一名角色可至多拥有一册“天书”"].map(str => `<li>${str}`).join("<br>"),
 		old_olqingshu: "青书",
@@ -30185,12 +29947,12 @@ const lmCharacter = {
 		old_ol_pengyang: "旧彭羕",
 		old_ol_pengyang_prefix: "旧",
 		old_oltuishi: "侻失",
-		old_oltuishi_info: "锁定技。①你不能使用【无懈可击】。②当你使用点数为字母的牌后，你摸两张牌，且你使用的下一张牌无距离和次数限制。",
+		old_oltuishi_info: "锁定技。①你不能使用【无懈可击】。<br>②当你使用点数为字母的牌后，你摸两张牌，且你使用的下一张牌无距离和次数限制。",
 
 		old_ol_feiyi: "旧费祎",
 		old_ol_feiyi_prefix: "旧",
 		old_hezhong: "和衷",
-		old_hezhong_info: "每回合每项限一次，当你的手牌数变为1后，你可以展示此唯一手牌并摸一张牌，然后你选择一项：①本回合使用点数大于此牌的点数的普通锦囊牌额外结算一次；②本回合使用点数小于此牌的点数的普通锦囊牌额外结算一次。",
+		old_hezhong_info: "每回合每项限一次，当你的手牌数变为1后，你可以展示此唯一手牌并摸一张牌，然后你选择一项：①本回合使用点数大于此牌的点数的普通锦囊牌额外结算一次；<br>②本回合使用点数小于此牌的点数的普通锦囊牌额外结算一次。",
 
 		old_ol_hujinding: "旧胡金定",
 		old_ol_hujinding_prefix: "旧",
@@ -30200,7 +29962,7 @@ const lmCharacter = {
 		old_ol_luyusheng: "旧陆郁生",
 		old_ol_luyusheng_prefix: "旧",
 		old_olcangxin: "藏心",
-		old_olcangxin_info: "锁定技。①当你受到伤害时，你观看牌堆底的三张牌并弃置其中任意张牌，然后此伤害-X。②摸牌阶段开始时，你展示牌堆底的三张牌，然后摸X张牌(X为其中红桃牌的数量)。",
+		old_olcangxin_info: "锁定技。①当你受到伤害时，你观看牌堆底的三张牌并弃置其中任意张牌，然后此伤害-X。<br>②摸牌阶段开始时，你展示牌堆底的三张牌，然后摸X张牌(X为其中红桃牌的数量)。",
 
 		old_wangyan: "旧王衍",
 		old_wangyan_prefix: "旧",
@@ -30225,12 +29987,12 @@ const lmCharacter = {
 		old_xin_zhonghui: "旧界钟会",
 		old_xin_zhonghui_prefix: "旧|界",
 		old_xinquanji: "权计",
-		old_xinquanji_info: "①当你受到1点伤害后，或其他角色不因你的赠予而得到你的牌后，你可以摸一张牌，然后将一张手牌置于武将牌上，称为“权”。②你的手牌上限+X（X为“权”的数量）。",
+		old_xinquanji_info: "①当你受到1点伤害后，或其他角色不因你的赠予而得到你的牌后，你可以摸一张牌，然后将一张手牌置于武将牌上，称为“权”。<br>②你的手牌上限+X（X为“权”的数量）。",
 		old_xinzili: "自立",
 		old_xinzili_info: `觉醒技。准备阶段，若你的“权”数大于2，则你回复1点体力并摸两张牌，减1点体力上限并获得${get.poptip("old_xinpaiyi")}。`,
 		old_xinpaiyi: "排异",
 		old_xinpaiyi_backup: "排异",
-		old_xinpaiyi_info: "出牌阶段每项各限一次，你可移去一张“权”并选择一项：①令一名角色摸X张牌。②对至多X名角色各造成1点伤害。（X为“权”数）",
+		old_xinpaiyi_info: "出牌阶段每项各限一次，你可移去一张“权”并选择一项：①令一名角色摸X张牌。<br>②对至多X名角色各造成1点伤害。（X为“权”数）",
 
 		old_dc_xushu: "旧界徐庶",
 		old_dc_xushu_prefix: "旧|界",
@@ -30262,9 +30024,9 @@ const lmCharacter = {
 		old_chengui: "旧陈珪",
 		old_chengui_prefix: "旧",
 		old_yingtu: "营图",
-		old_yingtu_info: "①当你的上家/下家于摸牌阶段外得到牌后，你可以获得其一张牌，然后将一张牌交给你的下家/上家。②当你的上家/下家使用【杀】或【决斗】指定第一个目标时，若目标角色不包含你和你的下家/你和你的上家，则你可以取消此牌的所有目标，然后将此牌目标改为你的下家/上家。",
+		old_yingtu_info: "①当你的上家/下家于摸牌阶段外得到牌后，你可以获得其一张牌，然后将一张牌交给你的下家/上家。<br>②当你的上家/下家使用【杀】或【决斗】指定第一个目标时，若目标角色不包含你和你的下家/你和你的上家，则你可以取消此牌的所有目标，然后将此牌目标改为你的下家/上家。",
 		old_congshi: "从势",
-		old_congshi_info: "锁定技。①体力值最大的角色对你的上家和下家使用牌无距离限制。②有角色使用因〖从势①〗增加距离的牌对你的上家或下家造成伤害后，你回复1点体力。",
+		old_congshi_info: "锁定技。①体力值最大的角色对你的上家和下家使用牌无距离限制。<br>②有角色使用因〖从势①〗增加距离的牌对你的上家或下家造成伤害后，你回复1点体力。",
 
 		old_dc_zhugejun: "旧新杀诸葛均",
 		old_dc_zhugejun_prefix: "旧|新杀",
@@ -30281,14 +30043,14 @@ const lmCharacter = {
 		old_dc_sp_zhurong: "旧SP祝融",
 		old_dc_sp_zhurong_prefix: "旧|SP",
 		old_dcremanhou: "蛮后",
-		old_dcremanhou_info: `出牌阶段限一次，你可以摸至多四张牌并根据摸牌数依次执行以下等量项：①失去${get.poptip("old_dcretanluan")}；②弃置一张手牌；③失去1点体力，获得一名其他角色的一张手牌；④弃置场上的一张牌，获得${get.poptip("old_dcretanluan")}。`,
+		old_dcremanhou_info: `出牌阶段限一次，你可以摸至多四张牌并根据摸牌数依次执行以下等量项：①失去${get.poptip("old_dcretanluan")}；<br>②弃置一张手牌；<br>③失去1点体力，获得一名其他角色的一张手牌；<br>④弃置场上的一张牌，获得${get.poptip("old_dcretanluan")}。`,
 		old_dcretanluan: "探乱",
 		old_dcretanluan_info: `出牌阶段限一次，你可以使用本回合弃牌堆中因弃置进入弃牌堆的一张牌，若你因此造成伤害，则你重置${get.poptip("old_dcremanhou")}。`,
 
 		old_yue_miheng: "旧乐祢衡",
 		old_yue_miheng_prefix: "旧|乐",
 		old_dcjigu: "激鼓",
-		old_dcjigu_info: "锁定技。①游戏开始时，你将所有手牌标记为“激鼓”。②你的“激鼓”牌不计入手牌上限。③当你造成或受到伤害后，若你的“激鼓”牌数等于你的装备区牌数，则你可以摸X张牌（X为你的空置装备栏数）。",
+		old_dcjigu_info: "锁定技。①游戏开始时，你将所有手牌标记为“激鼓”。<br>②你的“激鼓”牌不计入手牌上限。<br>③当你造成或受到伤害后，若你的“激鼓”牌数等于你的装备区牌数，则你可以摸X张牌（X为你的空置装备栏数）。",
 
 		old_dc_liuli: "旧刘理",
 		old_dc_liuli_prefix: "旧",
@@ -30300,7 +30062,7 @@ const lmCharacter = {
 		old_dcporui: "破锐",
 		old_dcporui_info: "每轮限一次，其他角色的结束阶段，你可以弃置一张牌并选择一名此回合内失去过牌的其他角色，你视为对该角色依次使用X+1张【杀】，然后你交给其X张手牌。（X为你的体力值，手牌不足X张则全给）",
 		old_dcgonghu: "共护",
-		old_dcgonghu_info: `锁定技。①当你于回合外失去基本牌后，若你本回合内失去基本牌的数量大于1，你将${get.poptip("old_dcporui")}改为每轮限两次。②当你造成或受到伤害后，若你本回合内造成或受到的总伤害大于1，你删除${get.poptip("old_dcporui")}中的“，然后你交给其X张手牌”。③当你使用红色基本牌/红色普通锦囊牌时，若你已发动过〖共护①〗和〖共护②〗，则此牌不可被响应/可额外增加一个目标。`,
+		old_dcgonghu_info: `锁定技。①当你于回合外失去基本牌后，若你本回合内失去基本牌的数量大于1，你将${get.poptip("old_dcporui")}改为每轮限两次。<br>②当你造成或受到伤害后，若你本回合内造成或受到的总伤害大于1，你删除${get.poptip("old_dcporui")}中的“，然后你交给其X张手牌”。<br>③当你使用红色基本牌/红色普通锦囊牌时，若你已发动过〖共护①〗和〖共护<br>②〗，则此牌不可被响应/可额外增加一个目标。`,
 
 		//系列专属
 		old_hansong: "旧韩嵩",
@@ -30328,7 +30090,7 @@ const lmCharacter = {
 		old_caofang_prefix: "旧",
 		old_dczhimin: "置民",
 		old_dczhimin_tag: "民",
-		old_dczhimin_info: "锁定技。①每轮开始时，你选择至多X名其他角色（X为你的体力值上限），获得这些角色各自手牌中的随机一张牌。②当你于你的回合外得到牌后，你将这些牌标记为“民”。③当你失去“民”后，你将手牌补至体力上限。",
+		old_dczhimin_info: "锁定技。①每轮开始时，你选择至多X名其他角色（X为你的体力值上限），获得这些角色各自手牌中的随机一张牌。<br>②当你于你的回合外得到牌后，你将这些牌标记为“民”。<br>③当你失去“民”后，你将手牌补至体力上限。",
 
 		old_dc_zhushuo: "旧朱铄",
 		old_dc_zhushuo_prefix: "旧",
@@ -30345,7 +30107,7 @@ const lmCharacter = {
 		old_dcjuanji: "狷急",
 		old_dcjuanji_info: "摸牌阶段开始时，你可以摸体力上限张牌；出牌阶段开始时，你可以失去1点体力，然后视为对一名角色使用一张【杀】；弃牌阶段开始时，你可以调整手牌至手牌上限，然后弃置一名角色区域里至多两张牌。",
 		old_dcrenshuang: "纫霜",
-		old_dcrenshuang_info: "锁定技，①你每轮首次进入濒死时，回复体力至1点并增加1点体力上限（至多以此法增加3点）。②你脱离濒死时，复原武将牌并视为使用一张普通锦囊牌。（每种牌名每轮限一次）",
+		old_dcrenshuang_info: "锁定技，①你每轮首次进入濒死时，回复体力至1点并增加1点体力上限（至多以此法增加3点）。<br>②你脱离濒死时，复原武将牌并视为使用一张普通锦囊牌。（每种牌名每轮限一次）",
 
 		oldx_renwan: "旧任婉",
 		oldx_renwan_prefix: "旧",
@@ -30367,9 +30129,9 @@ const lmCharacter = {
 		old_pangfengyi: "旧庞凤衣",
 		old_pangfengyi_prefix: "旧",
 		old_dcyitong: "异瞳",
-		old_dcyitong_info: "锁定技。①游戏开始时，你记录一个花色。②每回合〖异瞳〗记录花色的牌首次进入弃牌堆后，你从牌堆或弃牌堆获得与此花色不同的牌各一张。",
+		old_dcyitong_info: "锁定技。①游戏开始时，你记录一个花色。<br>②每回合〖异瞳〗记录花色的牌首次进入弃牌堆后，你从牌堆或弃牌堆获得与此花色不同的牌各一张。",
 		old_dcpeiniang: "醅酿",
-		old_dcpeiniang_info: "①你可以将〖异瞳〗记录花色的牌当作【酒】使用（无任何次数限制）。②其他角色处于濒死状态时，你可以对其使用【酒】（回复效果）。③因你使用【酒】执行的体力回复效果至少令目标角色将体力值回复至1点。",
+		old_dcpeiniang_info: "①你可以将〖异瞳〗记录花色的牌当作【酒】使用（无任何次数限制）。<br>②其他角色处于濒死状态时，你可以对其使用【酒】（回复效果）。<br>③因你使用【酒】执行的体力回复效果至少令目标角色将体力值回复至1点。",
 
 		old_zhugejing: "旧诸葛京",
 		old_zhugejing_prefix: "旧",
@@ -30409,7 +30171,7 @@ const lmCharacter = {
 		old_v_machao: "旧威马超",
 		old_v_machao_prefix: "旧|威",
 		old_dczhongtao: "众讨",
-		old_dczhongtao_info: "①出牌阶段限一次，你可以选择至多X+2种花色（X为你已损失的体力值），然后随机获得场上、弃牌堆或牌堆中你选择花色的各一张牌。②当你于回合内使用三种类别的牌后，此技能视为未发动过。",
+		old_dczhongtao_info: "①出牌阶段限一次，你可以选择至多X+2种花色（X为你已损失的体力值），然后随机获得场上、弃牌堆或牌堆中你选择花色的各一张牌。<br>②当你于回合内使用三种类别的牌后，此技能视为未发动过。",
 
 		old_v_zhangxingcai: "旧威张星彩",
 		old_v_zhangxingcai_prefix: "旧|威",
@@ -30429,7 +30191,7 @@ const lmCharacter = {
 		old_dc_sb_luxun: "旧新杀谋陆逊",
 		old_dc_sb_luxun_prefix: "旧|新杀谋",
 		old_dcsbjunmou: "隽谋",
-		old_dcsbjunmou_info: "转换技。①游戏开始时，你可以转换此技能状态；②一张牌结算结束后，若此牌的目标包括你，你可以摸一张牌并选择一张手牌，阳：此牌视为无次数限制的火【杀】；阴：重铸此牌并横置一名角色。",
+		old_dcsbjunmou_info: "转换技。①游戏开始时，你可以转换此技能状态；<br>②一张牌结算结束后，若此牌的目标包括你，你可以摸一张牌并选择一张手牌，阳：此牌视为无次数限制的火【杀】；阴：重铸此牌并横置一名角色。",
 		old_dcsbzhanyan: "绽炎",
 		old_dcsbzhanyan_info: "限定技，出牌阶段，你可选择任意名横置的其他角色并摸等量张牌，然后这些角色同时展示一张手牌，你可弃置相同花色牌并对展示对应花色的角色各造成1点火焰伤害，若这些角色均受到伤害则重复此流程， 且此技能结算期间你每失去一张牌则摸一张牌。",
 
@@ -30437,7 +30199,7 @@ const lmCharacter = {
 		old_dc_sb_hulie_prefix: "旧|新杀谋",
 		old_dcsbchuanyu: "传舆",
 		old_dcsbchuanyu_tag: "舆",
-		old_dcsbchuanyu_info: "①每轮开始时，你可摸一张牌然后交给一名角色一张牌，称为「舆」。②每当「舆」因使用进入弃牌堆时，你可将其交给本轮未获得过「舆」的一名角色。③每轮结束时，你可令本轮所有获得过「舆」的角色依次视为对你指定的一名角色使用【杀】(不限距离），然后弃置所有「舆」。",
+		old_dcsbchuanyu_info: "①每轮开始时，你可摸一张牌然后交给一名角色一张牌，称为「舆」。<br>②每当「舆」因使用进入弃牌堆时，你可将其交给本轮未获得过「舆」的一名角色。<br>③每轮结束时，你可令本轮所有获得过「舆」的角色依次视为对你指定的一名角色使用【杀】(不限距离），然后弃置所有「舆」。",
 		old_dcsbyitou: "倚投",
 		old_dcsbyitou_info: "其他角色的出牌阶段开始时，若其手牌数为全场最多，你可将所有手牌交给该角色，直到你的下回合开始，该角色造成伤害后，你摸一张牌。",
 
@@ -30459,7 +30221,7 @@ const lmCharacter = {
 		old_dc_sb_guanyu: "旧新杀谋关羽",
 		old_dc_sb_guanyu_prefix: "旧|新杀谋",
 		old_dcsbguanwu: "冠武",
-		old_dcsbguanwu_info: "锁定技。①回合开始时，你从场上、牌堆或弃牌堆中获得【青龙偃月刀】。②当你于一轮内每使用两张伤害牌时，本轮你的【杀】伤害+1。",
+		old_dcsbguanwu_info: "锁定技。①回合开始时，你从场上、牌堆或弃牌堆中获得【青龙偃月刀】。<br>②当你于一轮内每使用两张伤害牌时，本轮你的【杀】伤害+1。",
 		old_dcsbweishi: "威势",
 		old_dcsbweishi_info: "每回合每项限一次，1.当你成为其他角色使用非伤害牌的目标后，你可以弃置半数手牌（向上取整），令此牌对你无效；2.当其他角色对你使用的伤害牌结算结束后，你可以摸两张伤害牌，然后可以对其使用一张【杀】。",
 		old_dcsbjuao: "倨傲",
@@ -30476,7 +30238,7 @@ const lmCharacter = {
 		old_wu_guanyu_prefix: "旧|武",
 		old_dcjuewu: "绝武",
 		old_dcjuewu_two: "2点",
-		old_dcjuewu_info: `你可以将一张点数为2的牌当任意伤害类牌使用（包括${get.poptip("shuiyanqijuny")}）。②当你得到其他角色区域内的牌后，你令这些牌的点数均视为2直到你失去这些牌。`,
+		old_dcjuewu_info: `你可以将一张点数为2的牌当任意伤害类牌使用（包括${get.poptip("shuiyanqijuny")}）。<br>②当你得到其他角色区域内的牌后，你令这些牌的点数均视为2直到你失去这些牌。`,
 		old_dcwuyou: "灵显",
 		old_dcwuyou_info: "其他角色的出牌阶段限一次，其可以交给你一张手牌，然后你可以声明一个非装备牌的牌名（包括【水淹七军】）并交给其一张手牌，令此牌的牌名与属性视为与你选择的相同。",
 		old_dcyixian: "义贤",
@@ -30493,7 +30255,7 @@ const lmCharacter = {
 		old_wu_lukang: "旧武陆抗",
 		old_wu_lukang_prefix: "旧|武",
 		old_dcshenduan: "审断",
-		old_dcshenduan_info: "①你发起拼点或成为拼点的目标时，可弃置一张牌，然后用牌堆中点数最大的牌拼点。②有角色拼点后，你与本次用K拼点的角色各摸一张牌堆中点数最小的牌，赢的角色将其拼点牌置于牌堆底。",
+		old_dcshenduan_info: "①你发起拼点或成为拼点的目标时，可弃置一张牌，然后用牌堆中点数最大的牌拼点。<br>②有角色拼点后，你与本次用K拼点的角色各摸一张牌堆中点数最小的牌，赢的角色将其拼点牌置于牌堆底。",
 		old_dckegou: "克构",
 		old_dckegou_info: "出牌阶段限一次或你使用或打出过牌且不为你的回合结束时，你可与一名其他角色拼点。若你赢，你获得牌堆中X个不同较小点数的牌各一张（X为拼点牌点数的差值且最多为3）；若你没赢，其视为对你使用一张【杀】，然后你可以继续与其拼点并重复上述流程。",
 
@@ -30536,24 +30298,24 @@ const lmCharacter = {
 		old_qiaogong: "旧桥公",
 		old_qiaogong_prefix: "旧",
 		old_yizhu: "遗珠",
-		old_yizhu_info: "①游戏开始时与结束阶段，你摸X张牌，然后将两张牌随机插入牌堆前2X张牌的位置中，称为“遗珠”（X为场上角色数且至多为4，选择牌的牌名对其他角色可见）。②当有其他角色使用“遗珠”指定唯一目标时，你可以选择一项：1.增加一个目标；2.取消此目标，增加一个目标。然后移除此牌对应的“遗珠”记录并摸一张牌。③当有“遗珠”牌进入弃牌堆后，你摸一张牌并清除对应的“遗珠”标记。",
+		old_yizhu_info: "①游戏开始时与结束阶段，你摸X张牌，然后将两张牌随机插入牌堆前2X张牌的位置中，称为“遗珠”（X为场上角色数且至多为4，选择牌的牌名对其他角色可见）。<br>②当有其他角色使用“遗珠”指定唯一目标时，你可以选择一项：1.增加一个目标；2.取消此目标，增加一个目标。然后移除此牌对应的“遗珠”记录并摸一张牌。<br>③当有“遗珠”牌进入弃牌堆后，你摸一张牌并清除对应的“遗珠”标记。",
 		old_gonghuan: "共患",
 		old_gonghuan_info: "锁定技。每回合限一次，一名其他角色受到伤害时，若其拥有“姻”标记且其体力值小于你，则你将伤害转移给自己。此伤害结算结束后，若你与其体力值相等，则你与其移去“姻”标记。",
 
 		old_sp_xinpi: "旧信辛毗",
 		old_sp_xinpi_prefix: "旧|信",
 		old_spyinju: "引裾",
-		old_spyinju_info: "出牌阶段限一次，你可令一名其他角色选择一项：①对你使用一张【杀】。②其下个回合的准备阶段开始时，跳过出牌阶段和弃牌阶段。",
+		old_spyinju_info: "出牌阶段限一次，你可令一名其他角色选择一项：①对你使用一张【杀】。<br>②其下个回合的准备阶段开始时，跳过出牌阶段和弃牌阶段。",
 
 		old_wujing: "旧吴景",
 		old_wujing_prefix: "旧",
 		old_liubing: "流兵",
-		old_liubing_info: "锁定技。①当你声明使用【杀】后，若此牌是你本回合使用的第一张有唯一对应实体牌的【杀】，则你将此牌的花色改为♦。②其他角色于其出牌阶段内使用的非转化黑色杀结算结束后，若此【杀】未造成伤害，则你获得之。",
+		old_liubing_info: "锁定技。①当你声明使用【杀】后，若此牌是你本回合使用的第一张有唯一对应实体牌的【杀】，则你将此牌的花色改为♦。<br>②其他角色于其出牌阶段内使用的非转化黑色杀结算结束后，若此【杀】未造成伤害，则你获得之。",
 
 		old_sp_wangshuang: "旧勇王双",
 		old_sp_wangshuang_prefix: "旧|勇",
 		old_shanxie: "擅械",
-		old_shanxie_info: "①出牌阶段限一次，你可选择一项：⒈从牌堆中获得一张武器牌。⒉获得一名其他角色装备区内的一张武器牌并使用，然后其将一张手牌当做【杀】对你使用。②当其他角色使用【闪】响应你使用的【杀】时，若此【闪】没有点数或点数不大于你攻击范围的二倍，则你令此【闪】无效。",
+		old_shanxie_info: "①出牌阶段限一次，你可选择一项：⒈从牌堆中获得一张武器牌。⒉获得一名其他角色装备区内的一张武器牌并使用，然后其将一张手牌当做【杀】对你使用。<br>②当其他角色使用【闪】响应你使用的【杀】时，若此【闪】没有点数或点数不大于你攻击范围的二倍，则你令此【闪】无效。",
 
 		old_wangling: "旧王凌",
 		old_wangling_prefix: "旧",
@@ -30563,16 +30325,16 @@ const lmCharacter = {
 		old_guxuan: "孤悬",
 		old_guxuan_info: "当你成为其他角色使用锦囊牌的目标后，你可以弃置自己一个区域内的所有牌，然后选择弃置至多等量名其他角色对应区域内的各一张牌。",
 		old_juejin: "绝烬",
-		old_juejin_info: `${get.poptip("rule_chihengji")}。限定技，出牌阶段或当你进入濒死状态时，你可以选择X项执行：①回复X点体力；②摸X张牌；③手牌上限+X；④对一名其他角色造成X点火焰伤害（X为你脱离濒死状态的次数，至多为4，至少为1）。然后你可以发动一次${get.poptip("old_huitian")}。`,
+		old_juejin_info: `${get.poptip("rule_chihengji")}。限定技，出牌阶段或当你进入濒死状态时，你可以选择X项执行：①回复X点体力；<br>②摸X张牌；<br>③手牌上限+X；<br>④对一名其他角色造成X点火焰伤害（X为你脱离濒死状态的次数，至多为4，至少为1）。然后你可以发动一次${get.poptip("old_huitian")}。`,
 		old_huitian: "回天",
-		old_huitian_info: "每轮限一次，结束阶段，若你本回合使用【杀】造成过伤害且当前体力值小于等于2，你可以获得一个额外回合且你于该额外回合内：①摸牌阶段的摸牌数+2；②使用【杀】无次数限制且【杀】造成的伤害+1.每轮开始时，若你发动“回天”的次数大于2，你死亡。",
+		old_huitian_info: "每轮限一次，结束阶段，若你本回合使用【杀】造成过伤害且当前体力值小于等于2，你可以获得一个额外回合且你于该额外回合内：①摸牌阶段的摸牌数+2；<br>②使用【杀】无次数限制且【杀】造成的伤害+1.每轮开始时，若你发动“回天”的次数大于2，你死亡。",
 		old_xingzhen: "星阵",
-		old_xingzhen_info: "出牌阶段限一次，你可以观看牌堆顶的Y张牌（Y为你的体力上限且至多为7），你可以用手牌中的任意张牌与其中的任意张牌交换；然后选择一名其他角色角色，令其选择一项：①展示牌堆顶Y张牌；②展示你的手牌。展示后，你可以将展示牌中的【杀】依次对其使用。",
+		old_xingzhen_info: "出牌阶段限一次，你可以观看牌堆顶的Y张牌（Y为你的体力上限且至多为7），你可以用手牌中的任意张牌与其中的任意张牌交换；然后选择一名其他角色角色，令其选择一项：①展示牌堆顶Y张牌；<br>②展示你的手牌。展示后，你可以将展示牌中的【杀】依次对其使用。",
 
 		oldx_mb_shen_jiangwei: "旧手杀神姜维",
 		oldx_mb_shen_jiangwei_prefix: "旧|手杀神",
 		oldx_juejin: "绝烬",
-		oldx_juejin_info: `${get.poptip("rule_chihengji")}。限定技，出牌阶段或当你进入濒死状态时，你可以选择X项执行：①回复X点体力；②摸X张牌；③体力上限+X；④对一名其他角色造成X点雷电伤害（X为你脱离濒死状态的次数，至多为4，至少为1）。然后你可以发动一次${get.poptip("old_huitian")}。若你未使用此技能执行过选项，则你进入濒死状态后减一点体力上限并将体力回复至一点。`,
+		oldx_juejin_info: `${get.poptip("rule_chihengji")}。限定技，出牌阶段或当你进入濒死状态时，你可以选择X项执行：①回复X点体力；<br>②摸X张牌；<br>③体力上限+X；<br>④对一名其他角色造成X点雷电伤害（X为你脱离濒死状态的次数，至多为4，至少为1）。然后你可以发动一次${get.poptip("old_huitian")}。若你未使用此技能执行过选项，则你进入濒死状态后减一点体力上限并将体力回复至一点。`,
 		oldx_xingzhen: "星阵",
 		oldx_xingzhen_info: "牌堆顶的7张牌始终对你可见，你的回合外，你可以如手牌般使用或打出其中的基本牌，你的回合内，你可以如手牌般使用或打出其中的锦囊牌。",
 
@@ -30582,7 +30344,7 @@ const lmCharacter = {
 		old_mbgeyuan: "割圆",
 		old_mbgeyuan_info: "当你使用点数为X的牌时（X为圆周率中小数点后第一位的值），你可以摸Y张牌并令X改为后移一位的值（Y为你本技能发动的次数+1)。",
 		old_mbchongcha: "重差",
-		old_mbchongcha_info: "①你的点数大于等于10的牌不计入手牌上限，且使用时视为满足〖割圆〗中的点数0。②出牌阶段限一次，你可以弃置一张牌，令〖割圆〗中的X改为后移一位的值。",
+		old_mbchongcha_info: "①你的点数大于等于10的牌不计入手牌上限，且使用时视为满足〖割圆〗中的点数0。<br>②出牌阶段限一次，你可以弃置一张牌，令〖割圆〗中的X改为后移一位的值。",
 
 		old_mb_sunquan: "旧SP孙权",
 		old_mb_sunquan_prefix: "旧|SP",
@@ -30594,7 +30356,7 @@ const lmCharacter = {
 		old_mb_caomao: "旧手杀曹髦",
 		old_mb_caomao_prefix: "旧|手杀",
 		old_mbqianlong: "潜龙",
-		old_mbqianlong_info: `${get.poptip("rule_chihengji")}。①游戏开始时，你获得20枚“道心”标记。②当你得到牌后/受到1点伤害后/造成1点伤害后，你获得5/10/15枚“道心”（上限为99枚）。③若你的“道心”数不小于25/50/75/99，你视为拥有${get.poptip("mbcmqingzheng")}/${get.poptip("mbcmjiushi")}/${get.poptip("old_mbcmfangzhu")}/${get.poptip("old_mbjuejin")}。`,
+		old_mbqianlong_info: `${get.poptip("rule_chihengji")}。①游戏开始时，你获得20枚“道心”标记。<br>②当你得到牌后/受到1点伤害后/造成1点伤害后，你获得5/10/15枚“道心”（上限为99枚）。<br>③若你的“道心”数不小于25/50/75/99，你视为拥有${get.poptip("mbcmqingzheng")}/${get.poptip("mbcmjiushi")}/${get.poptip("old_mbcmfangzhu")}/${get.poptip("old_mbjuejin")}。`,
 		old_mbcmfangzhu: "放逐",
 		old_mbcmfangzhu_info: `${get.poptip("rule_chihengji")}。出牌阶段限一次，你可以选择一名其他角色，选择一项：⒈令其不能使用手牌中的非锦囊牌直到其回合结束；⒉令其所有非Charlotte技能失效直到其回合结束。`,
 		old_mbjuejin: "决进",
@@ -30611,17 +30373,17 @@ const lmCharacter = {
 		old_mb_cuilingyi_ab: "旧手杀崔芙",
 		old_mb_cuilingyi_prefix: "旧|手杀",
 		old_mbxishang: "袭裳",
-		old_mbxishang_info: `锁定技，①游戏开始时，你选择本局形象并获得${get.poptip("old_mbweizhuang")}。②你不因摸牌而获得牌时，明置之。`,
+		old_mbxishang_info: `锁定技，①游戏开始时，你选择本局形象并获得${get.poptip("old_mbweizhuang")}。<br>②你不因摸牌而获得牌时，明置之。`,
 		old_mbxishang_append: `<span style="font-family:yuanli">明置牌：一名角色装备区和判定区的牌都是明置牌，但是一名角色的明置牌不包括其判定区的牌`,
 		faceup_tag: "明置牌",
 		old_mbweizhuang: "褽装",
 		old_mbweizhuang_info: `此技能效果根据你的形象发生变化：${get.poptip("old_mbweizhuang_guidianx")}${get.poptip("old_mbweizhuang_dongjiaox")}${get.poptip("old_mbweizhuang_xiugex")}。`,
 		old_mbweizhuang_guidianx: "桂殿",
-		old_mbweizhuang_guidianx_info: `①有明置牌的角色的结束阶段，你可令以下一个数值-1并发动${get.poptip("mbcaiqiu")}：1.摸牌阶段摸牌数；2.出【杀】次数；3.手牌上限；4.体力值。②每局游戏限X+1次，每X+1张牌被明置后，你令以上一项数值+1（X为游戏人数）。`,
+		old_mbweizhuang_guidianx_info: `①有明置牌的角色的结束阶段，你可令以下一个数值-1并发动${get.poptip("mbcaiqiu")}：1.摸牌阶段摸牌数；2.出【杀】次数；3.手牌上限；4.体力值。<br>②每局游戏限X+1次，每X+1张牌被明置后，你令以上一项数值+1（X为游戏人数）。`,
 		old_mbweizhuang_dongjiaox: "东郊",
 		old_mbweizhuang_dongjiaox_info: `若你的明置牌包含类型数不小于：1，你使用基本牌数值+1；2，你使用锦囊牌指定目标后，可以获得其中一个目标一张牌；3，每回合每名角色限一次，你使用装备牌结算结束后，可以令一名有明置牌的角色摸两张牌。`,
 		old_mbweizhuang_xiugex: "绣阁",
-		old_mbweizhuang_xiugex_info: `①每回合每项各限一次，你可以弃置一张指定副类别的牌并视为使用一张无次数限制的对应牌，此牌结算结束后获得一张与弃置牌花色相同的牌：1.武器牌，【杀】；2.防具牌，【闪】；3.防御坐骑牌，【桃】；4.进攻坐骑牌，【酒】。②若你的明置牌包含四种花色，将此技能的“弃置”改为“展示”。`,
+		old_mbweizhuang_xiugex_info: `①每回合每项各限一次，你可以弃置一张指定副类别的牌并视为使用一张无次数限制的对应牌，此牌结算结束后获得一张与弃置牌花色相同的牌：1.武器牌，【杀】；2.防具牌，【闪】；3.防御坐骑牌，【桃】；4.进攻坐骑牌，【酒】。<br>②若你的明置牌包含四种花色，将此技能的“弃置”改为“展示”。`,
 
 		old_mb_mengda: "旧手杀孟达",
 		old_mb_mengda_prefix: "旧|手杀",
@@ -30631,7 +30393,7 @@ const lmCharacter = {
 		old_mb_caocao: "旧手杀SP曹操",
 		old_mb_caocao_prefix: "旧|手杀SP",
 		old_mblingfa: "令法",
-		old_mblingfa_info: `①第一轮开始时，你可令本轮其他角色使用【杀】时，其需弃置一张牌，否则你对其造成1点伤害。②第二轮游戏开始时，你可令本轮其他角色使用【桃】结算结束后，其需交给你一张牌，否则你对其造成1点伤害。③非前两轮游戏开始时，你可以失去〖令法〗并获得${get.poptip("new_rejianxiong")}。`,
+		old_mblingfa_info: `①第一轮开始时，你可令本轮其他角色使用【杀】时，其需弃置一张牌，否则你对其造成1点伤害。<br>②第二轮游戏开始时，你可令本轮其他角色使用【桃】结算结束后，其需交给你一张牌，否则你对其造成1点伤害。<br>③非前两轮游戏开始时，你可以失去〖令法〗并获得${get.poptip("new_rejianxiong")}。`,
 
 		old_wuke: "旧吴珂",
 		old_wuke_prefix: "旧",
@@ -30655,7 +30417,7 @@ const lmCharacter = {
 		old_hefei_zhangliao: "旧骥张辽",
 		old_hefei_zhangliao_prefix: "旧|骥",
 		old_hefeichonglei: "冲垒",
-		old_hefeichonglei_info: "锁定技，你的出牌阶段内：①你响应其他角色使用的牌后，或你使用的牌被其他角色响应后，获得其一张牌。②其他角色不处于濒死状态时，所有非【杀】手牌只能当作【闪】使用或打出。",
+		old_hefeichonglei_info: "锁定技，你的出牌阶段内：①你响应其他角色使用的牌后，或你使用的牌被其他角色响应后，获得其一张牌。<br>②其他角色不处于濒死状态时，所有非【杀】手牌只能当作【闪】使用或打出。",
 		old_hefeidangshi: "荡势",
 		old_hefeidangshi_info: "当你使用伤害牌结算结束后，你可令一名其他目标角色选择一项：1.对你使用一张非转化、非虚拟且与此牌牌名相同的伤害牌；2.弃置X张牌（X为所有角色本轮选择此项的次数且至少为1）；3.受到你造成的1点伤害。若其选择了本阶段未被执行过的选项，你摸一张牌且本阶段出【杀】次数+1。",
 		old_hefeiheyuzhangliao: "合御",
@@ -30664,7 +30426,7 @@ const lmCharacter = {
 			name: "骥乐进",
 			type: "character",
 			dialog: "characterDialog",
-		})}在场且与你阵营相同，修改${get.poptip("old_hefeichonglei")}中的“非【杀】手牌”为“手牌”。②若${get.poptip({
+		})}在场且与你阵营相同，修改${get.poptip("old_hefeichonglei")}中的“非【杀】手牌”为“手牌”。<br>②若${get.poptip({
 			id: "characterx_hefei_lidian",
 			name: "骥李典",
 			type: "character",
@@ -30685,7 +30447,7 @@ const lmCharacter = {
 		old_mb_sp_guanqiujian: "旧玄毌丘俭",
 		old_mb_sp_guanqiujian_prefix: "旧|玄",
 		old_mbcuizhen: "摧阵",
-		old_mbcuizhen_info: "①游戏开始时，你可以废除至多三名其他角色的武器栏。②当你于出牌阶段使用伤害类牌指定其他角色为目标后，若目标角色的手牌数不小于体力值，你可以废除其武器栏。③摸牌阶段，你令额定摸牌数+X（X为所有角色被废除的武器栏数之和+1，至多为4）。",
+		old_mbcuizhen_info: "①游戏开始时，你可以废除至多三名其他角色的武器栏。<br>②当你于出牌阶段使用伤害类牌指定其他角色为目标后，若目标角色的手牌数不小于体力值，你可以废除其武器栏。<br>③摸牌阶段，你令额定摸牌数+X（X为所有角色被废除的武器栏数之和+1，至多为4）。",
 
 		old_liwei: "旧李遗",
 		old_liwei_prefix: "旧",
@@ -30703,19 +30465,19 @@ const lmCharacter = {
 		old_mb_chengui: "旧手杀陈珪",
 		old_mb_chengui_prefix: "旧|手杀",
 		old_guimou: "诡谋",
-		old_guimou_info: "锁定技。游戏开始时/回合结束时，你随机/须选择以下一项直到你的下个准备阶段：①记录场上期间角色使用牌数；②记录期间场上角色弃置牌数；③记录期间场上角色获得牌数。准备阶段，你可以选择一名场上对应记录数值最少的其他角色，观看其手牌并选择其中至多三张牌，然后你可以将其中至多两张牌交给另一名其他角色，然后弃置其余牌。",
+		old_guimou_info: "锁定技。游戏开始时/回合结束时，你随机/须选择以下一项直到你的下个准备阶段：①记录场上期间角色使用牌数；<br>②记录期间场上角色弃置牌数；<br>③记录期间场上角色获得牌数。准备阶段，你可以选择一名场上对应记录数值最少的其他角色，观看其手牌并选择其中至多三张牌，然后你可以将其中至多两张牌交给另一名其他角色，然后弃置其余牌。",
 
 		old_mb_guozhao: "旧手杀郭照",
 		old_mb_guozhao_prefix: "旧|手杀",
 		old_yichong: "易宠",
-		old_yichong_info: "①准备阶段，你可以选择一名其他角色并选择一个花色，然后你获得其所有此花色的牌，移除场上的所有“雀”标记，令其获得“雀”标记直到你的下个回合开始。②拥有“雀”标记的角色获得你最后一次发动〖易宠①〗选择的花色的牌后，你获得这些牌（你至多通过每个“雀”得到五张牌）。",
+		old_yichong_info: "①准备阶段，你可以选择一名其他角色并选择一个花色，然后你获得其所有此花色的牌，移除场上的所有“雀”标记，令其获得“雀”标记直到你的下个回合开始。<br>②拥有“雀”标记的角色获得你最后一次发动〖易宠①〗选择的花色的牌后，你获得这些牌（你至多通过每个“雀”得到五张牌）。",
 		old_wufei: "诬诽",
-		old_wufei_info: "若场上存在拥有“雀”标记的角色A，则：①当你使用【杀】或伤害类锦囊牌指定第一个目标后，你令A成为此牌伤害来源。②当你受到伤害后，若A的体力值大于1且A的体力值大于你，则你可以对A造成1点伤害。",
+		old_wufei_info: "若场上存在拥有“雀”标记的角色A，则：①当你使用【杀】或伤害类锦囊牌指定第一个目标后，你令A成为此牌伤害来源。<br>②当你受到伤害后，若A的体力值大于1且A的体力值大于你，则你可以对A造成1点伤害。",
 
 		old_fuqian: "旧手杀傅佥",
 		old_fuqian_prefix: "旧|手杀",
 		old_jueyong: "绝勇",
-		old_jueyong_info: "锁定技。①当你不因【绝勇】成为唯一牌的目标时，若此牌不为转化牌且对应的实体牌牌数为1且不为【桃】或【酒】，则你将此牌置于你的武将牌上，称为“绝”，且取消此牌的目标。②结束阶段开始时，若你有“绝”，且“绝”的数量不小于你已损失的体力值，则你令所有“绝”的原使用者依次对你使用所有“绝”，将无法使用的“绝”置入弃牌堆。",
+		old_jueyong_info: "锁定技。①当你不因【绝勇】成为唯一牌的目标时，若此牌不为转化牌且对应的实体牌牌数为1且不为【桃】或【酒】，则你将此牌置于你的武将牌上，称为“绝”，且取消此牌的目标。<br>②结束阶段开始时，若你有“绝”，且“绝”的数量不小于你已损失的体力值，则你令所有“绝”的原使用者依次对你使用所有“绝”，将无法使用的“绝”置入弃牌堆。",
 		old_poxiang: "破降",
 		old_poxiang_info: "出牌阶段限一次。你可以将一张牌交给一名其他角色并摸三张牌，移去所有“绝”并失去1点体力，然后你跳过本回合的弃牌阶段。",
 
@@ -30727,25 +30489,25 @@ const lmCharacter = {
 		old_mb_zhuzhi: "旧手杀界朱治",
 		old_mb_zhuzhi_prefix: "旧|手杀界",
 		old_sbanguo: "安国",
-		old_sbanguo_info: "①游戏开始时，你令一名其他角色获得1枚“安国”标记（有“安国”的角色手牌上限基数等于体力上限）。②出牌阶段开始时，你可以将一名有“安国”的角色的所有“安国”移动给一名本局游戏未获得过“安国”的其他角色。③当你受到伤害时，若有有“安国”的角色且伤害值不小于你的体力值且此伤害没有来源或来源没有“安国”，防止此伤害。④一名角色进入濒死状态时，若其有你因〖安国①〗获得的“安国”，你移去其该“安国”，令其将体力回复至1点。然后你选择一项：1.若你的体力值大于1，你失去体力至1点；2.若你的体力上限大于1，你将体力上限减至1。最后你令其获得X点护甲（X为你以此法失去的体力值或减少的体力上限）。",
+		old_sbanguo_info: "①游戏开始时，你令一名其他角色获得1枚“安国”标记（有“安国”的角色手牌上限基数等于体力上限）。<br>②出牌阶段开始时，你可以将一名有“安国”的角色的所有“安国”移动给一名本局游戏未获得过“安国”的其他角色。<br>③当你受到伤害时，若有有“安国”的角色且伤害值不小于你的体力值且此伤害没有来源或来源没有“安国”，防止此伤害。<br>④一名角色进入濒死状态时，若其有你因〖安国①〗获得的“安国”，你移去其该“安国”，令其将体力回复至1点。然后你选择一项：1.若你的体力值大于1，你失去体力至1点；2.若你的体力上限大于1，你将体力上限减至1。最后你令其获得X点护甲（X为你以此法失去的体力值或减少的体力上限）。",
 
 		//谋攻篇
 		old_sb_caopi: "牢谋曹丕",
 		old_sb_caopi_prefix: "牢|谋",
 		old_sbxingshang: "行殇",
-		old_sbxingshang_info: "①当一名角色受到伤害后（每回合限一次）或死亡时，你获得2个“颂”标记（你至多拥有9个“颂”标记）。②出牌阶段限两次，你可以：" + ["移去2个“颂”标记，令一名角色摸X张牌并复原武将牌（X为场上死亡角色数，且X至少为3）", "移去3个“颂”标记，令一名体力上限小于10的角色回复1点体力，增加1点体力上限，随机恢复一个已废除的装备栏", `移去4个“颂”标记，获得一名阵亡角色武将牌上除主公技外的所有技能，然后你失去${get.poptip("old_sbxingshang")}、${get.poptip("old_sbfangzhu")}和${get.poptip("old_sbsongwei")}`].map((str, index) => `${index + 1}.${str}`).join("；") + "。",
+		old_sbxingshang_info: "①当一名角色受到伤害后（每回合限一次）或死亡时，你获得2个“颂”标记（你至多拥有9个“颂”标记）。<br>②出牌阶段限两次，你可以：" + ["移去2个“颂”标记，令一名角色摸X张牌并复原武将牌（X为场上死亡角色数，且X至少为3）", "移去3个“颂”标记，令一名体力上限小于10的角色回复1点体力，增加1点体力上限，随机恢复一个已废除的装备栏", `移去4个“颂”标记，获得一名阵亡角色武将牌上除主公技外的所有技能，然后你失去${get.poptip("old_sbxingshang")}、${get.poptip("old_sbfangzhu")}和${get.poptip("old_sbsongwei")}`].map((str, index) => `${index + 1}.${str}`).join("；") + "。",
 		old_sbfangzhu: "放逐",
 		old_sbfangzhu_info: "出牌阶段限一次，你可以：" + ["移去1个“颂”标记，令一名其他角色于手牌中只能使用基本牌直到其回合结束", "移去2个“颂”标记，令一名其他角色于手牌中只能使用锦囊牌直到其回合结束", "移去3个“颂”标记，令一名其他角色于手牌中只能使用装备牌直到其回合结束", "移去2个“颂”标记，令一名其他角色的非Charlotte技能失效直到其回合结束", "移去2个“颂”标记，令一名其他角色不能响应另一名角色使用的牌直到其回合结束", "移去3个“颂”标记，令一名其他角色将武将牌翻面"].map((str, index) => `${index + 1}.${str}`).join("；") + "。",
 		old_sbfangzhu_info_doudizhu: "出牌阶段限一次，你可以：" + ["移去2个“颂”标记，令一名其他角色于手牌中只能使用锦囊牌直到其回合结束", "移去2个“颂”标记，令一名其他角色不能响应另一名角色使用的牌直到其回合结束", "移去3个“颂”标记，令一名其他角色将武将牌翻面"].map((str, index) => `${index + 1}.${str}`).join("；") + "。",
 		old_sbsongwei: "颂威",
-		old_sbsongwei_info: "主公技。①出牌阶段开始时，你获得Y个“颂”标记（Y为场上其他魏势力角色数的两倍）。②每局游戏限一次，你可以令一名其他魏势力角色失去武将牌上的所有技能。",
+		old_sbsongwei_info: "主公技。①出牌阶段开始时，你获得Y个“颂”标记（Y为场上其他魏势力角色数的两倍）。<br>②每局游戏限一次，你可以令一名其他魏势力角色失去武将牌上的所有技能。",
 
 		old_sb_jiangwei: "旧谋姜维",
 		old_sb_jiangwei_prefix: "旧|谋",
 		old_sbzhiji: "志继",
 		old_sbzhiji_info: `觉醒技。准备阶段，若你的手牌数不大于体力值，你减少1点体力上限，回复1点体力并摸两张牌，获得${get.poptip("old_sbbeifa")}。`,
 		old_sbbeifa: "北伐",
-		old_sbbeifa_info: "蓄力技（3/9）。①出牌阶段，你可以消耗任意点蓄力值，将一张手牌当做等字数且未被记录的仅能对其他角色使用的牌使用或打出，然后记录之。②你于回合内受到伤害或〖北伐〗记录牌名数达到X时，清除所有记录，然后若X大于1，蓄力值上限-1（X为此技能提供的蓄力值上限）。③你的回合内，有转化牌被使用或打出时或有牌被弃置时，你获得对应实体牌数点蓄力值。",
+		old_sbbeifa_info: "蓄力技（3/9）。①出牌阶段，你可以消耗任意点蓄力值，将一张手牌当做等字数且未被记录的仅能对其他角色使用的牌使用或打出，然后记录之。<br>②你于回合内受到伤害或〖北伐〗记录牌名数达到X时，清除所有记录，然后若X大于1，蓄力值上限-1（X为此技能提供的蓄力值上限）。<br>③你的回合内，有转化牌被使用或打出时或有牌被弃置时，你获得对应实体牌数点蓄力值。",
 
 		old_sb_xuhuang: "旧谋徐晃",
 		old_sb_xuhuang_prefix: "旧|谋",
@@ -30755,9 +30517,9 @@ const lmCharacter = {
 		old_sb_yuanshao: "旧谋袁绍",
 		old_sb_yuanshao_prefix: "旧|谋",
 		old_sbluanji: "乱击",
-		old_sbluanji_info: "①出牌阶段限一次。你可以将两张手牌当【万箭齐发】使用。②当其他角色因响应你使用的【万箭齐发】而打出【闪】时，你摸一张牌。",
+		old_sbluanji_info: "①出牌阶段限一次。你可以将两张手牌当【万箭齐发】使用。<br>②当其他角色因响应你使用的【万箭齐发】而打出【闪】时，你摸一张牌。",
 		old_sbxueyi: "血裔",
-		old_sbxueyi_info: "主公技，锁定技。①你的手牌上限+2X（X为场上其他群势力角色数）。②当你使用牌指定其他群势力角色为目标后，你摸一张牌。",
+		old_sbxueyi_info: "主公技，锁定技。①你的手牌上限+2X（X为场上其他群势力角色数）。<br>②当你使用牌指定其他群势力角色为目标后，你摸一张牌。",
 
 		old_sb_handang: "旧谋韩当",
 		old_sb_handang_prefix: "旧|谋",
@@ -30770,11 +30532,11 @@ const lmCharacter = {
 		old_sb_jiaxu: "旧谋贾诩",
 		old_sb_jiaxu_prefix: "旧|谋",
 		old_sbwansha: "完杀",
-		old_sbwansha_info: "①你的回合内，不处于濒死状态的其他角色不能使用【桃】。②一名角色进入濒死状态时，你可以观看其手牌并选择其中零至两张牌（其他人不可见），然后其选择一项：1.你将这些牌分配给任意名不为其的角色；2.其弃置除这些牌以外的牌。",
+		old_sbwansha_info: "①你的回合内，不处于濒死状态的其他角色不能使用【桃】。<br>②一名角色进入濒死状态时，你可以观看其手牌并选择其中零至两张牌（其他人不可见），然后其选择一项：1.你将这些牌分配给任意名不为其的角色；2.其弃置除这些牌以外的牌。",
 		old_sbwansha_rewrite: "完杀·改",
-		old_sbwansha_rewrite_info: "①你的回合内，不处于濒死状态的其他角色不能使用【桃】。②一名角色进入濒死状态时，你可以观看其手牌并选择其区域内零至三张牌（其他人不可见），然后其选择一项：1.你将这些牌分配给任意名不为其的角色；2.其弃置除这些牌以外的牌。",
+		old_sbwansha_rewrite_info: "①你的回合内，不处于濒死状态的其他角色不能使用【桃】。<br>②一名角色进入濒死状态时，你可以观看其手牌并选择其区域内零至三张牌（其他人不可见），然后其选择一项：1.你将这些牌分配给任意名不为其的角色；2.其弃置除这些牌以外的牌。",
 		old_sbluanwu: "乱武",
-		old_sbluanwu_info: "限定技，出牌阶段，你可令所有其他角色依次选择一项：①对距离最近（或之一）的另一名其他角色使用一张【杀】；②失去1点体力。一名角色因此失去体力后，你可以修改〖完杀〗或者〖帷幕〗。",
+		old_sbluanwu_info: "限定技，出牌阶段，你可令所有其他角色依次选择一项：①对距离最近（或之一）的另一名其他角色使用一张【杀】；<br>②失去1点体力。一名角色因此失去体力后，你可以修改〖完杀〗或者〖帷幕〗。",
 
 		old_sb_zhugejin: "旧谋诸葛瑾",
 		old_sb_zhugejin_prefix: "旧|谋",
@@ -30791,7 +30553,7 @@ const lmCharacter = {
 		old_sbtuxi: "突袭",
 		old_sbtuxi_info: "你的回合限三次，当你不因此技能获得牌后，你可以将其中任意张牌置入弃牌堆，然后获得至多X名其他角色各一张手牌（X为你以此法置入弃牌堆的牌数）。",
 		old_sbdengfeng: "登锋",
-		old_sbdengfeng_info: `准备阶段，你可以选择一名其他角色并选择一项：①令其获得其装备区的至多两张牌。②你获得牌堆中的一张【杀】。③${get.poptip("rule_beishui")}：你失去1点体力。`,
+		old_sbdengfeng_info: `准备阶段，你可以选择一名其他角色并选择一项：①令其获得其装备区的至多两张牌。<br>②你获得牌堆中的一张【杀】。<br>③${get.poptip("rule_beishui")}：你失去1点体力。`,
 
 		old_sb_zhanghe: "旧谋张郃",
 		old_sb_zhanghe_prefix: "旧|谋",
@@ -30828,45 +30590,45 @@ const lmCharacter = {
 		old_sb_sunce: "旧谋孙策",
 		old_sb_sunce_prefix: "旧|谋",
 		old_sbjiang: "激昂",
-		old_sbjiang_info: "①当你使用【决斗】或红色【杀】指定目标后，或当你成为【决斗】或红色【杀】的目标后，你摸一张牌。②当你使用【决斗】时，你可以额外指定一名目标，然后你失去1点体力。③出牌阶段限一次。你可以将所有手牌当【决斗】使用。",
+		old_sbjiang_info: "①当你使用【决斗】或红色【杀】指定目标后，或当你成为【决斗】或红色【杀】的目标后，你摸一张牌。<br>②当你使用【决斗】时，你可以额外指定一名目标，然后你失去1点体力。<br>③出牌阶段限一次。你可以将所有手牌当【决斗】使用。",
 		old_sbhunzi: "魂姿",
 		old_sbhunzi_info: `觉醒技。当你脱离濒死状态后，你减1点体力上限，获得2点护甲，摸三张牌。然后你获得${get.poptip("sbyingzi")}和${get.poptip("gzyinghun")}。`,
 		old_sbzhiba: "制霸",
-		old_sbzhiba_info: "主公技，限定技。当你进入濒死状态时，你可以回复X点体力并修改〖激昂③〗为“出牌阶段限X次”（X为场上吴势力角色数）。然后其他吴势力角色依次受到1点无来源伤害，且当有角色因此死亡后，你摸三张牌。",
+		old_sbzhiba_info: "主公技，限定技。当你进入濒死状态时，你可以回复X点体力并修改〖激昂<br>③〗为“出牌阶段限X次”（X为场上吴势力角色数）。然后其他吴势力角色依次受到1点无来源伤害，且当有角色因此死亡后，你摸三张牌。",
 
 		old_sb_sp_zhugeliang: "牢谋诸葛亮",
 		old_sb_sp_zhugeliang_prefix: "牢|谋",
 		old_sbhuoji: "火计",
-		old_sbhuoji_info: `使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得${get.poptip("old_sbguanxing")}和${get.poptip("old_sbkongcheng")}。③失败：使命成功前进入濒死状态。`,
+		old_sbhuoji_info: `使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。<br>②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得${get.poptip("old_sbguanxing")}和${get.poptip("old_sbkongcheng")}。<br>③失败：使命成功前进入濒死状态。`,
 		old_sbkanpo: "看破",
-		old_sbkanpo_info: "①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录共计三个未于本次清除过的非装备牌牌名（对其他角色不可见）。②当其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录，令此牌无效。",
+		old_sbkanpo_info: "①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录共计三个未于本次清除过的非装备牌牌名（对其他角色不可见）。<br>②当其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录，令此牌无效。",
 		old_sbguanxing: "观星",
-		old_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”。然后你可以将任意张“星”置于牌堆顶（X为你此次移去的“星”数+1且至多为7，若你此前未发动过〖观星①〗则X为7）。②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。",
+		old_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”。然后你可以将任意张“星”置于牌堆顶（X为你此次移去的“星”数+1且至多为7，若你此前未发动过〖观星①〗则X为7）。<br>②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。<br>③你可以如手牌般使用或打出“星”。",
 		old_sbkongcheng: "空城",
 		old_sbkongcheng_info: "锁定技。当你受到伤害时，若你有〖观星〗，且若你：有“星”，你判定，若结果点数不大于你的“星”数，此伤害-1；没有“星”，此伤害+1。",
 
 		oldx_sb_sp_zhugeliang: "旧谋诸葛亮",
 		oldx_sb_sp_zhugeliang_prefix: "旧|谋",
 		oldx_sbhuoji: "火计",
-		oldx_sbhuoji_info: `使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得${get.poptip("oldx_sbguanxing")}和${get.poptip("oldx_sbkongcheng")}。③失败：使命成功前进入濒死状态。`,
+		oldx_sbhuoji_info: `使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。<br>②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得${get.poptip("oldx_sbguanxing")}和${get.poptip("oldx_sbkongcheng")}。<br>③失败：使命成功前进入濒死状态。`,
 		oldx_sbkanpo: "看破",
-		oldx_sbkanpo_info: "①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录10个牌名）。②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。",
+		oldx_sbkanpo_info: "①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录10个牌名）。<br>②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。",
 		oldx_sbguanxing: "观星",
-		oldx_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”（X为7-此前发动〖观星①〗次数的两倍，且X至少为0）。然后你可以将任意张“星”置于牌堆顶。②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。",
+		oldx_sbguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”（X为7-此前发动〖观星①〗次数的两倍，且X至少为0）。然后你可以将任意张“星”置于牌堆顶。<br>②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。<br>③你可以如手牌般使用或打出“星”。",
 		oldx_sbkongcheng: "空城",
 		oldx_sbkongcheng_info: "锁定技。当你受到伤害时，若你拥有技能〖观星〗，且若你：有“星”，你判定，若结果点数不大于你的“星”数，此伤害-1；没有“星”，此伤害+1。",
 
 		old_sb_menghuo: "旧谋孟获",
 		old_sb_menghuo_prefix: "旧|谋",
 		old_sbzaiqi: "再起",
-		old_sbzaiqi_info: "蓄力技（3/7）。①弃牌阶段结束时，你可以消耗任意点蓄力值并选择等量名角色，然后令这些角色选择一项：1.令你摸一张牌；2.弃置一张牌，然后你回复1点体力。②每回合限一次。当你造成伤害后，你获得1点蓄力值。",
+		old_sbzaiqi_info: "蓄力技（3/7）。①弃牌阶段结束时，你可以消耗任意点蓄力值并选择等量名角色，然后令这些角色选择一项：1.令你摸一张牌；2.弃置一张牌，然后你回复1点体力。<br>②每回合限一次。当你造成伤害后，你获得1点蓄力值。",
 
 		old_sb_zhurong: "旧谋祝融",
 		old_sb_zhurong_prefix: "旧|谋",
 		old_sblieren: "烈刃",
 		old_sblieren_info: "当你使用【杀】指定唯一目标后，你可以摸一张牌，然后与其拼点。若你赢，此【杀】结算结束后，你可以对另一名其他角色造成1点伤害。",
 		old_sbjuxiang: "巨象",
-		old_sbjuxiang_info: "锁定技。①【南蛮入侵】对你无效。②当其他角色使用【南蛮入侵】结算结束后，你获得此牌对应的所有实体牌。③结束阶段，若你未于本回合使用过【南蛮入侵】，你将一张游戏外的随机【南蛮入侵】（共八张）交给一名角色。",
+		old_sbjuxiang_info: "锁定技。①【南蛮入侵】对你无效。<br>②当其他角色使用【南蛮入侵】结算结束后，你获得此牌对应的所有实体牌。<br>③结束阶段，若你未于本回合使用过【南蛮入侵】，你将一张游戏外的随机【南蛮入侵】（共八张）交给一名角色。",
 
 		old_sb_guanyu: "旧谋关羽",
 		old_sb_guanyu_prefix: "旧|谋",
@@ -30877,23 +30639,23 @@ const lmCharacter = {
 		old_sb_zhaoyun: "旧谋赵云",
 		old_sb_zhaoyun_prefix: "旧|谋",
 		old_sblongdan: "龙胆",
-		old_sblongdan_info: "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。",
+		old_sblongdan_info: "蓄力技（1/4）。①你可以消耗1点蓄力值，将【杀】当做【闪】或将【闪】当做【杀】使用或打出，然后摸一张牌。<br>②一名角色的回合结束时，你获得1点蓄力值。",
 		old_sbjizhu: "积著",
 		old_sbjizhu_info: `准备阶段开始时，你可以和一名其他角色进行${get.poptip("rule_xieli")}。其的下个结束阶段开始时，若你与其${get.poptip("rule_xieli")}成功，则你修改${get.poptip("old_sblongdan_shabi")}直到你的下个结束阶段开始。`,
 		old_sblongdan_shabi: "龙胆",
-		old_sblongdan_shabi_info: "蓄力技（1/4）。①你可以消耗1点蓄力值，将一张基本牌当做任意基本牌使用或打出，然后摸一张牌。②一名角色的回合结束时，你获得1点蓄力值。",
+		old_sblongdan_shabi_info: "蓄力技（1/4）。①你可以消耗1点蓄力值，将一张基本牌当做任意基本牌使用或打出，然后摸一张牌。<br>②一名角色的回合结束时，你获得1点蓄力值。",
 
 		old_sb_fazheng: "旧谋法正",
 		old_sb_fazheng_prefix: "旧|谋",
 		old_sbxuanhuo: "眩惑",
-		old_sbxuanhuo_info: "①出牌阶段限一次。你可以将一张牌交给一名没有“眩”标记的其他角色，然后令其获得“眩”标记。②当有“眩”的其他角色于摸牌阶段外得到牌后，若你以此法于其本次获得“眩”的期间内得到其的牌数小于5，你随机获得其一张手牌。",
+		old_sbxuanhuo_info: "①出牌阶段限一次。你可以将一张牌交给一名没有“眩”标记的其他角色，然后令其获得“眩”标记。<br>②当有“眩”的其他角色于摸牌阶段外得到牌后，若你以此法于其本次获得“眩”的期间内得到其的牌数小于5，你随机获得其一张手牌。",
 		old_sbenyuan: "恩怨",
 		old_sbenyuan_info: "锁定技。准备阶段，若场上存在有“眩”的角色，你移去该角色的“眩”，且你于其本次获得“眩”的期间内得到其的牌数：不小于3，你交给其两张牌；小于3，其失去1点体力，你回复1点体力。",
 
 		old_sb_huangzhong: "旧谋黄忠",
 		old_sb_huangzhong_prefix: "旧|谋",
 		old_sbliegong: "烈弓",
-		old_sbliegong_info: "①你使用【杀】可以选择你距离不大于此【杀】点数的角色为目标。②当你使用牌时，或成为其他角色使用牌的目标后，你记录此牌的花色。③当你使用【杀】指定唯一目标后，若你〖烈弓②〗的记录不为空，则你可亮出牌堆顶的X张牌（X为你〖烈弓②〗记录过的花色数-1），令此【杀】的伤害值基数+Y（Y为亮出牌中被〖烈弓②〗记录过花色的牌的数量），且目标角色不能使用〖烈弓②〗记录过花色的牌响应此【杀】。此【杀】使用结算结束后，你清除〖烈弓②〗的记录。",
+		old_sbliegong_info: "①你使用【杀】可以选择你距离不大于此【杀】点数的角色为目标。<br>②当你使用牌时，或成为其他角色使用牌的目标后，你记录此牌的花色。<br>③当你使用【杀】指定唯一目标后，若你〖烈弓<br>②〗的记录不为空，则你可亮出牌堆顶的X张牌（X为你〖烈弓<br>②〗记录过的花色数-1），令此【杀】的伤害值基数+Y（Y为亮出牌中被〖烈弓<br>②〗记录过花色的牌的数量），且目标角色不能使用〖烈弓<br>②〗记录过花色的牌响应此【杀】。此【杀】使用结算结束后，你清除〖烈弓<br>②〗的记录。",
 
 		old_sb_gongsunzan: "旧谋公孙瓒",
 		old_sb_gongsunzan_prefix: "旧|谋",
@@ -30910,7 +30672,7 @@ const lmCharacter = {
 		old_sb_huanggai: "旧谋黄盖",
 		old_sb_huanggai_prefix: "旧|谋",
 		old_sbzhaxiang: "诈降",
-		old_sbzhaxiang_info: "锁定技。①摸牌阶段，你多摸X张牌。②你于每个回合使用的前X张牌无距离与次数限制且不能被响应（X为你已损失的体力值）。",
+		old_sbzhaxiang_info: "锁定技。①摸牌阶段，你多摸X张牌。<br>②你于每个回合使用的前X张牌无距离与次数限制且不能被响应（X为你已损失的体力值）。",
 
 		old_sb_ganning: "旧谋甘宁",
 		old_sb_ganning_prefix: "旧|谋",
@@ -30922,7 +30684,7 @@ const lmCharacter = {
 		old_sb_xiaoqiao: "旧谋小乔",
 		old_sb_xiaoqiao_prefix: "旧|谋",
 		old_sbtianxiang: "天香",
-		old_sbtianxiang_info: "①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸X张牌（X为移去的“天香”标记数+3）。",
+		old_sbtianxiang_info: "①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。<br>②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。<br>③准备阶段，你移去场上所有的“天香”标记，然后摸X张牌（X为移去的“天香”标记数+3）。",
 
 		//兵势篇
 		old_pot_chenqun: "旧势陈群",
@@ -30978,7 +30740,7 @@ const lmCharacter = {
 		old_pot_weiyan: "旧势魏延",
 		old_pot_weiyan_prefix: "旧|势",
 		old_potzhongao: "忠傲",
-		old_potzhongao_info: `使命技，①游戏开始时，你获得${get.poptip("potkuanggu")}。②成功：你杀死一名角色，升级${get.poptip("potkuanggu")}，回复X点体力并摸X张牌，体力值已满则改为摸等量张牌（X为你剩余的“壮誓”次数）。③失败：你进入濒死，或你未于出牌阶段开始时执行${get.poptip("old_potzhuangshi")}，失去${get.poptip("old_potzhuangshi")}并获得${get.poptip("kunfen")}，然后你回复1点体力并摸两张牌。`,
+		old_potzhongao_info: `使命技，①游戏开始时，你获得${get.poptip("potkuanggu")}。<br>②成功：你杀死一名角色，升级${get.poptip("potkuanggu")}，回复X点体力并摸X张牌，体力值已满则改为摸等量张牌（X为你剩余的“壮誓”次数）。<br>③失败：你进入濒死，或你未于出牌阶段开始时执行${get.poptip("old_potzhuangshi")}，失去${get.poptip("old_potzhuangshi")}并获得${get.poptip("kunfen")}，然后你回复1点体力并摸两张牌。`,
 		old_potzhuangshi: "壮誓",
 		old_potzhuangshi_info: "出牌阶段开始时，你可以执行任意项：1.失去任意点体力，令你此阶段使用的前等量张牌不计入次数限制；2.弃置任意张手牌，令你此阶段使用的前等量张牌无距离限制且不可被响应。若均不执行，你增加1点体力上限并回复1点体力。",
 		old_potzhuangshi_tag: "已选择弃置",
@@ -30988,19 +30750,19 @@ const lmCharacter = {
 		old_pothanzhan: "酣战",
 		old_pothanzhan_info: "出牌阶段限一次，你可以选择一名其他角色，你与其将手牌数摸至X张（X为各自体力上限且至多摸三张），然后你视为对其使用一张【决斗】。",
 		old_potzhanlie: "战烈",
-		old_potzhanlie_info: "①一名角色的回合开始时，你记录X（X为你的攻击范围），本回合中的前X张【杀】进入弃牌堆后，你获得等量“烈”标记（你至多拥有8个“烈”标记）。②出牌阶段结束时，你可移除全部”烈”标记（没有标记也可发动），视为使用一张无次数限制的【杀】并选择以下选项中的至多Y项（Y为你本次移除的标记数/2，向下取整）：1.令此【杀】可以额外指定一个目标；2.令此【杀】基础伤害值+1；3.令此【杀】需额外弃置一张牌方可响应；4.此【杀】结算完毕后，你摸两张牌。",
+		old_potzhanlie_info: "①一名角色的回合开始时，你记录X（X为你的攻击范围），本回合中的前X张【杀】进入弃牌堆后，你获得等量“烈”标记（你至多拥有8个“烈”标记）。<br>②出牌阶段结束时，你可移除全部”烈”标记（没有标记也可发动），视为使用一张无次数限制的【杀】并选择以下选项中的至多Y项（Y为你本次移除的标记数/2，向下取整）：1.令此【杀】可以额外指定一个目标；2.令此【杀】基础伤害值+1；3.令此【杀】需额外弃置一张牌方可响应；4.此【杀】结算完毕后，你摸两张牌。",
 		old_potzhenfeng: "振锋",
-		old_potzhenfeng_info: "限定技，出牌阶段，你可以选择一项：①回复2点体力；②修改〖酣战〗和〖战烈〗描述中的“X”为当前体力值、已损失体力值、存活角色数中的一项（拥有对应技能方可选择）。",
+		old_potzhenfeng_info: "限定技，出牌阶段，你可以选择一项：①回复2点体力；<br>②修改〖酣战〗和〖战烈〗描述中的“X”为当前体力值、已损失体力值、存活角色数中的一项（拥有对应技能方可选择）。",
 
 		old_pot_lougui: "旧势娄圭",
 		old_pot_lougui_prefix: "旧|势",
 		old_potjiyu: "急御",
-		old_potjiyu_info: "①出牌阶段限一次，你可以弃置一张手牌，从牌堆中随机获得与此牌类别不同的牌各一张。②当你失去本阶段因〖急御①〗获得的所有牌后，你重置〖急御①〗。",
+		old_potjiyu_info: "①出牌阶段限一次，你可以弃置一张手牌，从牌堆中随机获得与此牌类别不同的牌各一张。<br>②当你失去本阶段因〖急御①〗获得的所有牌后，你重置〖急御①〗。",
 
 		old_pot_chendao: "旧势陈到",
 		old_pot_chendao_prefix: "旧|势",
 		old_pothongyi: "弘毅",
-		old_pothongyi_info: "锁定技。①游戏开始时，你获得2个「毅」标记；当你造成或受到1点伤害后，你获得1个「毅」标记；你至多拥有4个「毅」标记。②准备阶段，你选择一项：1.摸X张牌（X为你拥有的「毅」标记数）；2.移去所有「毅」标记，视为使用等量的【杀】。",
+		old_pothongyi_info: "锁定技。①游戏开始时，你获得2个「毅」标记；当你造成或受到1点伤害后，你获得1个「毅」标记；你至多拥有4个「毅」标记。<br>②准备阶段，你选择一项：1.摸X张牌（X为你拥有的「毅」标记数）；2.移去所有「毅」标记，视为使用等量的【杀】。",
 
 		old_pot_yuji: "旧势于吉",
 		old_pot_yuji_prefix: "旧|势",
@@ -31045,7 +30807,7 @@ const lmCharacter = {
 		old_tw_niufudongxie: "旧牛辅董翓",
 		old_tw_niufudongxie_prefix: "旧",
 		old_twjuntun: "军屯",
-		old_twjuntun_info: "①游戏开始时或当其他角色濒死状态结算完成后，你可令一名角色获得【凶军】。②当其他角色造成伤害后，若其拥有【凶军】，你获得等同于此次伤害值的暴虐值。",
+		old_twjuntun_info: "①游戏开始时或当其他角色濒死状态结算完成后，你可令一名角色获得【凶军】。<br>②当其他角色造成伤害后，若其拥有【凶军】，你获得等同于此次伤害值的暴虐值。",
 		old_twxiongxi: "凶袭",
 		old_twxiongxi_info: "每回合每名角色限一次，出牌阶段，你可以弃置X张牌对一名其他角色造成1点伤害（X为你的暴虐值与暴虐值上限之差）。",
 		old_twxiongjun: "凶军",
@@ -31054,14 +30816,14 @@ const lmCharacter = {
 		old_xia_zhaoe: "旧赵娥",
 		old_xia_zhaoe_prefix: "旧",
 		old_twyanshi: "言誓",
-		old_twyanshi_info: "①游戏开始时，你选择一名其他角色，称为“言誓”角色。②当你或“言誓”角色受到二者之外角色造成的伤害后，伤害来源获得1枚“誓”标记。③你对有“誓”的角色使用牌无距离限制。④当你对有“誓”的角色造成伤害时，此伤害+1，且当你对这些角色造成伤害后，你摸等同于伤害值的牌并移去其所有“誓”。",
+		old_twyanshi_info: "①游戏开始时，你选择一名其他角色，称为“言誓”角色。<br>②当你或“言誓”角色受到二者之外角色造成的伤害后，伤害来源获得1枚“誓”标记。<br>③你对有“誓”的角色使用牌无距离限制。<br>④当你对有“誓”的角色造成伤害时，此伤害+1，且当你对这些角色造成伤害后，你摸等同于伤害值的牌并移去其所有“誓”。",
 		old_twrenchou: "刃仇",
 		old_twrenchou_info: "锁定技。当你或“言誓”角色死亡时，若二者中的另一名角色A存活，A对杀死你或其的角色造成X点伤害（X为A的体力值）。",
 
 		old_xia_guanyu: "旧侠关羽",
 		old_xia_guanyu_prefix: "旧|侠",
 		old_twzhongyi: "忠义",
-		old_twzhongyi_info: `锁定技。①你使用【杀】无距离限制。②当你使用【杀】结算完毕后，你选择一项：⒈摸X张牌；⒉回复X点体力；⒊${get.poptip("rule_beishui")}：失去Y点体力，依次执行以上两项（X为此牌造成的伤害值，Y为你本局游戏此前选择此项的次数+1）。`,
+		old_twzhongyi_info: `锁定技。①你使用【杀】无距离限制。<br>②当你使用【杀】结算完毕后，你选择一项：⒈摸X张牌；⒉回复X点体力；⒊${get.poptip("rule_beishui")}：失去Y点体力，依次执行以上两项（X为此牌造成的伤害值，Y为你本局游戏此前选择此项的次数+1）。`,
 
 		old_huan_zhugeliang: "旧幻诸葛亮",
 		old_huan_zhugeliang_prefix: "旧|幻",
@@ -31078,7 +30840,7 @@ const lmCharacter = {
 		old_huan_zhugeguo: "旧幻诸葛果",
 		old_huan_zhugeguo_prefix: "旧|幻",
 		old_rexianyuan: "仙援",
-		old_rexianyuan_info: "①一轮游戏开始时，你获得4枚“仙援”标记（一名角色至多拥有4枚“仙援”标记）。②出牌阶段，你可以将“仙援”标记分配给其他角色。③拥有“仙援”标记的角色的出牌阶段开始时，你选择一项：⒈观看其手牌，将其中至多X张牌置于牌堆顶；⒉令其摸X张牌（X为其拥有的“仙援”标记数）。然后若当前回合角色不为你，则移去其所有“仙援”标记。",
+		old_rexianyuan_info: "①一轮游戏开始时，你获得4枚“仙援”标记（一名角色至多拥有4枚“仙援”标记）。<br>②出牌阶段，你可以将“仙援”标记分配给其他角色。<br>③拥有“仙援”标记的角色的出牌阶段开始时，你选择一项：⒈观看其手牌，将其中至多X张牌置于牌堆顶；⒉令其摸X张牌（X为其拥有的“仙援”标记数）。然后若当前回合角色不为你，则移去其所有“仙援”标记。",
 
 		old_huan_caoang: "旧幻曹昂",
 		old_huan_caoang_prefix: "旧|幻",
@@ -31103,7 +30865,7 @@ const lmCharacter = {
 		old_jsrg_huangfusong: "旧TW起皇甫嵩",
 		old_jsrg_huangfusong_prefix: "旧|TW|起",
 		old_twjuxia: "居下",
-		old_twjuxia_info: "①每回合限一次，其他角色使用牌指定你为目标后，若其技能数多于你，则你可以令此牌对你无效，然后你摸两张牌。②准备阶段，若你没有〖观火〗，则你可以获得之。",
+		old_twjuxia_info: "①每回合限一次，其他角色使用牌指定你为目标后，若其技能数多于你，则你可以令此牌对你无效，然后你摸两张牌。<br>②准备阶段，若你没有〖观火〗，则你可以获得之。",
 
 		old_tw_huangfusong: "旧TW皇甫嵩",
 		old_tw_huangfusong_prefix: "旧|TW",
@@ -31134,14 +30896,14 @@ const lmCharacter = {
 		old_tw_zhanghong: "旧张纮",
 		old_tw_zhanghong_prefix: "旧",
 		old_twquanqian: "劝迁",
-		old_twquanqian_info: `昂扬技。出牌阶段限一次，你可以将至多四张花色各不相同的手牌交给一名其他角色，然后若你交出的牌数大于1，则你从牌堆中获得一张装备牌，然后选择一项：①将手牌数摸至与其相同；②观看其手牌并获得其一种花色的所有牌。<br>${get.poptip("rule_jiang")}：你弃置六张手牌。`,
+		old_twquanqian_info: `昂扬技。出牌阶段限一次，你可以将至多四张花色各不相同的手牌交给一名其他角色，然后若你交出的牌数大于1，则你从牌堆中获得一张装备牌，然后选择一项：①将手牌数摸至与其相同；<br>②观看其手牌并获得其一种花色的所有牌。<br>${get.poptip("rule_jiang")}：你弃置六张手牌。`,
 		old_twrouke: "柔克",
 		old_twrouke_info: "锁定技。当你于摸牌阶段外得到超过一张牌时，你摸一张牌。",
 
 		old_tw_shen_lvmeng: "旧TW神吕蒙",
 		old_tw_shen_lvmeng_prefix: "旧|TW|神",
 		old_twshelie: "涉猎",
-		old_twshelie_info: "①摸牌阶段，你可以改为亮出牌堆顶的五张牌，然后选择获得其中花色不同的牌。②每轮限一次。结束阶段，若你本回合使用的花色数不小于你的体力值，你执行一个额外的摸牌阶段或出牌阶段。",
+		old_twshelie_info: "①摸牌阶段，你可以改为亮出牌堆顶的五张牌，然后选择获得其中花色不同的牌。<br>②每轮限一次。结束阶段，若你本回合使用的花色数不小于你的体力值，你执行一个额外的摸牌阶段或出牌阶段。",
 		old_twgongxin: "攻心",
 		old_twgongxin2: "攻心",
 		old_twgongxin_info: "出牌阶段限一次。你可以观看一名其他角色的手牌，然后你可以展示其中一张牌并选择一项：1.弃置此牌；2.将此牌置于牌堆顶。若该角色手牌中的花色数因此减少，你选择一种颜色，其于本回合不能使用或打出该颜色的牌。",
@@ -31160,9 +30922,9 @@ const lmCharacter = {
 		old_new_simayi: "旧手杀神司马懿",
 		old_new_simayi_prefix: "旧|手杀神",
 		old_jilin: "戢鳞",
-		old_jilin_info: "①游戏开始时，你将牌堆顶三张牌暗置于你的武将牌上，称为“志”。②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
+		old_jilin_info: "①游戏开始时，你将牌堆顶三张牌暗置于你的武将牌上，称为“志”。<br>②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。<br>③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
 		old_yingyou: "英猷",
-		old_yingyou_info: "①出牌阶段开始时，你可明置一张“志”然后摸X张牌（X为明置的“志”的数量）。②当你失去与明置的“志”其中一张花色相同的牌时，你摸一张牌。",
+		old_yingyou_info: "①出牌阶段开始时，你可明置一张“志”然后摸X张牌（X为明置的“志”的数量）。<br>②当你失去与明置的“志”其中一张花色相同的牌时，你摸一张牌。",
 		old_yingtian: "应天",
 		old_yingtian_info: `觉醒技。一名角色死亡后，若场上势力数不大于2，则你获得${get.poptip("reguicai")}、${get.poptip("rewansha")}、${get.poptip("lianpo")}并失去〖英猷〗且你本局游戏使用牌没有距离限制。`,
 
@@ -31187,7 +30949,7 @@ const lmCharacter = {
 		old_lukai: "旧陆凯",
 		old_lukai_prefix: "旧",
 		old_bushi: "卜筮",
-		old_bushi_info: "①你使用♠牌无次数限制；②当你使用或打出♥牌后，你摸两张牌；③结束阶段或当你成为♣牌的目标后，你从牌堆或弃牌堆获得一张♦牌。④准备阶段，你可调整此技能中四种花色的对应顺序。",
+		old_bushi_info: "①你使用♠牌无次数限制；<br>②当你使用或打出♥牌后，你摸两张牌；<br>③结束阶段或当你成为♣牌的目标后，你从牌堆或弃牌堆获得一张♦牌。<br>④准备阶段，你可调整此技能中四种花色的对应顺序。",
 		old_zhongzhuang: "忠壮",
 		old_zhongzhuang_info: "锁定技，当你造成伤害时，若你的攻击范围：小于3，你令此伤害+1；大于3，你将此伤害值改为1",
 
@@ -31264,7 +31026,7 @@ const lmCharacter = {
 		lm_old_caocao: "凌神曹操",
 		lm_old_caocao_prefix: "凌|神",
 		lmjunkguixin: "归心",
-		lmjunkguixin_info: "每轮开始时和你的回合结束时，你可以选择一项：①获得剩余武将牌堆的所有主公技的其中一个技能；②更改一名其他角色的势力。",
+		lmjunkguixin_info: "每轮开始时和你的回合结束时，你可以选择一项：①获得剩余武将牌堆的所有主公技的其中一个技能；<br>②更改一名其他角色的势力。",
 
 		sw_guanyu: "☆神关羽",
 		sw_guanyu_prefix: "☆神",
@@ -31308,7 +31070,7 @@ const lmCharacter = {
 		minimeihun: "魅魂",
 		minimeihun_info: "结束阶段，或你于当前回合首次成为【杀】的目标后，你可以选择一名其他角色，然后声明一个花色，令其交给你所有你此花色的牌，若其没有此花色的牌，则你观看其手牌并获得其中一张。",
 		minihuoxin: "惑心",
-		minihuoxin_info: "出牌阶段限一次，你可以弃置一张牌并令两名角色拼点，然后你可以声明一个花色，没赢的角色须选择一项：①令你获得其所有此花色的牌；②其不能使用或打出你此次声明的花色的牌直到其下个回合结束。",
+		minihuoxin_info: "出牌阶段限一次，你可以弃置一张牌并令两名角色拼点，然后你可以声明一个花色，没赢的角色须选择一项：①令你获得其所有此花色的牌；<br>②其不能使用或打出你此次声明的花色的牌直到其下个回合结束。",
 
 		sw_tw_lvmeng: "TW☆神吕蒙",
 		sw_tw_lvmeng_prefix: "TW|☆神",
@@ -31351,7 +31113,7 @@ const lmCharacter = {
 		"#ext:星之梦/audio/die/wangtaowangyue2:die": "这次比试不算，再来……",
 
 		hf_zhiti: "止啼",
-		hf_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；回合结束时，若你攻击范围内的其他角色均已受伤，你废除一名其他角色的一个装备栏。②当你拼点或【决斗】胜利/受到伤害后，你恢复一个装备栏。③你的手牌上限，出杀次数，摸牌阶段的额定摸牌数+X（X为场上已受伤的角色数）",
+		hf_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；回合结束时，若你攻击范围内的其他角色均已受伤，你废除一名其他角色的一个装备栏。<br>②当你拼点或【决斗】胜利/受到伤害后，你恢复一个装备栏。<br>③你的手牌上限，出杀次数，摸牌阶段的额定摸牌数+X（X为场上已受伤的角色数）",
 	},
 };
 if (!_status.postReconnect.extErdai_skill) {

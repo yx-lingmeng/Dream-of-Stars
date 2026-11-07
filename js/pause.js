@@ -567,246 +567,97 @@ if (lib.config.extension_星之梦_pause) {
 		// };
 	};
 }
-// 精简历史记录
-if (lib.config.extension_星之梦_conciselog) {
-	game.log = function () {
-		let str = "",
-			str2 = "",
-			logvid = null,
-			giveLog = false;
-		const color = /* @__PURE__ */ new Map([
-			["r", "fire"],
-			["y", "yellow"],
-			["g", "green"],
-			["b", "blue"],
-		]);
-		Array.from(arguments).forEach(value => {
-			const itemtype = get.itemtype(value);
-			if (itemtype == "player" || itemtype == "players") {
-				str += `<span class="bluetext">${get.translation(value)}</span>`;
-				str2 += get.translation(value);
-			} else if (itemtype == "cards" || itemtype == "card" || (typeof value == "object" && value && value.name)) {
-				str += `<span class="yellowtext">${get.translation(value)}</span>`;
-				str2 += get.translation(value);
-			} else if (typeof value == "object") {
-				if (value) {
-					// 新增 giveLP 相关逻辑
-					if (value.giveLP) {
-						const list = [value.giveLP, value.player, value.target, value.cards];
-						if (list[3]?.length) {
-							giveLog = value;
-							if (list[1] == game.me || list[2] == game.me || value.visible) {
-								str += `<span class="bluetext">${get.translation(list[1])}</span>`;
-								str2 += get.translation(list[1]);
-								str += "从";
-								str2 += "从";
-								str += `<span class="bluetext">${get.translation(list[2])}</span>`;
-								str2 += get.translation(list[2]);
-								str += "处获得了";
-								str2 += "处获得了";
-								str += `<span class="yellowtext">${get.translation(list[3])}</span>`;
-								str2 += get.translation(list[3]);
-							} else {
-								str += `<span class="bluetext">${get.translation(list[1])}</span>`;
-								str2 += get.translation(list[1]);
-								str += "从";
-								str2 += "从";
-								str += `<span class="bluetext">${get.translation(list[2])}</span>`;
-								str2 += get.translation(list[2]);
-								str += `处获得了${get.translation(list[3].length)}张牌。`;
-								str2 += `处获得了${get.translation(list[3].length)}张牌。`;
-							}
-						}
-					} else if (value.parentNode == ui.historybar) {
-						logvid = value.logvid;
-					} else {
-						str += get.translation(value);
-						str2 += get.translation(value);
-					}
-				}
-			} else if (typeof value == "string") {
-				if (value[0] == "【" && value[value.length - 1] == "】") {
-					str += `<span class="greentext">${get.translation(value)}</span>`;
-					str2 += get.translation(value);
-				} else if (value[0] == "#") {
-					str += `<span class="${color.get(value[1]) || ""}text">${get.translation(value.slice(2))}</span>`;
-					str2 += get.translation(value.slice(2));
+// 记录渲染：侧边栏与右上角战报共用一份实现
+// conciselog 只影响战报的过滤（仅技能/判定行），不影响侧边栏记录
+// game.log 会被序列化后在别处（联机客机 / 重新编译）执行，函数体里不能引用模块作用域的变量，
+// 所以配置项一律现读 lib.config，不要在外面提成 const
+game.log = function () {
+	let str = "",
+		str2 = "",
+		logvid = null;
+	const color = /* @__PURE__ */ new Map([
+		["r", "fire"],
+		["y", "yellow"],
+		["g", "green"],
+		["b", "blue"],
+	]);
+	Array.from(arguments).forEach(value => {
+		const itemtype = get.itemtype(value);
+		if (itemtype == "player" || itemtype == "players") {
+			str += `<span class="bluetext">${get.translation(value)}</span>`;
+			str2 += get.translation(value);
+		} else if (itemtype == "cards" || itemtype == "card" || (typeof value == "object" && value && value.name)) {
+			str += `<span class="yellowtext">${get.translation(value)}</span>`;
+			str2 += get.translation(value);
+		} else if (typeof value == "object") {
+			if (value) {
+				if (value.parentNode == ui.historybar) {
+					logvid = value.logvid;
 				} else {
 					str += get.translation(value);
 					str2 += get.translation(value);
 				}
-			} else {
-				str += value;
-				str2 += value;
 			}
-		});
-		const node = ui.create.div();
-		node.innerHTML = lib.config.log_highlight ? str : str2;
-		// 改为新的记录在下面刷新
-		ui.sidebar.appendChild(node);
-		// ui.sidebar.insertBefore(node, ui.sidebar.firstChild);
-		game.addVideo("log", null, lib.config.log_highlight ? str : str2);
-		// 更新广播逻辑以支持 giveLog
-		if (giveLog) {
-			game.broadcast(arg => game.log(arg), giveLog);
-		} else {
-			game.broadcast((str, str2) => game.log(lib.config.log_highlight ? str : str2), str, str2);
-		}
-		if (!_status.video && !game.online) {
-			if (logvid) {
-				game.logv(logvid, `<div class="text center">${lib.config.log_highlight ? str : str2}</div>`);
-			} else {
-				logvid = _status.event.getLogv();
-			}
-		}
-
-		if (!_status.event.skill && !/^(.+?)进行(.+?)判定，亮出的判定牌为(.+)$/.test(str)) return;
-		if (_status.event === "useCard") return;
-		if (_status.event.skill === "_recasting") return;
-
-		if (lib.config.show_log == "off" || game.chess) {
-			return;
-		}
-		const nodeentry = node.cloneNode(true);
-		ui.arenalog.insertBefore(nodeentry, ui.arenalog.firstChild);
-		if (!lib.config.clear_log) {
-			while (ui.arenalog.childNodes.length && ui.arenalog.scrollHeight > ui.arenalog.offsetHeight) {
-				ui.arenalog.lastChild.remove();
-			}
-		}
-		if (!lib.config.low_performance) {
-			nodeentry.style.transition = "all 0s";
-			nodeentry.style.marginBottom = `-${nodeentry.offsetHeight}px`;
-			ui.refresh(nodeentry);
-			nodeentry.style.transition = "";
-			nodeentry.style.marginBottom = "";
-		}
-		if (!lib.config.clear_log) {
-			return;
-		}
-		nodeentry.timeout = setTimeout(() => nodeentry.delete(), 1e3);
-		Array.from(ui.arenalog.childNodes).forEach(value => {
-			if (!value.timeout) {
-				value.remove();
-			}
-		});
-	};
-} else {
-	game.log = function () {
-		let str = "",
-			str2 = "",
-			logvid = null,
-			giveLog = false;
-		const color = /* @__PURE__ */ new Map([
-			["r", "fire"],
-			["y", "yellow"],
-			["g", "green"],
-			["b", "blue"],
-		]);
-		Array.from(arguments).forEach(value => {
-			const itemtype = get.itemtype(value);
-			if (itemtype == "player" || itemtype == "players") {
-				str += `<span class="bluetext">${get.translation(value)}</span>`;
+		} else if (typeof value == "string") {
+			if (value[0] == "【" && value[value.length - 1] == "】") {
+				str += `<span class="greentext">${get.translation(value)}</span>`;
 				str2 += get.translation(value);
-			} else if (itemtype == "cards" || itemtype == "card" || (typeof value == "object" && value && value.name)) {
-				str += `<span class="yellowtext">${get.translation(value)}</span>`;
+			} else if (value[0] == "#") {
+				str += `<span class="${color.get(value[1]) || ""}text">${get.translation(value.slice(2))}</span>`;
+				str2 += get.translation(value.slice(2));
+			} else {
+				str += get.translation(value);
 				str2 += get.translation(value);
-			} else if (typeof value == "object") {
-				if (value) {
-					// 新增 giveLP 相关逻辑
-					if (value.giveLP) {
-						const list = [value.giveLP, value.player, value.target, value.cards];
-						if (list[3]?.length) {
-							giveLog = value;
-							if (list[1] == game.me || list[2] == game.me || value.visible) {
-								str += `<span class="bluetext">${get.translation(list[1])}</span>`;
-								str2 += get.translation(list[1]);
-								str += "从";
-								str2 += "从";
-								str += `<span class="bluetext">${get.translation(list[2])}</span>`;
-								str2 += get.translation(list[2]);
-								str += "处获得了";
-								str2 += "处获得了";
-								str += `<span class="yellowtext">${get.translation(list[3])}</span>`;
-								str2 += get.translation(list[3]);
-							} else {
-								str += `<span class="bluetext">${get.translation(list[1])}</span>`;
-								str2 += get.translation(list[1]);
-								str += "从";
-								str2 += "从";
-								str += `<span class="bluetext">${get.translation(list[2])}</span>`;
-								str2 += get.translation(list[2]);
-								str += `处获得了${get.translation(list[3].length)}张牌。`;
-								str2 += `处获得了${get.translation(list[3].length)}张牌。`;
-							}
-						}
-					} else if (value.parentNode == ui.historybar) {
-						logvid = value.logvid;
-					} else {
-						str += get.translation(value);
-						str2 += get.translation(value);
-					}
-				}
-			} else if (typeof value == "string") {
-				if (value[0] == "【" && value[value.length - 1] == "】") {
-					str += `<span class="greentext">${get.translation(value)}</span>`;
-					str2 += get.translation(value);
-				} else if (value[0] == "#") {
-					str += `<span class="${color.get(value[1]) || ""}text">${get.translation(value.slice(2))}</span>`;
-					str2 += get.translation(value.slice(2));
-				} else {
-					str += get.translation(value);
-					str2 += get.translation(value);
-				}
-			} else {
-				str += value;
-				str2 += value;
 			}
-		});
-		const node = ui.create.div();
-		node.innerHTML = lib.config.log_highlight ? str : str2;
-		// 改为新的记录在下面刷新
-		ui.sidebar.appendChild(node);
-		// ui.sidebar.insertBefore(node, ui.sidebar.firstChild);
-		game.addVideo("log", null, lib.config.log_highlight ? str : str2);
-		// 更新广播逻辑以支持 giveLog
-		if (giveLog) {
-			game.broadcast(arg => game.log(arg), giveLog);
 		} else {
-			game.broadcast((str, str2) => game.log(lib.config.log_highlight ? str : str2), str, str2);
+			str += value;
+			str2 += value;
 		}
-		if (!_status.video && !game.online) {
-			if (logvid) {
-				game.logv(logvid, `<div class="text center">${lib.config.log_highlight ? str : str2}</div>`);
-			} else {
-				logvid = _status.event.getLogv();
-			}
+	});
+	const node = ui.create.div();
+	node.innerHTML = lib.config.log_highlight ? str : str2;
+	// 新记录追加到底部
+	ui.sidebar.appendChild(node);
+	// ui.sidebar.insertBefore(node, ui.sidebar.firstChild);
+	game.addVideo("log", null, lib.config.log_highlight ? str : str2);
+	game.broadcast((str, str2) => game.log(lib.config.log_highlight ? str : str2), str, str2);
+	if (!_status.video && !game.online) {
+		if (logvid) {
+			game.logv(logvid, `<div class="text center">${lib.config.log_highlight ? str : str2}</div>`);
+		} else {
+			logvid = _status.event.getLogv();
 		}
-		if (lib.config.show_log == "off" || game.chess) {
-			return;
+	}
+	if (lib.config.extension_星之梦_conciselog) {
+		const currentEvent = _status.event;
+		if (!currentEvent?.skill && !/^(.+?)进行(.+?)判定，亮出的判定牌为(.+)$/.test(str)) return;
+		if (currentEvent?.name === "useCard") return;
+		if (currentEvent?.skill === "_recasting") return;
+	}
+	if (lib.config.show_log == "off" || game.chess) {
+		return;
+	}
+	const nodeentry = node.cloneNode(true);
+	ui.arenalog.insertBefore(nodeentry, ui.arenalog.firstChild);
+	if (!lib.config.clear_log) {
+		while (ui.arenalog.childNodes.length && ui.arenalog.scrollHeight > ui.arenalog.offsetHeight) {
+			ui.arenalog.lastChild.remove();
 		}
-		const nodeentry = node.cloneNode(true);
-		ui.arenalog.insertBefore(nodeentry, ui.arenalog.firstChild);
-		if (!lib.config.clear_log) {
-			while (ui.arenalog.childNodes.length && ui.arenalog.scrollHeight > ui.arenalog.offsetHeight) {
-				ui.arenalog.lastChild.remove();
-			}
+	}
+	if (!lib.config.low_performance) {
+		nodeentry.style.transition = "all 0s";
+		nodeentry.style.marginBottom = `-${nodeentry.offsetHeight}px`;
+		ui.refresh(nodeentry);
+		nodeentry.style.transition = "";
+		nodeentry.style.marginBottom = "";
+	}
+	if (!lib.config.clear_log) {
+		return;
+	}
+	nodeentry.timeout = setTimeout(() => nodeentry.delete(), 1e3);
+	Array.from(ui.arenalog.childNodes).forEach(value => {
+		if (!value.timeout) {
+			value.remove();
 		}
-		if (!lib.config.low_performance) {
-			nodeentry.style.transition = "all 0s";
-			nodeentry.style.marginBottom = `-${nodeentry.offsetHeight}px`;
-			ui.refresh(nodeentry);
-			nodeentry.style.transition = "";
-			nodeentry.style.marginBottom = "";
-		}
-		if (!lib.config.clear_log) {
-			return;
-		}
-		nodeentry.timeout = setTimeout(() => nodeentry.delete(), 1e3);
-		Array.from(ui.arenalog.childNodes).forEach(value => {
-			if (!value.timeout) {
-				value.remove();
-			}
-		});
-	};
-}
+	});
+};

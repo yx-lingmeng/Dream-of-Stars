@@ -1099,12 +1099,9 @@ export async function precontent(config, pack) {
 			f(arr, Array.from(fold));
 		});
 	};
-	//官方势力
+	//官方势力：只用于这里的判定与选项，不替换 lib.group（替换会让其它扩展注册的势力静默丢失）
+	const officialGroups = ["wei", "shu", "wu", "qun", "jin"];
 	if (lib.config.extension_星之梦_guanfangshili) {
-		Object.defineProperty(lib, "group", {
-			get: () => ["wei", "shu", "wu", "qun", "jin"],
-			set: () => {},
-		});
 		lib.skill._slyh = {
 			trigger: { global: "gameStart", player: "enterGame" },
 			forced: true,
@@ -1112,11 +1109,11 @@ export async function precontent(config, pack) {
 			silent: true,
 			priority: Infinity,
 			filter(_, player) {
-				return get.mode() !== "guozhan" && player.group && !lib.group.includes(player.group);
+				return get.mode() !== "guozhan" && player.group && !officialGroups.includes(player.group);
 			},
 			async content(event, trigger, player) {
 				const result = await player
-					.chooseControl(lib.group.slice(0, 5))
+					.chooseControl(officialGroups.slice(0))
 					.set("ai", () => get.event().controls.randomGet())
 					.set("prompt", "请选择你的势力")
 					.forResult();
@@ -1157,9 +1154,7 @@ export async function precontent(config, pack) {
 				if (get.is.double(name)) {
 					result = await player.chooseControl(get.is.double(name, true)).set("prompt", "请选择你的势力").forResult();
 				} else if (lib.character[name][1] == "shen" || lib.character[name][1] == "devil") {
-					var list = lib.group.slice(0);
-					list.remove("shen");
-					list.remove("devil");
+					var list = officialGroups.slice(0);
 					result = await player.chooseControl(list).set("prompt", "请选择武将的势力").forResult();
 				}
 				if (result && result.control) {
@@ -1636,6 +1631,9 @@ export async function precontent(config, pack) {
 		ui.pause.show();
 		if (lib.config.show_cardpile) {
 			ui.cardPileButton.style.display = "";
+		}
+		if (lib.config.show_commonCardpile) {
+			ui.commonCardPileButton.style.display = "";
 		}
 	};
 	//自定义初始手牌数

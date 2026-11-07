@@ -95,7 +95,6 @@ const characters = {
 		skills: ["old_olzongxuan", "old_olzhiyan"],
 		img: "image/character/re_yufan.jpg",
 		dieAudios: ["re_yufan"],
-		tempname: ["re_yufan"],
 	},
 	old_shen_caopi: {
 		sex: "male",
@@ -275,6 +274,7 @@ const characters = {
 		img: "image/character/zhugejin.jpg",
 		dieAudios: ["zhugejin"],
 		names: "诸葛|瑾",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_sp_sunce: {
 		sex: "male",
@@ -317,7 +317,6 @@ const characters = {
 		img: "image/character/ol_luyusheng.jpg",
 		dieAudios: ["ol_luyusheng"],
 		clans: ["吴郡陆氏"],
-		tempname: ["clan_luyusheng"],
 	},
 	old_wangyan: {
 		sex: "male",
@@ -354,7 +353,6 @@ const characters = {
 		img: "image/character/xin_zhonghui.jpg",
 		dieAudios: ["xin_zhonghui"],
 		clans: ["颍川钟氏"],
-		tempname: ["clan_zhonghui"],
 	},
 	old_dc_xushu: {
 		sex: "male",
@@ -422,6 +420,8 @@ const characters = {
 		skills: ["dcgengdu", "old_dcgumai"],
 		img: "image/character/dc_zhugejun.jpg",
 		dieAudios: ["dc_zhugejun"],
+		names: "诸葛|均",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_dc_xiahouxuan: {
 		sex: "male",
@@ -575,6 +575,7 @@ const characters = {
 		img: "image/character/zhugejing.jpg",
 		dieAudios: ["zhugejing"],
 		names: "诸葛|京",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_bailingyun: {
 		sex: "female",
@@ -648,6 +649,8 @@ const characters = {
 		skills: ["dcsbjingmou", "old_dcsbguyi"],
 		img: "image/character/dc_sb_zhugeliang.jpg",
 		dieAudios: ["dc_sb_zhugeliang"],
+		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_dc_sb_xunyu: {
 		sex: "male",
@@ -657,7 +660,6 @@ const characters = {
 		img: "image/character/dc_sb_xunyu.jpg",
 		dieAudios: ["dc_sb_xunyu"],
 		clans: ["颍川荀氏"],
-		tempname: ["clan_xunyu"],
 	},
 	old_dc_sb_luxun: {
 		sex: "male",
@@ -666,6 +668,7 @@ const characters = {
 		skills: ["old_dcsbjunmou", "old_dcsbzhanyan"],
 		img: "image/character/dc_sb_luxun.jpg",
 		dieAudios: ["dc_sb_luxun"],
+		clans: ["吴郡陆氏"],
 	},
 	old_dc_sb_hulie: {
 		sex: "male",
@@ -733,6 +736,7 @@ const characters = {
 		img: "image/character/wu_zhugeliang.jpg",
 		dieAudios: ["wu_zhugeliang"],
 		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_wu_lukang: {
 		sex: "male",
@@ -838,7 +842,6 @@ const characters = {
 		img: "image/character/wangling.jpg",
 		dieAudios: ["wangling"],
 		clans: ["太原王氏"],
-		tempname: ["clan_wangling"],
 	},
 	old_mb_shen_jiangwei: {
 		sex: "male",
@@ -1012,7 +1015,7 @@ const characters = {
 		sex: "female",
 		group: "qun",
 		hp: 3,
-		skills: ["old_mbbojian", "twmbjiwei"],
+		skills: ["old_mbbojian", "twjiwei"],
 		img: "image/character/mb_sp_zhenji.jpg",
 		dieAudios: ["mb_sp_zhenji"],
 	},
@@ -1096,6 +1099,7 @@ const characters = {
 		img: "image/character/sb_zhugejin.jpg",
 		dieAudios: ["sb_zhugejin"],
 		names: "诸葛|瑾",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_sb_zhangliao: {
 		sex: "male",
@@ -1172,6 +1176,7 @@ const characters = {
 		img: "image/character/sb_sp_zhugeliang.jpg",
 		dieAudios: ["sb_sp_zhugeliang"],
 		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	oldx_sb_sp_zhugeliang: {
 		sex: "male",
@@ -1181,6 +1186,7 @@ const characters = {
 		img: "image/character/sb_sp_zhugeliang.jpg",
 		dieAudios: ["sb_sp_zhugeliang"],
 		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_sb_menghuo: {
 		sex: "male",
@@ -1470,6 +1476,7 @@ const characters = {
 		img: "image/character/huan_zhugeliang.jpg",
 		dieAudios: ["huan_zhugeliang"],
 		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	old_huan_weiyan: {
 		sex: "male",
@@ -1486,6 +1493,8 @@ const characters = {
 		skills: ["old_rexianyuan", "twlingyin"],
 		img: "image/character/huan_zhugeguo.jpg",
 		dieAudios: ["huan_zhugeguo"],
+		names: "诸葛|果",
+		clans: ["琅琊诸葛氏"],
 	},
 
 	old_huan_caoang: {
@@ -1522,6 +1531,7 @@ const characters = {
 		skills: ["old_twtaoluan", "old_twshiji", "old_twzhengjun"],
 		img: "image/character/tw_huangfusong.jpg",
 		dieAudios: ["sp_huangfusong"],
+		names: "皇甫|嵩",
 	},
 	old_yinfuren: {
 		sex: "female",
@@ -1630,6 +1640,7 @@ const characters = {
 		skills: ["old_bushi", "old_zhongzhuang"],
 		img: "image/character/lukai.jpg",
 		dieAudios: ["lukai"],
+		clans: ["吴郡陆氏"],
 	},
 	old_yj_majun: {
 		sex: "male",
@@ -1810,6 +1821,7 @@ const characters = {
 		dieAudios: ["shen_zhugeliang"],
 		groupInGuozhan: "shu",
 		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	sw_zhouyu: {
 		sex: "male",
@@ -1874,6 +1886,7 @@ const characters = {
 		img: "image/character/shen_luxun.jpg",
 		dieAudios: ["shen_luxun"],
 		groupInGuozhan: "wu",
+		clans: ["吴郡陆氏"],
 	},
 	sw_zhangliao: {
 		sex: "male",
@@ -1956,6 +1969,7 @@ const characters = {
 		dieAudios: ["shen_zhugeliang"],
 		groupInGuozhan: "shu",
 		names: "诸葛|亮",
+		clans: ["琅琊诸葛氏"],
 	},
 	lm_xurong: {
 		sex: "male",
