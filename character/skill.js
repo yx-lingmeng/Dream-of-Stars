@@ -16123,7 +16123,7 @@ const lmCharacter = {
 						if (!target || !target.hasSkill("old_hefeichonglei") || target == player || player.isDying()) {
 							return false;
 						}
-						if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+						if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 							return true;
 						}
 						return get.name(card) != "sha";
@@ -16139,7 +16139,7 @@ const lmCharacter = {
 						}
 						if (
 							player.countCards("hs", card => {
-								if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+								if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 									return true;
 								}
 								return get.name(card) != "sha";
@@ -16154,7 +16154,7 @@ const lmCharacter = {
 						if (!target || !target.hasSkill("old_hefeichonglei")) {
 							return "";
 						}
-						if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+						if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 							return "将一张手牌当作闪使用或打出";
 						}
 						return "将一张非【杀】手牌当作闪使用或打出";
@@ -16176,7 +16176,7 @@ const lmCharacter = {
 							}
 							if (
 								!player.countCards("hs", card => {
-									if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+									if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 										return true;
 									}
 									return get.name(card) != "sha";
@@ -16196,7 +16196,7 @@ const lmCharacter = {
 								return;
 							}
 							const hs = player.getCards("hs", card => {
-								if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+								if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 									return true;
 								}
 								return get.name(card) != "sha";
@@ -16206,7 +16206,7 @@ const lmCharacter = {
 							}
 						},
 						cardRespondable(card, player) {
-							if (get.name(card) == "shan" || player.isDying()) {
+							if (get.name(card) == "shan" || player.isDying() || get.event().skill == "old_hefeichonglei_wansha") {
 								return;
 							}
 							const target = get.event()?.getParent("phaseUse", true, true)?.player;
@@ -16214,7 +16214,7 @@ const lmCharacter = {
 								return;
 							}
 							const hs = player.getCards("hs", card => {
-								if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+								if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 									return true;
 								}
 								return get.name(card) != "sha";
@@ -16232,7 +16232,7 @@ const lmCharacter = {
 								return;
 							}
 							const hs = player.getCards("hs", card => {
-								if (target.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(target, "hefei_lidian")) {
+								if (lib.skill.old_hefeiheyuzhangliao.hasYuejin(target)) {
 									return true;
 								}
 								return get.name(card) != "sha";
@@ -16249,7 +16249,7 @@ const lmCharacter = {
 			audio: "hefeidangshi",
 			trigger: { player: "useCardAfter" },
 			filter(event, player) {
-				return get.is.damageCard(event.card) && event.targets?.some(target => target !== player);
+				return get.is.damageCard(event.card) && event.targets?.some(target => target !== player && target.isIn());
 			},
 			async cost(event, trigger, player) {
 				event.result = await player
@@ -16271,7 +16271,7 @@ const lmCharacter = {
 					})
 					.set(
 						"targets",
-						trigger.targets.filter(target => target !== player)
+						trigger.targets.filter(target => target !== player && target.isIn())
 					)
 					.forResult();
 			},
@@ -16282,7 +16282,7 @@ const lmCharacter = {
 				} = event;
 				const getNum = player => {
 					let num = Math.max(1, player.countMark(`old_hefeidangshi_count`));
-					if (player.hasSkill("old_hefeiheyuzhangliao") && get.info("friendgongli").isFriendOf(player, "hefei_lidian")) {
+					if (lib.skill.old_hefeiheyuzhangliao.hasLidian(player)) {
 						num = 3;
 					}
 					return num;
@@ -16355,7 +16355,7 @@ const lmCharacter = {
 				}
 				const type = result.links[0];
 				const index = ["useCard", "discard", "damage"].indexOf(type);
-				game.log(player, "选择了", "#g【荡势】", "的", "#y选项" + get.cnNumber(index + 1, true));
+				game.log(target, "选择了", "#g【荡势】", "的", "#y选项" + get.cnNumber(index + 1, true));
 				switch (type) {
 					case "useCard": {
 						await target
@@ -16451,6 +16451,21 @@ const lmCharacter = {
 			locked: true,
 			ai: {
 				combo: ["old_hefeichonglei", "old_hefeidangshi"],
+			},
+			// 只写本体名，靠 isFriendOf 里 get.nameList().endsWith 认人：old_ / characterx_ 等变体自动算作在场
+			friendOf(player, name) {
+				const friend = get.info("friendgongli");
+				if (!friend || typeof friend.isFriendOf !== "function") {
+					return false;
+				}
+				return friend.isFriendOf(player, name);
+			},
+			// 合御①：同阵营的骥乐进在场；合御②：同阵营的骥李典在场
+			hasYuejin(player) {
+				return player.hasSkill("old_hefeiheyuzhangliao") && lib.skill.old_hefeiheyuzhangliao.friendOf(player, "hefei_yuejin");
+			},
+			hasLidian(player) {
+				return player.hasSkill("old_hefeiheyuzhangliao") && lib.skill.old_hefeiheyuzhangliao.friendOf(player, "hefei_lidian");
 			},
 		},
 

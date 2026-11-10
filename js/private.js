@@ -2145,20 +2145,15 @@ lib.skill.hefeiheyulidian = {
 		global: "discardAfter",
 	},
 	filter(event, player) {
-		const names =
-			event.name == "useCard"
-				? ["hefei_zhangliao", "old_hefei_zhangliao"] // 两种形态都支持
-				: ["hefei_yuejin"];
-
+		// 只写本体名：旧骥张辽也算"骥张辽在场"
+		const name = event.name == "useCard" ? "hefei_zhangliao" : "hefei_yuejin";
 		const friend = get.info("friendgongli");
 		if (!friend || typeof friend.isFriendOf !== "function") {
 			return false;
 		}
-
-		if (!names.some(n => friend.isFriendOf(player, n))) {
+		if (!friend.isFriendOf(player, name)) {
 			return false;
 		}
-
 		const evt = event.getParent(2);
 		if (event.name == "useCard") {
 			return evt?.name == "hefeigaigong";
@@ -2187,14 +2182,14 @@ lib.skill.hefeiheyuyuejin = {
 		global: ["loseAfter", "loseAsyncAfter", "equipAfter", "addJudgeAfter", "addToExpansionAfter", "gainAfter"],
 	},
 	filter(event, player) {
-		const names = event.name == "damage" ? ["hefei_zhangliao", "old_hefei_zhangliao"] : ["hefei_lidian"];
+		const name = event.name == "damage" ? "hefei_zhangliao" : "hefei_lidian";
 		const friend = get.info("friendgongli");
-		if (!friend || typeof friend.isFriendOf !== "function") return false;
-
-		if (!names.some(n => friend.isFriendOf(player, n))) {
+		if (!friend || typeof friend.isFriendOf !== "function") {
 			return false;
 		}
-
+		if (!friend.isFriendOf(player, name)) {
+			return false;
+		}
 		if (event.name == "damage") {
 			return event.card?.storage?.hefeixianjian;
 		}
