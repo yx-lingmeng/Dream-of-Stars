@@ -9,16 +9,8 @@ export let extensionDefaultPackage = async function () {
 		skill: await basic.resolve(skill),
 		// card: await basic.resolve(card)
 		intro: (function () {
-			var log = [
-				"最低适配：v1.11.5",
-				"自用扩展，主要用于保留在正式服削弱前的牢武将，外加一些功能和美化。",
-				"本扩展武将除涉及本扩展装备外（如神武）的武将基本支持单向联机，即客机没有装本扩展也可使用。",
-			];
-			return (
-				"<p style='color: rgb(210, 210,000); font - size: 12px; line - height: 14px; text - shadow: 0 0 2px black; '>" +
-				log.join("<br>•") +
-				"</p>"
-			);
+			var log = ["最低适配：v1.11.5", "自用扩展，主要用于保留在正式服削弱前的牢武将，外加一些功能和美化。", "本扩展武将除涉及本扩展装备外（如神武）的武将基本支持单向联机，即客机没有装本扩展也可使用。"];
+			return "<p style='color: rgb(210, 210,000); font - size: 12px; line - height: 14px; text - shadow: 0 0 2px black; '>" + log.join("<br>•") + "</p>";
 		})(),
 	};
 };

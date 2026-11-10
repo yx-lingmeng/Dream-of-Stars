@@ -125,7 +125,8 @@
 .pausedbg > .content > .headbg {
 	position: relative;
 	/* 电脑端 100%；手机/平板由下面的媒体查询或 body 上的 xzm-avatar-mobile 改成 76% */
-	width: 100%;
+	/* ● 头像列高度不够时由 js/pause.js 在 .content 上写 --avatarFit（≤1）按比例压小，8 人场 16:9 下第 8 个头像不再超高 */
+	width: calc(100% * var(--avatarFit, 1));
 	aspect-ratio: 1 / 1;
 	margin: -1%;
 	background-image: url("../image/pause/game_hist_headbg.png");
@@ -139,12 +140,12 @@
    优先看扩展设置/自动判断（js/pause.js 给 body 加类）；媒体查询只作为 JS 没运行时的兜底 */
 @media (pointer: coarse), (hover: none), (max-width: 950px) {
 	body:not(.xzm-avatar-pc) .pausedbg > .content > .headbg {
-		width: 76%;
+		width: calc(76% * var(--avatarFit, 1));
 	}
 }
 /* 扩展设置选「手机（76%）」或自动判断为手机时 */
 body.xzm-avatar-mobile .pausedbg > .content > .headbg {
-	width: 76%;
+	width: calc(76% * var(--avatarFit, 1));
 }
 /*●小头像尺寸*/
 .pausedbg > .content > .headbg > .char {
@@ -356,14 +357,6 @@ body.xzm-avatar-mobile .pausedbg > .content > .headbg {
 	mask-repeat: no-repeat;
 }
 
-/*● 新增：记录框里隐藏“某某进入了XX阶段”这类记录（js/pause.js 会给这类记录加 recg-hide 类）*/
-.pausedbg > .historybg #sidebar > div.recg-hide {
-	display: none !important;
-}
-/* 新增：兜底规则——若上面的结构选择器仍未匹配（不同版本 DOM 结构差异），只要节点在暂停界面（记录框）内就隐藏 recg-hide */
-.pausedbg .recg-hide {
-	display: none !important;
-}
 #sidebar > div,
 #sidebar3 > div {
 	margin: 5px;
