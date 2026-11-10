@@ -1125,7 +1125,13 @@ export async function precontent(config, pack) {
 		};
 	}
 	//神将选择势力
-	if (lib.config.extension_星之梦_shenjiangshili) {
+	//「仅保留官方势力」已完全覆盖本功能（神/魔同样会被要求重选官方势力）：开启时不注册，并从扩展设置里摘掉该选项
+	if (lib.config.extension_星之梦_guanfangshili) {
+		const extensionMenu = lib.extensionMenu["extension_星之梦"];
+		if (extensionMenu) {
+			delete extensionMenu.shenjiangshili;
+		}
+	} else if (lib.config.extension_星之梦_shenjiangshili) {
 		lib.skill._bol_doudizhuchoosegroup = {
 			charlotte: true,
 			ruleSkill: true,
